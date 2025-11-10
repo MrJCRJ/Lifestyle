@@ -1,0 +1,10 @@
+/* 
+ * components.css - Arquivo principal de componentes
+ * Importa módulos CSS organizados por funcionalidade
+ */
+
+@import url("cards.css");
+@import url("forms.css");
+@import url("buttons.css");
+@import url("tracking.css");
+@import url("modals.css");

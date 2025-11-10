@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#7c3aed" />
+    <meta
+      name="description"
+      content="Gerenciador inteligente de rotinas diárias"
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Lifestyle - Gerenciador de Rotinas</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/screens.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header Component -->
+      <header></header>
+
+      <!-- Main App Container -->
+      <main id="app">
+        <!-- Componentes carregados dinamicamente via component-loader.js -->
+      </main>
+
+      <!-- Footer Component -->
+      <footer></footer>
+    </div>
+
+    <!-- Modal de Configurações será injetado no body -->
+
+    <!-- Component Loader (deve ser carregado antes de tudo) -->
+    <script src="js/component-loader.js"></script>
+
+    <!-- Core modules -->
+    <script src="js/state.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/data-transfer.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/free-time.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/forms.js"></script>
+    <script src="js/navigation.js"></script>
+
+    <!-- Work and study modules -->
+    <script src="js/work.js"></script>
+    <script src="js/study.js"></script>
+    <script src="js/cleaning.js"></script>
+    <script src="js/planner.js"></script>
+
+    <!-- Schedule modules -->
+    <script src="js/schedule-generator.js?v=2025111001"></script>
+    <script src="js/schedule-filters.js?v=2025111001"></script>
+    <script src="js/schedule-render.js?v=2025111001"></script>
+    <script src="js/schedule-display.js?v=2025111001"></script>
+
+    <!-- Event tracking modules -->
+    <script src="js/time-utils.js"></script>
+    <script src="js/tracking-modals.js"></script>
+    <script src="js/tracking-actions.js"></script>
+    <script src="js/schedule-events.js"></script>
+
+    <!-- Planner modules -->
+    <script src="js/planner-wizard.js"></script>
+    <script src="js/planner-data.js"></script>
+    <script src="js/schedule-planner.js"></script>
+
+    <!-- Main app -->
+    <script src="js/main.js"></script>
+
+    <!-- PWA Registration -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .catch((error) =>
+              console.error("❌ Erro ao registrar Service Worker:", error)
+            );
+        });
+      }
+    </script>
+  </body>
+</html>

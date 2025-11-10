@@ -1,0 +1,65 @@
+<!-- Tela de Cronograma -->
+<section id="schedule-screen" class="screen">
+  <div class="schedule-content">
+    <h2>📅 Seus Cronogramas</h2>
+
+    <div class="filter-container">
+      <button
+        class="filter-btn active"
+        data-filter="today"
+        onclick="showScheduleView('today')"
+      >
+        Hoje
+      </button>
+      <button
+        class="filter-btn"
+        data-filter="3days"
+        onclick="showScheduleView('3days')"
+      >
+        3 Dias
+      </button>
+      <button
+        class="filter-btn"
+        data-filter="week"
+        onclick="showScheduleView('week')"
+      >
+        Semana
+      </button>
+      <button
+        class="filter-btn"
+        data-filter="7days"
+        onclick="showScheduleView('7days')"
+      >
+        7 Dias
+      </button>
+      <button
+        class="filter-btn"
+        data-filter="dashboard"
+        onclick="showDashboard()"
+        style="
+          background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+          color: white;
+          margin-left: 10px;
+        "
+      >
+        📊 Dashboard
+      </button>
+    </div>
+
+    <div id="schedule-display"></div>
+  </div>
+</section>
+
+<!-- Tela de Dashboard -->
+<section id="dashboard-screen" class="screen">
+  <div class="dashboard-content">
+    <div class="dashboard-header">
+      <h2>📊 Dashboard de Estatísticas</h2>
+      <button onclick="showScheduleView('today')" class="btn btn-outline">
+        ← Voltar aos Cronogramas
+      </button>
+    </div>
+
+    <div id="dashboard-content"></div>
+  </div>
+</section>

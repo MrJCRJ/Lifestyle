@@ -1,0 +1,220 @@
+<!-- Planejamento Diário - Sono -->
+<section id="planner-sleep-screen" class="screen">
+  <div class="form-content">
+    <h2>😴 Rotina de Sono</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-sleep-day-name">Amanhã</span></strong>
+    </p>
+
+    <!-- Configurações Rápidas -->
+    <div class="quick-config-container" id="quick-config">
+      <h3 style="font-size: 1.1rem; margin-bottom: 10px">
+        ⚡ Configuração Rápida
+      </h3>
+      <div class="quick-config-buttons">
+        <button
+          onclick="loadConfigFromPreviousDay()"
+          class="btn btn-outline btn-small"
+        >
+          📅 Copiar Dia Anterior
+        </button>
+        <button
+          onclick="loadConfigFromLastWeek()"
+          class="btn btn-outline btn-small"
+        >
+          📆 Copiar Semana Passada
+        </button>
+        <button onclick="clearPlannerForms()" class="btn btn-outline btn-small">
+          🆕 Começar Vazio
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="plannerSleepTime">Que horas vai dormir?</label>
+      <input type="time" id="plannerSleepTime" required />
+    </div>
+
+    <div class="form-group">
+      <label for="plannerWakeTime">Que horas vai acordar?</label>
+      <input type="time" id="plannerWakeTime" required />
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerSleep()" class="btn btn-primary">
+        Continuar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Planejamento Diário - Trabalho -->
+<section id="planner-work-screen" class="screen">
+  <div class="form-content">
+    <h2>💼 Trabalho</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-work-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai trabalhar neste dia?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasWork"
+            value="yes"
+            onchange="togglePlannerWorkForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasWork"
+            value="no"
+            onchange="togglePlannerWorkForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-work-details" style="display: none">
+      <div id="planner-jobs-container"></div>
+      <button onclick="addPlannerJobSlot()" class="btn btn-secondary">
+        + Adicionar outro trabalho/bico
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevPlannerStep('work')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="savePlannerWork()" class="btn btn-primary">
+        Continuar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Planejamento Diário - Estudo -->
+<section id="planner-study-screen" class="screen">
+  <div class="form-content">
+    <h2>📚 Estudos</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-study-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai estudar neste dia?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasStudy"
+            value="yes"
+            onchange="togglePlannerStudyForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasStudy"
+            value="no"
+            onchange="togglePlannerStudyForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-study-details" style="display: none">
+      <div id="planner-studies-container"></div>
+      <button onclick="addPlannerStudySlot()" class="btn btn-secondary">
+        + Adicionar outro curso/estudo
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevPlannerStep('study')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="savePlannerStudy()" class="btn btn-primary">
+        Continuar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Planejamento Diário - Limpeza -->
+<section id="planner-cleaning-screen" class="screen">
+  <div class="form-content">
+    <h2>🧹 Limpeza / Organização</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-cleaning-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai fazer limpeza neste dia?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasCleaning"
+            value="yes"
+            onchange="togglePlannerCleaningForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasCleaning"
+            value="no"
+            onchange="togglePlannerCleaningForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-cleaning-details" style="display: none">
+      <div class="form-group">
+        <label for="plannerCleaningStartTime">Horário de início</label>
+        <input type="time" id="plannerCleaningStartTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerCleaningEndTime">Horário de término</label>
+        <input type="time" id="plannerCleaningEndTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerCleaningNotes">Áreas/Tarefas (opcional)</label>
+        <textarea
+          id="plannerCleaningNotes"
+          placeholder="Ex: Cozinha, banheiro, organizar quarto..."
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevPlannerStep('cleaning')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="savePlannerCleaning()" class="btn btn-primary">
+        Finalizar
+      </button>
+    </div>
+  </div>
+</section>

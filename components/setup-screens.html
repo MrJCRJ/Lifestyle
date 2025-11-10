@@ -1,0 +1,173 @@
+<!-- Formulário de Sono -->
+<section id="sleep-screen" class="screen">
+  <div class="form-content">
+    <h2>😴 Rotina de Sono</h2>
+    <p class="subtitle">Vamos começar com o básico</p>
+
+    <div class="form-group">
+      <label for="sleepTime">Que horas você geralmente dorme?</label>
+      <input type="time" id="sleepTime" required />
+    </div>
+
+    <div class="form-group">
+      <label for="wakeTime">Que horas você geralmente acorda?</label>
+      <input type="time" id="wakeTime" required />
+    </div>
+
+    <div class="button-group">
+      <button onclick="saveSleep()" class="btn btn-primary">Continuar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Formulário de Trabalho -->
+<section id="work-screen" class="screen">
+  <div class="form-content">
+    <h2>💼 Trabalho - <span id="current-work-day">Segunda</span></h2>
+    <p class="subtitle">Configure os trabalhos para este dia</p>
+
+    <div class="form-group">
+      <label>Você trabalha neste dia?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="hasWork"
+            value="yes"
+            onchange="toggleWorkForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="hasWork"
+            value="no"
+            onchange="toggleWorkForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="work-details" style="display: none">
+      <div id="jobs-container"></div>
+      <button onclick="addJobSlot()" class="btn btn-secondary">
+        + Adicionar outro trabalho/bico
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevStep('work')" class="btn btn-outline">Voltar</button>
+      <button onclick="saveWork()" class="btn btn-primary">Continuar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Formulário de Estudo -->
+<section id="study-screen" class="screen">
+  <div class="form-content">
+    <h2>📚 Estudos - <span id="current-study-day">Segunda</span></h2>
+    <p class="subtitle">Configure os estudos para este dia</p>
+
+    <div class="form-group">
+      <label>Você estuda neste dia?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="hasStudy"
+            value="yes"
+            onchange="toggleStudyForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="hasStudy"
+            value="no"
+            onchange="toggleStudyForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="study-details" style="display: none">
+      <div id="studies-container"></div>
+      <button onclick="addStudySlot()" class="btn btn-secondary">
+        + Adicionar outro curso/estudo
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevStep('study')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="saveStudy()" class="btn btn-primary">Continuar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Formulário de Limpeza -->
+<section id="cleaning-screen" class="screen">
+  <div class="form-content">
+    <h2>🧹 Limpeza / Organização</h2>
+    <p class="subtitle">Configure o horário de limpeza diária</p>
+
+    <div class="form-group">
+      <label>Você faz limpeza neste dia?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="hasCleaning"
+            value="yes"
+            onchange="toggleCleaningForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="hasCleaning"
+            value="no"
+            onchange="toggleCleaningForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="cleaning-details" style="display: none">
+      <div class="form-group">
+        <label for="cleaningStartTime">Horário de início</label>
+        <input type="time" id="cleaningStartTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="cleaningEndTime">Horário de término</label>
+        <input type="time" id="cleaningEndTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="cleaningNotes">Áreas/Tarefas (opcional)</label>
+        <textarea
+          id="cleaningNotes"
+          placeholder="Ex: Cozinha, banheiro, organizar quarto..."
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevStep('cleaning')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="saveCleaning()" class="btn btn-primary">
+        Finalizar
+      </button>
+    </div>
+  </div>
+</section>
