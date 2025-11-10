@@ -1,9 +1,11 @@
-// Service Worker para PWA
+// Service Worker para PWA - Lifestyle App
 
-const CACHE_NAME = 'lifestyle-v2.1';
+const CACHE_NAME = 'lifestyle-v2.2';
+const OFFLINE_URL = '/offline.html';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/offline.html',
   '/css/base.css',
   '/css/components.css',
   '/css/screens.css',
@@ -12,6 +14,7 @@ const urlsToCache = [
   '/css/forms.css',
   '/css/modals.css',
   '/css/tracking.css',
+  '/css/dashboard.css',
   '/js/main.js',
   '/js/component-loader.js',
   '/js/state.js',
@@ -37,12 +40,16 @@ const urlsToCache = [
   '/js/planner-wizard.js',
   '/js/planner-data.js',
   '/js/schedule-planner.js',
+  '/js/pwa-install.js',
+  '/js/notifications-simple.js',
   '/components/header.html',
   '/components/footer.html',
   '/components/settings-modal.html',
   '/components/setup-screens.html',
   '/components/planner-screens.html',
-  '/components/schedule-screen.html'
+  '/components/schedule-screen.html',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png'
 ];
 
 // Instalação do Service Worker
@@ -75,34 +82,62 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Interceptar requisições
+// Interceptar requisições - Estratégia: Cache First com Network Fallback
 self.addEventListener('fetch', event => {
+  // Para requisições de navegação (HTML)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          // Atualiza cache com a resposta da rede
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // Se offline, tenta buscar do cache ou retorna página offline
+          return caches.match(event.request)
+            .then(cached => cached || caches.match(OFFLINE_URL));
+        })
+    );
+    return;
+  }
+
+  // Para outros recursos (CSS, JS, imagens)
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        // Retorna do cache se existir
-        if (response) {
-          return response;
+      .then(cached => {
+        if (cached) {
+          // Retorna do cache e atualiza em background
+          fetch(event.request).then(response => {
+            if (response && response.status === 200) {
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, response.clone());
+              });
+            }
+          }).catch(() => { });
+          return cached;
         }
 
-        // Senão, busca da rede
+        // Se não está no cache, busca da rede
         return fetch(event.request).then(response => {
-          // Não cachear se não for resposta válida
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
 
-          // Clonar resposta
           const responseToCache = response.clone();
-
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);
           });
 
           return response;
         }).catch(() => {
-          // Se offline e não tem no cache, retorna página offline
-          return caches.match('/index.html');
+          // Fallback para offline
+          if (event.request.destination === 'document') {
+            return caches.match(OFFLINE_URL);
+          }
         });
       })
   );
@@ -116,22 +151,52 @@ self.addEventListener('sync', event => {
   }
 });
 
-// Notificações push (para futuro)
+// Notificações push (simples e funcional)
 self.addEventListener('push', event => {
   console.log('Service Worker: Push recebido');
-  const options = {
-    body: event.data ? event.data.text() : 'Nova notificação do Lifestyle App',
+
+  let notificationData = {
+    title: 'Lifestyle App',
+    body: 'Nova notificação',
     icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-72x72.png',
+    badge: '/icons/icon-72x72.png'
+  };
+
+  // Se houver dados no push
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      notificationData = {
+        title: data.title || notificationData.title,
+        body: data.body || data.message || notificationData.body,
+        icon: data.icon || notificationData.icon,
+        badge: data.badge || notificationData.badge,
+        tag: data.tag || 'lifestyle-notification',
+        requireInteraction: data.requireInteraction || false,
+        data: data.data || {}
+      };
+    } catch (e) {
+      notificationData.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: notificationData.body,
+    icon: notificationData.icon,
+    badge: notificationData.badge,
+    tag: notificationData.tag || 'lifestyle-notification',
+    requireInteraction: notificationData.requireInteraction || false,
     vibrate: [200, 100, 200],
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: 1
-    }
+      url: notificationData.data.url || '/',
+      ...notificationData.data
+    },
+    actions: notificationData.data.actions || []
   };
 
   event.waitUntil(
-    self.registration.showNotification('Lifestyle App', options)
+    self.registration.showNotification(notificationData.title, options)
   );
 });
 
@@ -141,7 +206,7 @@ self.addEventListener('notificationclick', event => {
   event.notification.close();
 
   event.waitUntil(
-    clients.openWindow('/')
+    clients.openWindow(event.notification.data?.url || '/')
   );
 });
 

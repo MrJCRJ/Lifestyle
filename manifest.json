@@ -2,11 +2,14 @@
   "name": "Lifestyle App",
   "short_name": "Lifestyle",
   "description": "Gerenciador inteligente de rotinas diárias com planejamento de sono, trabalho, estudo e limpeza",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
   "orientation": "portrait-primary",
+  "dir": "ltr",
+  "lang": "pt-BR",
   "icons": [
     {
       "src": "icons/icon-72x72.png",

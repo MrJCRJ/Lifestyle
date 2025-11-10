@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste PWA e Notificações - Lifestyle</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        color: #f1f5f9;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .test-section {
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #475569;
+      }
+
+      .test-section h2 {
+        color: #8b5cf6;
+        margin-bottom: 15px;
+        font-size: 1.25rem;
+      }
+
+      .status {
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+        font-size: 0.9rem;
+      }
+
+      .status.success {
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid #10b981;
+        color: #10b981;
+      }
+
+      .status.error {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid #ef4444;
+        color: #ef4444;
+      }
+
+      .status.warning {
+        background: rgba(245, 158, 11, 0.2);
+        border: 1px solid #f59e0b;
+        color: #f59e0b;
+      }
+
+      button {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        margin: 5px;
+        min-height: 44px;
+        font-size: 16px;
+        transition: transform 0.2s;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      code {
+        background: #0f172a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #8b5cf6;
+      }
+
+      pre {
+        background: #0f172a;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 768px) {
+        .button-group {
+          flex-direction: column;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧪 Teste de PWA e Notificações</h1>
+
+      <!-- PWA Status -->
+      <div class="test-section">
+        <h2>📱 Status do PWA</h2>
+        <div id="pwa-status"></div>
+        <div class="button-group">
+          <button onclick="testPWA()">🔍 Verificar PWA</button>
+          <button onclick="testServiceWorker()">
+            ⚙️ Testar Service Worker
+          </button>
+          <button onclick="testManifest()">📋 Verificar Manifest</button>
+        </div>
+      </div>
+
+      <!-- Notificações -->
+      <div class="test-section">
+        <h2>🔔 Teste de Notificações</h2>
+        <div id="notification-status"></div>
+        <div class="button-group">
+          <button onclick="requestNotificationPermission()">
+            ✋ Pedir Permissão
+          </button>
+          <button onclick="sendTestNotification()">
+            📢 Notificação Simples
+          </button>
+          <button onclick="sendScheduledNotification()">
+            ⏰ Notificação em 5s
+          </button>
+          <button onclick="testActivityNotification()">
+            📚 Notif. Atividade
+          </button>
+          <button onclick="testBreakNotification()">☕ Notif. Pausa</button>
+          <button onclick="testCompleteNotification()">
+            ✅ Notif. Conclusão
+          </button>
+        </div>
+      </div>
+
+      <!-- Cache -->
+      <div class="test-section">
+        <h2>💾 Cache e Offline</h2>
+        <div id="cache-status"></div>
+        <div class="button-group">
+          <button onclick="testCache()">🔍 Verificar Cache</button>
+          <button onclick="testOffline()">📡 Simular Offline</button>
+          <button onclick="clearCache()">🗑️ Limpar Cache</button>
+        </div>
+      </div>
+
+      <!-- Console de Logs -->
+      <div class="test-section">
+        <h2>📝 Console de Logs</h2>
+        <pre id="console-log"></pre>
+        <button onclick="clearConsole()">🧹 Limpar Console</button>
+      </div>
+    </div>
+
+    <script>
+      // Logger helper
+      function log(message, type = "info") {
+        const consoleEl = document.getElementById("console-log");
+        const timestamp = new Date().toLocaleTimeString();
+        const emoji =
+          type === "success"
+            ? "✅"
+            : type === "error"
+            ? "❌"
+            : type === "warning"
+            ? "⚠️"
+            : "ℹ️";
+        consoleEl.textContent += `${emoji} [${timestamp}] ${message}\n`;
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+        console.log(message);
+      }
+
+      function clearConsole() {
+        document.getElementById("console-log").textContent = "";
+      }
+
+      // PWA Tests
+      async function testPWA() {
+        const statusEl = document.getElementById("pwa-status");
+        let html = "<h3>Verificação PWA:</h3>";
+
+        // Service Worker
+        const swSupported = "serviceWorker" in navigator;
+        html += `<div class="status ${swSupported ? "success" : "error"}">
+        ${swSupported ? "✅" : "❌"} Service Worker: ${
+          swSupported ? "Suportado" : "Não suportado"
+        }
+      </div>`;
+        log(
+          `Service Worker: ${swSupported ? "Suportado" : "Não suportado"}`,
+          swSupported ? "success" : "error"
+        );
+
+        // Manifest
+        const manifestLink = document.querySelector('link[rel="manifest"]');
+        html += `<div class="status ${manifestLink ? "success" : "error"}">
+        ${manifestLink ? "✅" : "❌"} Manifest: ${
+          manifestLink ? "Encontrado" : "Não encontrado"
+        }
+      </div>`;
+
+        // Standalone mode
+        const isStandalone = window.matchMedia(
+          "(display-mode: standalone)"
+        ).matches;
+        html += `<div class="status ${isStandalone ? "success" : "warning"}">
+        ${isStandalone ? "✅" : "⚠️"} Modo: ${
+          isStandalone ? "Standalone (App instalado)" : "Navegador"
+        }
+      </div>`;
+        log(
+          `Modo: ${isStandalone ? "Standalone" : "Navegador"}`,
+          isStandalone ? "success" : "warning"
+        );
+
+        // HTTPS
+        const isHTTPS =
+          location.protocol === "https:" || location.hostname === "localhost";
+        html += `<div class="status ${isHTTPS ? "success" : "warning"}">
+        ${isHTTPS ? "✅" : "⚠️"} HTTPS: ${
+          isHTTPS ? "Sim" : "Não (apenas localhost)"
+        }
+      </div>`;
+
+        statusEl.innerHTML = html;
+      }
+
+      async function testServiceWorker() {
+        if (!("serviceWorker" in navigator)) {
+          log("Service Worker não suportado", "error");
+          return;
+        }
+
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration) {
+            log(
+              `Service Worker registrado! Scope: ${registration.scope}`,
+              "success"
+            );
+            log(
+              `Estado: ${registration.active ? "Ativo" : "Inativo"}`,
+              registration.active ? "success" : "warning"
+            );
+          } else {
+            log("Service Worker não registrado", "warning");
+          }
+        } catch (error) {
+          log(`Erro ao verificar Service Worker: ${error.message}`, "error");
+        }
+      }
+
+      async function testManifest() {
+        try {
+          const response = await fetch("/manifest.json");
+          const manifest = await response.json();
+          log("Manifest carregado com sucesso!", "success");
+          log(`Nome: ${manifest.name}`, "info");
+          log(`Ícones: ${manifest.icons.length} encontrados`, "success");
+        } catch (error) {
+          log(`Erro ao carregar manifest: ${error.message}`, "error");
+        }
+      }
+
+      // Notification Tests
+      async function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          log("Notificações não suportadas", "error");
+          updateNotificationStatus();
+          return;
+        }
+
+        try {
+          const permission = await Notification.requestPermission();
+          log(
+            `Permissão de notificações: ${permission}`,
+            permission === "granted" ? "success" : "warning"
+          );
+          updateNotificationStatus();
+        } catch (error) {
+          log(`Erro ao solicitar permissão: ${error.message}`, "error");
+        }
+      }
+
+      function updateNotificationStatus() {
+        const statusEl = document.getElementById("notification-status");
+
+        if (!("Notification" in window)) {
+          statusEl.innerHTML =
+            '<div class="status error">❌ Notificações não suportadas neste navegador</div>';
+          return;
+        }
+
+        const permission = Notification.permission;
+        const statusClass =
+          permission === "granted"
+            ? "success"
+            : permission === "denied"
+            ? "error"
+            : "warning";
+        const emoji =
+          permission === "granted"
+            ? "✅"
+            : permission === "denied"
+            ? "❌"
+            : "⚠️";
+
+        statusEl.innerHTML = `<div class="status ${statusClass}">
+        ${emoji} Permissão: ${
+          permission === "granted"
+            ? "Concedida"
+            : permission === "denied"
+            ? "Negada"
+            : "Padrão (não solicitada)"
+        }
+      </div>`;
+      }
+
+      async function sendTestNotification() {
+        if (Notification.permission !== "granted") {
+          log("Permissão de notificações necessária", "warning");
+          await requestNotificationPermission();
+          return;
+        }
+
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification("🧪 Teste de Notificação", {
+            body: "Esta é uma notificação de teste do Lifestyle App!",
+            icon: "/icons/icon-192x192.png",
+            badge: "/icons/icon-72x72.png",
+            vibrate: [200, 100, 200],
+          });
+          log("Notificação enviada com sucesso!", "success");
+        } catch (error) {
+          log(`Erro ao enviar notificação: ${error.message}`, "error");
+        }
+      }
+
+      async function sendScheduledNotification() {
+        if (Notification.permission !== "granted") {
+          await requestNotificationPermission();
+          return;
+        }
+
+        log("Notificação agendada para 5 segundos...", "info");
+
+        setTimeout(async () => {
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.showNotification("⏰ Notificação Agendada", {
+              body: "5 segundos se passaram!",
+              icon: "/icons/icon-192x192.png",
+            });
+            log("Notificação agendada enviada!", "success");
+          } catch (error) {
+            log(`Erro: ${error.message}`, "error");
+          }
+        }, 5000);
+      }
+
+      async function testActivityNotification() {
+        if (Notification.permission !== "granted") {
+          await requestNotificationPermission();
+          return;
+        }
+
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification("📚 Estudar JavaScript", {
+            body: "Sua atividade começa em breve (14:00)",
+            icon: "/icons/icon-192x192.png",
+            requireInteraction: true,
+          });
+          log("Notificação de atividade enviada!", "success");
+        } catch (error) {
+          log(`Erro: ${error.message}`, "error");
+        }
+      }
+
+      async function testBreakNotification() {
+        if (Notification.permission !== "granted") {
+          await requestNotificationPermission();
+          return;
+        }
+
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification("☕ Hora da pausa!", {
+            body: "Faça uma pausa de 5-10 minutos para descansar",
+            icon: "/icons/icon-192x192.png",
+            vibrate: [200, 100, 200, 100, 200],
+          });
+          log("Notificação de pausa enviada!", "success");
+        } catch (error) {
+          log(`Erro: ${error.message}`, "error");
+        }
+      }
+
+      async function testCompleteNotification() {
+        if (Notification.permission !== "granted") {
+          await requestNotificationPermission();
+          return;
+        }
+
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification("✅ Tarefa concluída!", {
+            body: "Parabéns! Você concluiu: Fazer exercícios",
+            icon: "/icons/icon-192x192.png",
+          });
+          log("Notificação de conclusão enviada!", "success");
+        } catch (error) {
+          log(`Erro: ${error.message}`, "error");
+        }
+      }
+
+      // Cache Tests
+      async function testCache() {
+        const statusEl = document.getElementById("cache-status");
+
+        if (!("caches" in window)) {
+          statusEl.innerHTML =
+            '<div class="status error">❌ Cache API não suportada</div>';
+          return;
+        }
+
+        try {
+          const cacheNames = await caches.keys();
+          let html = `<div class="status success">✅ Cache API suportada</div>`;
+          html += `<div class="status success">📦 ${cacheNames.length} cache(s) encontrado(s):</div>`;
+
+          for (const cacheName of cacheNames) {
+            const cache = await caches.open(cacheName);
+            const keys = await cache.keys();
+            html += `<div class="status success">
+            • <code>${cacheName}</code>: ${keys.length} arquivo(s)
+          </div>`;
+            log(`Cache: ${cacheName} - ${keys.length} arquivos`, "success");
+          }
+
+          statusEl.innerHTML = html;
+        } catch (error) {
+          log(`Erro ao verificar cache: ${error.message}`, "error");
+        }
+      }
+
+      function testOffline() {
+        log("Simulando modo offline...", "info");
+        log(
+          "Use DevTools > Network > Throttling > Offline para testar",
+          "info"
+        );
+        log("Depois recarregue a página para ver offline.html", "info");
+      }
+
+      async function clearCache() {
+        if (!("caches" in window)) {
+          log("Cache API não suportada", "error");
+          return;
+        }
+
+        try {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map((name) => caches.delete(name)));
+          log(`${cacheNames.length} cache(s) limpo(s) com sucesso!`, "success");
+          document.getElementById("cache-status").innerHTML =
+            '<div class="status success">✅ Cache limpo!</div>';
+        } catch (error) {
+          log(`Erro ao limpar cache: ${error.message}`, "error");
+        }
+      }
+
+      // Init
+      window.addEventListener("load", () => {
+        log("Página de testes carregada!", "success");
+        updateNotificationStatus();
+        testPWA();
+      });
+    </script>
+  </body>
+</html>
