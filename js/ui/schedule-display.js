@@ -36,4 +36,16 @@ function showScheduleView(filter = 'today') {
 
     container.innerHTML = html;
     showScreen('schedule');
+
+    // Atualizar linha de hora atual a cada minuto
+    if (filter === 'today') {
+        // Limpar intervalo anterior se existir
+        if (window.timeIndicatorInterval) {
+            clearInterval(window.timeIndicatorInterval);
+        }
+        // Atualizar a cada 60 segundos
+        window.timeIndicatorInterval = setInterval(() => {
+            showScheduleView('today');
+        }, 60000);
+    }
 }

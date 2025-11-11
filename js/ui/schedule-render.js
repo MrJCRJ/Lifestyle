@@ -56,18 +56,23 @@ function renderFreeTimeSlot(previousActivity, currentActivity) {
 
     let freeDuration = '';
     if (freeHours > 0 && freeMins > 0) {
-        freeDuration = `${freeHours}h ${freeMins}min livres`;
+        freeDuration = `${freeHours}h ${freeMins}min`;
     } else if (freeHours > 0) {
-        freeDuration = `${freeHours}h livres`;
+        freeDuration = `${freeHours}h`;
     } else {
-        freeDuration = `${freeMins}min livres`;
+        freeDuration = `${freeMins}min`;
     }
 
     return `
-        <div class="free-time-slot">
-            <span>⏰ Horários Livres</span>
-            <span class="activity-time">${previousActivity.endTime} - ${currentActivity.startTime}</span>
-            <span class="free-time-duration">${freeDuration}</span>
+        <div class="activity free-time-activity">
+            <div class="activity-main">
+                <div class="activity-info">
+                    <span class="activity-time">${previousActivity.endTime} - ${currentActivity.startTime}</span>
+                    <span class="activity-duration">${freeDuration}</span>
+                    <span class="activity-name">⏰ Horário Livre</span>
+                    <span class="activity-type type-free">Livre</span>
+                </div>
+            </div>
         </div>
     `;
 }
@@ -98,12 +103,12 @@ function renderActivityActions(schedule, activity, index, isToday) {
         const percentage = Math.min(100, Math.round((waterData.consumed / waterData.goal) * 100));
 
         return `
-            <div class="activity-actions hydration-actions">
+            <div class="hydration-actions">
                 <div class="water-progress">
-                    <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
                     <div class="water-progress-bar">
                         <div class="water-progress-fill" style="width: ${percentage}%"></div>
                     </div>
+                    <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
                 </div>
                 <div class="water-buttons">
                     <button onclick="addWaterIntake('${schedule.date}', ${index}, 250)" class="btn-icon btn-water" title="+ 250ml">💧</button>
@@ -144,41 +149,27 @@ function renderActivity(schedule, activity, index, isToday) {
 
     // Renderizar horário livre antes desta atividade (se não for a primeira e não for refeição)
     let freeTimeHtml = '';
-    if (isToday && index > 0 && activity.type !== 'meal' && activity.type !== 'hydration') {
+    if (index > 0 && activity.type !== 'meal' && activity.type !== 'hydration') {
         const previousActivity = schedule.activities[index - 1];
-        freeTimeHtml = renderFreeTimeSlot(previousActivity, activity);
+        // Pular se a atividade anterior for refeição ou hidratação
+        if (previousActivity.type !== 'meal' && previousActivity.type !== 'hydration') {
+            freeTimeHtml = renderFreeTimeSlot(previousActivity, activity);
+        }
     }
 
-    // Refeições e hidratação: layout simplificado (tipo tarefa)
-    if (activity.type === 'meal' || activity.type === 'hydration') {
-        return `
-            ${freeTimeHtml}
-            <div class="activity task-style ${statusClass}">
-                <div class="activity-main">
-                    <div class="activity-info">
-                        <span class="activity-name">${activity.name}</span>
-                        <span class="activity-type type-${activity.type}">${getTypeLabel(activity.type)}</span>
-                    </div>
-                    ${actionsHtml}
-                </div>
-                ${trackingInfo}
-            </div>
-        `;
-    }
-
-    // Atividades normais: layout completo com horários
-    const duration = calculateDuration(activity.startTime, activity.endTime);
+    // Todas as atividades com layout unificado
+    const duration = activity.endTime ? calculateDuration(activity.startTime, activity.endTime) : '';
+    const timeDisplay = activity.endTime ? `${activity.startTime} - ${activity.endTime}` : '';
 
     return `
         ${freeTimeHtml}
         <div class="activity ${isActive ? 'active-event' : ''} ${statusClass}">
             <div class="activity-main">
                 <div class="activity-info">
-                    <span class="activity-time">${activity.startTime} - ${activity.endTime}</span>
-                    <span class="activity-duration">${duration}</span>
+                    ${timeDisplay ? `<span class="activity-time">${timeDisplay}</span>` : ''}
+                    ${duration ? `<span class="activity-duration">${duration}</span>` : ''}
                     <span class="activity-name">${activity.name}</span>
                     <span class="activity-type type-${activity.type}">${getTypeLabel(activity.type)}</span>
-                    ${activity.timeAdjusted ? '<span class="time-adjusted-badge">⏰ Ajustado</span>' : ''}
                 </div>
                 ${actionsHtml}
             </div>
@@ -190,14 +181,45 @@ function renderActivity(schedule, activity, index, isToday) {
 // Renderizar card de dia com cronograma
 function renderScheduleDayCard(schedule, isToday) {
     const headerHtml = renderScheduleHeader(schedule);
+
+    // Renderizar atividades normalmente
     const activitiesHtml = schedule.activities
         .map((activity, index) => renderActivity(schedule, activity, index, isToday))
         .join('');
 
+    // Calcular posição do indicador de hora atual
+    let timeIndicatorStyle = '';
+    if (isToday) {
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        // Encontrar entre quais atividades está a hora atual
+        let position = 0;
+        for (let i = 0; i < schedule.activities.length; i++) {
+            const activity = schedule.activities[i];
+            if (activity.startTime) {
+                const [startHour, startMin] = activity.startTime.split(':').map(Number);
+                const startMinutes = startHour * 60 + startMin;
+
+                if (currentMinutes >= startMinutes) {
+                    position = i + 1;
+                }
+            }
+        }
+
+        // Calcular posição em pixels (aproximadamente)
+        const activityHeight = 70; // altura aproximada de cada card
+        const topPosition = position * activityHeight;
+        timeIndicatorStyle = `style="top: ${topPosition}px"`;
+    }
+
     return `
         <div class="day-schedule ${schedule.isPlanned ? 'planned-schedule' : ''}">
             ${headerHtml}
-            ${activitiesHtml}
+            <div class="schedule-activities">
+                ${isToday ? `<div class="time-indicator" ${timeIndicatorStyle}></div>` : ''}
+                ${activitiesHtml}
+            </div>
         </div>
     `;
 }
