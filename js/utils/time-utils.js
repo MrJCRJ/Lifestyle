@@ -1,5 +1,15 @@
 // Utilitários para cálculos e validações de tempo
 
+/**
+ * Converter horário HH:MM para minutos
+ * @param {string} time - Horário no formato HH:MM
+ * @returns {number} Total de minutos
+ */
+function timeToMinutes(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
 // Calcular duração em horas e minutos
 function calculateDuration(startTime, endTime) {
     const [startHour, startMin] = startTime.split(':').map(Number);

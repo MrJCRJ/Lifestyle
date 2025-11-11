@@ -2,69 +2,27 @@
 
 // Toggle formulário de alimentação
 function toggleMealsForm(show) {
-    const detailsElement = document.getElementById('meals-details');
-    if (detailsElement) {
-        detailsElement.style.display = show ? 'block' : 'none';
-
-        // Inicializar com pelo menos uma refeição se estiver mostrando e container vazio
-        if (show) {
-            const container = document.getElementById('meals-times-container');
-            if (container && container.children.length === 0) {
-                addMealTime();
-            }
-        }
-    }
+    toggleMealsFormGeneric('meals-details', 'meals-times-container', show, addMealTime);
 }
 
 // Adicionar horário de refeição
 function addMealTime() {
-    const container = document.getElementById('meals-times-container');
-    const mealCount = container.children.length + 1;
-
-    const timeDiv = document.createElement('div');
-    timeDiv.className = 'time-slot';
-    timeDiv.innerHTML = `
-        <label>Refeição ${mealCount}:</label>
-        <input type="time" class="meal-time" required />
-        ${mealCount > 1 ? '<button type="button" onclick="removeMealTime(this)" class="btn-remove">×</button>' : ''}
-    `;
-
-    container.appendChild(timeDiv);
+    addMealTimeSlot('meals-times-container', 'meal-time', 'removeMealTime');
 }
 
 // Remover horário de refeição
 function removeMealTime(button) {
-    const container = document.getElementById('meals-times-container');
-    if (container.children.length > 1) {
-        button.parentElement.remove();
-        updateMealLabels();
-    }
+    removeMealTimeSlot(button, 'meals-times-container', updateMealLabels);
 }
 
 // Atualizar numeração das refeições
 function updateMealLabels() {
-    const container = document.getElementById('meals-times-container');
-    const slots = container.querySelectorAll('.time-slot');
-    slots.forEach((slot, index) => {
-        const label = slot.querySelector('label');
-        if (label) {
-            label.textContent = `Refeição ${index + 1}:`;
-        }
-    });
+    updateMealLabelsGeneric('meals-times-container');
 }
 
 // Coletar dados de refeições
 function collectMealsData(containerId) {
-    const container = document.getElementById(containerId);
-    const times = Array.from(container.querySelectorAll('.meal-time'))
-        .map(input => input.value)
-        .filter(time => time);
-
-    if (times.length === 0) {
-        throw new Error('Por favor, adicione pelo menos um horário de refeição!');
-    }
-
-    return times;
+    return collectMealTimesGeneric(containerId, 'meal-time');
 }
 
 // Salvar refeições do dia atual
@@ -85,80 +43,34 @@ function saveMeals() {
 
 // Carregar dados de refeições
 function loadMealsData() {
-    const container = document.getElementById('meals-times-container');
-    container.innerHTML = '';
-
-    // Iniciar com pelo menos uma refeição
-    addMealTime();
+    loadMealDataGeneric('meals-times-container', addMealTime);
 }
 
 // === Funções para o Planejador ===
 
 // Toggle formulário de refeições do planejador
 function togglePlannerMealsForm(show) {
-    const detailsElement = document.getElementById('planner-meals-details');
-    if (detailsElement) {
-        detailsElement.style.display = show ? 'block' : 'none';
-
-        // Inicializar com pelo menos uma refeição se estiver mostrando e container vazio
-        if (show) {
-            const container = document.getElementById('planner-meals-times-container');
-            if (container && container.children.length === 0) {
-                addPlannerMealTime();
-            }
-        }
-    }
+    toggleMealsFormGeneric('planner-meals-details', 'planner-meals-times-container', show, addPlannerMealTime);
 }
 
 // Adicionar horário de refeição no planejador
 function addPlannerMealTime() {
-    const container = document.getElementById('planner-meals-times-container');
-    const mealCount = container.children.length + 1;
-
-    const timeDiv = document.createElement('div');
-    timeDiv.className = 'time-slot';
-    timeDiv.innerHTML = `
-        <label>Refeição ${mealCount}:</label>
-        <input type="time" class="planner-meal-time" required />
-        ${mealCount > 1 ? '<button type="button" onclick="removePlannerMealTime(this)" class="btn-remove">×</button>' : ''}
-    `;
-
-    container.appendChild(timeDiv);
+    addMealTimeSlot('planner-meals-times-container', 'planner-meal-time', 'removePlannerMealTime');
 }
 
 // Remover horário de refeição no planejador
 function removePlannerMealTime(button) {
-    const container = document.getElementById('planner-meals-times-container');
-    if (container.children.length > 1) {
-        button.parentElement.remove();
-        updatePlannerMealLabels();
-    }
+    removeMealTimeSlot(button, 'planner-meals-times-container', updatePlannerMealLabels);
 }
 
 // Atualizar numeração das refeições no planejador
 function updatePlannerMealLabels() {
-    const container = document.getElementById('planner-meals-times-container');
-    const slots = container.querySelectorAll('.time-slot');
-    slots.forEach((slot, index) => {
-        const label = slot.querySelector('label');
-        if (label) {
-            label.textContent = `Refeição ${index + 1}:`;
-        }
-    });
+    updateMealLabelsGeneric('planner-meals-times-container');
 }
 
 // Coletar dados de refeições do planejador
 function collectPlannerMealsData(containerId) {
-    const container = document.getElementById(containerId);
-    const times = Array.from(container.querySelectorAll('.planner-meal-time'))
-        .map(input => input.value)
-        .filter(time => time);
-
-    if (times.length === 0) {
-        throw new Error('Por favor, adicione pelo menos um horário de refeição!');
-    }
-
-    return times;
+    return collectMealTimesGeneric(containerId, 'planner-meal-time');
 }
 
 // Salvar refeições no planejador
@@ -190,9 +102,5 @@ function savePlannerMeals() {
 
 // Carregar dados de refeições no planejador
 function loadPlannerMealsData() {
-    const container = document.getElementById('planner-meals-times-container');
-    container.innerHTML = '';
-
-    // Iniciar com pelo menos uma refeição
-    addPlannerMealTime();
+    loadMealDataGeneric('planner-meals-times-container', addPlannerMealTime);
 }

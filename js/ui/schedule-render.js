@@ -93,33 +93,45 @@ function renderTrackingInfo(activity) {
     return { statusClass, trackingInfo };
 }
 
-// Renderizar botões de ação
-function renderActivityActions(schedule, activity, index, isToday) {
-    if (!isToday) return '';
+// Renderizar informações da atividade (tempo, nome, tipo)
+function renderActivityInfo(activity) {
+    const duration = activity.endTime ? calculateDuration(activity.startTime, activity.endTime) : '';
+    const timeDisplay = activity.endTime ? `${activity.startTime} - ${activity.endTime}` : '';
 
-    // Hidratação: sistema especial de tracking
-    if (activity.type === 'hydration') {
-        const waterData = activity.waterTracking || { consumed: 0, goal: activity.waterGoal || 2000 };
-        const percentage = Math.min(100, Math.round((waterData.consumed / waterData.goal) * 100));
+    return `
+        <div class="activity-info">
+            ${timeDisplay ? `<span class="activity-time">${timeDisplay}</span>` : ''}
+            ${duration ? `<span class="activity-duration">${duration}</span>` : ''}
+            <span class="activity-name">${activity.name}</span>
+            <span class="activity-type type-${activity.type}">${getTypeLabel(activity.type)}</span>
+        </div>
+    `;
+}
 
-        return `
-            <div class="hydration-actions">
-                <div class="water-progress">
-                    <div class="water-progress-bar">
-                        <div class="water-progress-fill" style="width: ${percentage}%"></div>
-                    </div>
-                    <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
+// Renderizar botões de hidratação
+function renderHydrationActions(schedule, activity, index) {
+    const waterData = activity.waterTracking || { consumed: 0, goal: activity.waterGoal || 2000 };
+    const percentage = Math.min(100, Math.round((waterData.consumed / waterData.goal) * 100));
+
+    return `
+        <div class="hydration-actions">
+            <div class="water-progress">
+                <div class="water-progress-bar">
+                    <div class="water-progress-fill" style="width: ${percentage}%"></div>
                 </div>
-                <div class="water-buttons">
-                    <button onclick="addWaterIntake('${schedule.date}', ${index}, 250)" class="btn-icon btn-water" title="+ 250ml">💧</button>
-                    <button onclick="addWaterIntake('${schedule.date}', ${index}, 500)" class="btn-icon btn-water" title="+ 500ml">🥤</button>
-                    <button onclick="resetWaterIntake('${schedule.date}', ${index})" class="btn-icon btn-clear" title="Resetar">↻</button>
-                </div>
+                <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
             </div>
-        `;
-    }
+            <div class="water-buttons">
+                <button onclick="addWaterIntake('${schedule.date}', ${index}, 250)" class="btn-icon btn-water" title="+ 250ml">💧</button>
+                <button onclick="addWaterIntake('${schedule.date}', ${index}, 500)" class="btn-icon btn-water" title="+ 500ml">🥤</button>
+                <button onclick="resetWaterIntake('${schedule.date}', ${index})" class="btn-icon btn-clear" title="Resetar">↻</button>
+            </div>
+        </div>
+    `;
+}
 
-    // Refeições e outras atividades: marcação simples padrão
+// Renderizar botões de marcação simples
+function renderSimpleTrackingActions(schedule, activity, index) {
     const hasSimpleTracking = activity.simpleTracking;
 
     if (hasSimpleTracking) {
@@ -140,11 +152,25 @@ function renderActivityActions(schedule, activity, index, isToday) {
     `;
 }
 
+// Renderizar botões de ação
+function renderActivityActions(schedule, activity, index, isToday) {
+    if (!isToday) return '';
+
+    // Hidratação: sistema especial de tracking
+    if (activity.type === 'hydration') {
+        return renderHydrationActions(schedule, activity, index);
+    }
+
+    // Refeições e outras atividades: marcação simples padrão
+    return renderSimpleTrackingActions(schedule, activity, index);
+}
+
 // Renderizar atividade completa
 function renderActivity(schedule, activity, index, isToday) {
     const isActive = isToday && isEventActive(activity.startTime, activity.endTime);
 
     const { statusClass, trackingInfo } = renderTrackingInfo(activity);
+    const activityInfoHtml = renderActivityInfo(activity);
     const actionsHtml = renderActivityActions(schedule, activity, index, isToday);
 
     // Renderizar horário livre antes desta atividade (se não for a primeira e não for refeição)
@@ -157,20 +183,11 @@ function renderActivity(schedule, activity, index, isToday) {
         }
     }
 
-    // Todas as atividades com layout unificado
-    const duration = activity.endTime ? calculateDuration(activity.startTime, activity.endTime) : '';
-    const timeDisplay = activity.endTime ? `${activity.startTime} - ${activity.endTime}` : '';
-
     return `
         ${freeTimeHtml}
         <div class="activity ${isActive ? 'active-event' : ''} ${statusClass}">
             <div class="activity-main">
-                <div class="activity-info">
-                    ${timeDisplay ? `<span class="activity-time">${timeDisplay}</span>` : ''}
-                    ${duration ? `<span class="activity-duration">${duration}</span>` : ''}
-                    <span class="activity-name">${activity.name}</span>
-                    <span class="activity-type type-${activity.type}">${getTypeLabel(activity.type)}</span>
-                </div>
+                ${activityInfoHtml}
                 ${actionsHtml}
             </div>
             ${trackingInfo}

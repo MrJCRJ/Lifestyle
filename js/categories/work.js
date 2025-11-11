@@ -2,13 +2,7 @@ let jobSlotCounter = 0;
 
 // Toggle formulário de trabalho
 function toggleWorkForm(show) {
-    document.getElementById('work-details').style.display = show ? 'block' : 'none';
-    if (show) {
-        const container = document.getElementById('jobs-container');
-        if (container.children.length === 0) {
-            addJobSlot();
-        }
-    }
+    toggleCategoryForm('job', show);
 }
 
 // Carregar dados de trabalho
@@ -30,24 +24,24 @@ function addJobSlot(jobData = null) {
     slotDiv.id = `job-slot-${jobSlotCounter}`;
 
     const isFirstItem = container.children.length === 0;
-    slotDiv.innerHTML = createJobCardHTML('job', jobSlotCounter, jobData, isFirstItem);
+    slotDiv.innerHTML = createCategoryCardHTML('job', jobSlotCounter, jobData, isFirstItem);
 
     container.appendChild(slotDiv);
 }
 
 // Adicionar horário ao trabalho
 function addJobTime(jobId) {
-    addGenericTime('job', jobId);
+    addCategoryTime('job', jobId);
 }
 
 // Remover horário do trabalho
 function removeJobTime(jobId, timeIndex) {
-    removeGenericTime('job', jobId, timeIndex);
+    removeCategoryTime('job', jobId, timeIndex);
 }
 
 // Remover trabalho
 function removeJobSlot(id) {
-    removeItemSlot('job', id);
+    removeCategorySlot('job', id);
 }
 
 // Salvar trabalhos do dia atual

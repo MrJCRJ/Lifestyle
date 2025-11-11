@@ -2,13 +2,7 @@ let studySlotCounter = 0;
 
 // Toggle formulário de estudo
 function toggleStudyForm(show) {
-    document.getElementById('study-details').style.display = show ? 'block' : 'none';
-    if (show) {
-        const container = document.getElementById('studies-container');
-        if (container.children.length === 0) {
-            addStudySlot();
-        }
-    }
+    toggleCategoryForm('study', show);
 }
 
 // Carregar dados de estudo
@@ -30,24 +24,24 @@ function addStudySlot(studyData = null) {
     slotDiv.id = `study-slot-${studySlotCounter}`;
 
     const isFirstItem = container.children.length === 0;
-    slotDiv.innerHTML = createStudyCardHTML('study', studySlotCounter, studyData, isFirstItem);
+    slotDiv.innerHTML = createCategoryCardHTML('study', studySlotCounter, studyData, isFirstItem);
 
     container.appendChild(slotDiv);
 }
 
 // Adicionar horário ao estudo
 function addStudyTime(studyId) {
-    addGenericTime('study', studyId);
+    addCategoryTime('study', studyId);
 }
 
 // Remover horário do estudo
 function removeStudyTime(studyId, timeIndex) {
-    removeGenericTime('study', studyId, timeIndex);
+    removeCategoryTime('study', studyId, timeIndex);
 }
 
 // Remover estudo
 function removeStudySlot(id) {
-    removeItemSlot('study', id);
+    removeCategorySlot('study', id);
 }
 
 // Salvar estudos do dia atual
