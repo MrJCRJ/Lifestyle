@@ -2,27 +2,10 @@
 
 // Toggle formulário de alimentação
 function toggleMealsForm(show) {
-    toggleMealsFormGeneric('meals-details', 'meals-times-container', show, addMealTime);
-}
-
-// Adicionar horário de refeição
-function addMealTime() {
-    addMealTimeSlot('meals-times-container', 'meal-time', 'removeMealTime');
-}
-
-// Remover horário de refeição
-function removeMealTime(button) {
-    removeMealTimeSlot(button, 'meals-times-container', updateMealLabels);
-}
-
-// Atualizar numeração das refeições
-function updateMealLabels() {
-    updateMealLabelsGeneric('meals-times-container');
-}
-
-// Coletar dados de refeições
-function collectMealsData(containerId) {
-    return collectMealTimesGeneric(containerId, 'meal-time');
+    const mealsDetails = document.getElementById('meals-details');
+    if (mealsDetails) {
+        mealsDetails.style.display = show ? 'block' : 'none';
+    }
 }
 
 // Salvar refeições do dia atual
@@ -34,7 +17,18 @@ function saveMeals() {
         return;
     }
 
-    // Dados de refeições serão salvos no planData ao gerar o cronograma
+    // Salvar quantidade de refeições no userData
+    if (!appState.userData.userProfile) {
+        appState.userData.userProfile = {};
+    }
+
+    if (hasMeals.value === 'yes') {
+        const mealsCount = parseInt(document.getElementById('mealsCount').value) || 3;
+        appState.userData.userProfile.mealsCount = mealsCount;
+    } else {
+        appState.userData.userProfile.mealsCount = 0;
+    }
+
     saveToStorage();
 
     // Ir para hidratação
@@ -43,34 +37,20 @@ function saveMeals() {
 
 // Carregar dados de refeições
 function loadMealsData() {
-    loadMealDataGeneric('meals-times-container', addMealTime);
+    const mealsCount = appState.userData.userProfile?.mealsCount;
+    if (mealsCount && mealsCount > 0) {
+        document.getElementById('mealsCount').value = mealsCount;
+    }
 }
 
 // === Funções para o Planejador ===
 
 // Toggle formulário de refeições do planejador
 function togglePlannerMealsForm(show) {
-    toggleMealsFormGeneric('planner-meals-details', 'planner-meals-times-container', show, addPlannerMealTime);
-}
-
-// Adicionar horário de refeição no planejador
-function addPlannerMealTime() {
-    addMealTimeSlot('planner-meals-times-container', 'planner-meal-time', 'removePlannerMealTime');
-}
-
-// Remover horário de refeição no planejador
-function removePlannerMealTime(button) {
-    removeMealTimeSlot(button, 'planner-meals-times-container', updatePlannerMealLabels);
-}
-
-// Atualizar numeração das refeições no planejador
-function updatePlannerMealLabels() {
-    updateMealLabelsGeneric('planner-meals-times-container');
-}
-
-// Coletar dados de refeições do planejador
-function collectPlannerMealsData(containerId) {
-    return collectMealTimesGeneric(containerId, 'planner-meal-time');
+    const mealsDetails = document.getElementById('planner-meals-details');
+    if (mealsDetails) {
+        mealsDetails.style.display = show ? 'block' : 'none';
+    }
 }
 
 // Salvar refeições no planejador
@@ -85,15 +65,12 @@ function savePlannerMeals() {
     if (!appState.tempPlanData) {
         appState.tempPlanData = {};
     }
-    appState.tempPlanData.meals = [];
 
     if (hasMeals.value === 'yes') {
-        try {
-            appState.tempPlanData.meals = collectPlannerMealsData('planner-meals-times-container');
-        } catch (error) {
-            alert(error.message);
-            return;
-        }
+        const mealsCount = parseInt(document.getElementById('plannerMealsCount').value) || 3;
+        appState.tempPlanData.mealsCount = mealsCount;
+    } else {
+        appState.tempPlanData.mealsCount = 0;
     }
 
     // Ir para hidratação
@@ -102,5 +79,8 @@ function savePlannerMeals() {
 
 // Carregar dados de refeições no planejador
 function loadPlannerMealsData() {
-    loadMealDataGeneric('planner-meals-times-container', addPlannerMealTime);
+    const mealsCount = appState.tempPlanData?.mealsCount || appState.userData.userProfile?.mealsCount;
+    if (mealsCount && mealsCount > 0) {
+        document.getElementById('plannerMealsCount').value = mealsCount;
+    }
 }

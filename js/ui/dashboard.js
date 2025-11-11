@@ -40,7 +40,7 @@ function calculateAllStats() {
         const dayOfWeek = date.getDay();
 
         schedule.activities.forEach(activity => {
-            const duration = calculateActivityDuration(activity);
+            const duration = calculateActivityDurationMinutes(activity);
 
             if (activity.type === 'work') {
                 totalWorkMinutes += duration;
@@ -90,20 +90,6 @@ function calculateAllStats() {
         daysTracked: daysWithSchedule,
         totalSchedules: scheduleKeys.length
     };
-}
-
-/**
- * Calcular duração de atividade
- */
-function calculateActivityDuration(activity) {
-    let start = timeToMinutes(activity.startTime);
-    let end = timeToMinutes(activity.endTime);
-
-    if (end < start) {
-        end += 1440; // adiciona 24h se atravessa meia-noite
-    }
-
-    return end - start;
 }
 
 /**
@@ -319,7 +305,7 @@ function getWeekStats() {
             daysCount++;
 
             schedule.activities.forEach(activity => {
-                const duration = calculateActivityDuration(activity);
+                const duration = calculateActivityDurationMinutes(activity);
 
                 if (activity.type === 'work') totalWork += duration;
                 if (activity.type === 'study') totalStudy += duration;

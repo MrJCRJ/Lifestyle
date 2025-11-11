@@ -11,22 +11,22 @@ function addSleepActivities(schedule, planData) {
 
   // Se wake < sleep, significa que atravessa a meia-noite
   if (wakeMinutes < sleepMinutes) {
-    // Parte 1: Dormir (do horário de sono até 23:59)
-    schedule.push({
-      id: 'sleep-dormir',
-      type: 'sleep',
-      name: '😴 Dormir',
-      startTime: planData.sleep,
-      endTime: '23:59'
-    });
-
-    // Parte 2: Acordar (de 00:00 até horário de acordar)
+    // Parte 1: Acordar (de 00:00 até horário de acordar) - vem primeiro no dia
     schedule.push({
       id: 'sleep-acordar',
       type: 'sleep',
       name: '😴 Acordar',
       startTime: '00:00',
       endTime: planData.wake
+    });
+
+    // Parte 2: Dormir (do horário de sono até 23:59) - vem no final do dia
+    schedule.push({
+      id: 'sleep-dormir',
+      type: 'sleep',
+      name: '😴 Dormir',
+      startTime: planData.sleep,
+      endTime: '23:59'
     });
   } else {
     // Sono no mesmo dia (raro, mas possível para cochilos)
@@ -103,20 +103,21 @@ function addCleaningActivity(schedule, cleaning) {
 /**
  * Adiciona atividades de refeições ao cronograma
  * @param {Array} schedule - Array de atividades
- * @param {Array} meals - Array de horários de refeições
+ * @param {number} mealsCount - Quantidade de refeições
  */
-function addMealActivities(schedule, meals) {
-  if (meals && Array.isArray(meals)) {
-    meals.forEach((mealTime, index) => {
+function addMealActivities(schedule, mealsCount) {
+  if (mealsCount && mealsCount > 0) {
+    for (let i = 0; i < mealsCount; i++) {
       schedule.push({
-        id: `meal-${index}`,
+        id: `meal-${i}`,
         type: 'meal',
-        name: `🍽️ Refeição ${index + 1}`,
-        startTime: mealTime,
-        endTime: mealTime, // Refeições são pontuais
+        name: `🍽️ Refeição ${i + 1}`,
+        // Sem horário fixo - usuário marca quando fizer
+        startTime: null,
+        endTime: null,
         duration: 0
       });
-    });
+    }
   }
 }
 
@@ -157,10 +158,10 @@ function addHydrationActivity(schedule, waterGoal) {
 }
 
 /**
- * Constrói cronograma completo a partir dos dados do plano
+ * Constrói cronograma completo a partir dos dados do plano (formato 24h)
  * @param {Object} planData - Dados do plano
  * @param {number} waterGoal - Meta de água (opcional)
- * @returns {Array} Array de atividades ordenadas
+ * @returns {Array} Array de atividades ordenadas de 00:00 a 23:59
  */
 function buildScheduleFromPlanData(planData, waterGoal = null) {
   const schedule = [];
@@ -170,11 +171,17 @@ function buildScheduleFromPlanData(planData, waterGoal = null) {
   addWorkActivities(schedule, planData.jobs);
   addStudyActivities(schedule, planData.studies);
   addCleaningActivity(schedule, planData.cleaning);
-  addMealActivities(schedule, planData.meals);
   addExerciseActivity(schedule, planData.exercise);
 
-  // Ordenar por horário antes de adicionar hidratação
-  schedule.sort((a, b) => a.startTime.localeCompare(b.startTime));
+  // Ordenar por horário (00:00 até 23:59) - apenas atividades com horário
+  schedule.sort((a, b) => {
+    const timeA = timeToMinutes(a.startTime);
+    const timeB = timeToMinutes(b.startTime);
+    return timeA - timeB;
+  });
+
+  // Adicionar refeições (sem horário fixo)
+  addMealActivities(schedule, planData.mealsCount);
 
   // Adicionar hidratação no final (não tem horário fixo)
   addHydrationActivity(schedule, waterGoal);

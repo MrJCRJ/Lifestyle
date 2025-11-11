@@ -59,6 +59,39 @@ function isEventActive(startTime, endTime) {
     return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
 }
 
+// Calcular tempo restante até o fim do evento
+function getTimeRemaining(endTime) {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const [endHour, endMin] = endTime.split(':').map(Number);
+    let endMinutes = endHour * 60 + endMin;
+
+    // Se passou da meia-noite
+    if (endMinutes < currentMinutes) {
+        endMinutes += 24 * 60;
+    }
+
+    const remainingMinutes = endMinutes - currentMinutes;
+
+    if (remainingMinutes <= 0) {
+        return { hours: 0, minutes: 0, text: 'Finalizando...' };
+    }
+
+    const hours = Math.floor(remainingMinutes / 60);
+    const minutes = remainingMinutes % 60;
+
+    let text = 'Falta: ';
+    if (hours > 0 && minutes > 0) {
+        text += `${hours}h ${minutes}min`;
+    } else if (hours > 0) {
+        text += `${hours}h`;
+    } else {
+        text += `${minutes}min`;
+    }
+
+    return { hours, minutes, text };
+}
+
 // Calcular tempo livre entre atividades
 function calculateFreeTime(schedules) {
     const freeSlots = [];

@@ -168,18 +168,7 @@ textarea::placeholder {
   display: block;
   font-size: var(--font-size-sm);
   color: var(--text-muted);
-  margin-top: var(--spacing-sm);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  box-shadow: var(--shadow-md);
 }
 
 /* Time slots para refeições */

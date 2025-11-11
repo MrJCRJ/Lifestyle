@@ -1,0 +1,148 @@
+/**
+ * activity-states.css
+ * Estados e estilos de atividades no cronograma
+ */
+
+/* Estados de atividades */
+.activity {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: var(--bg-card);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.activity.active-event {
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+  animation: pulse 2s infinite;
+}
+
+/* Timer regressivo no evento ativo */
+.event-countdown {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.2),
+    rgba(139, 92, 246, 0.2)
+  );
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--primary-color);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  animation: countdown-pulse 2s ease-in-out infinite;
+}
+
+.activity.completed {
+  background: rgba(34, 197, 94, 0.15);
+  border-left-color: #22c55e;
+}
+
+.activity.not-done {
+  background: rgba(239, 68, 68, 0.15);
+  border-left-color: #ef4444;
+}
+
+/* Horário livre com layout unificado */
+.activity.free-time-activity {
+  background: rgba(139, 92, 246, 0.15);
+  border-left-color: var(--secondary-color);
+}
+
+/* Layout de atividades */
+.activity-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.activity-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-duration {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 2px 6px;
+  background: var(--bg-light);
+  border-radius: 4px;
+}
+
+.activity-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Container de atividades */
+.schedule-activities {
+  position: relative;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .activity {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+
+  .activity-main {
+    gap: 8px;
+  }
+
+  .activity-info {
+    gap: 6px;
+  }
+
+  .activity-duration {
+    font-size: 0.75rem;
+    padding: 1px 4px;
+  }
+
+  .activity-actions {
+    gap: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .activity {
+    padding: 8px 10px;
+    margin-bottom: 5px;
+  }
+
+  .activity-info {
+    gap: 5px;
+  }
+
+  .activity-time {
+    font-size: 0.75rem;
+  }
+
+  .activity-name {
+    font-size: 0.85rem;
+  }
+
+  .activity-type {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  .activity-duration {
+    font-size: 0.7rem;
+  }
+}

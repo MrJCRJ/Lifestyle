@@ -1,0 +1,161 @@
+/**
+ * hydration.css
+ * Sistema completo de rastreamento de hidratação
+ */
+
+/* Resumo de hidratação no topo */
+.hydration-summary {
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(6, 182, 212, 0.1)
+  );
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+}
+
+.hydration-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.hydration-icon {
+  font-size: 1.5rem;
+}
+
+.hydration-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.hydration-percentage {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+.hydration-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* Botões compactos de hidratação */
+.water-buttons-compact {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-water-small,
+.btn-clear-small {
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  border: none;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-water-small:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.btn-clear-small {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.btn-clear-small:hover {
+  background: rgba(239, 68, 68, 0.3);
+  transform: scale(1.05);
+}
+
+/* Hidratação nas atividades */
+.hydration-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.water-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.water-progress-bar {
+  width: 100%;
+  height: 18px;
+  background: var(--bg-light);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  order: 1;
+}
+
+.water-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.water-amount {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-align: center;
+  order: 2;
+}
+
+.water-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-water {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-water:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .water-buttons {
+    gap: 6px;
+  }
+
+  .btn-water {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .water-amount {
+    font-size: 0.8rem;
+  }
+
+  .water-progress-bar {
+    height: 16px;
+  }
+}

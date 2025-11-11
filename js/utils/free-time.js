@@ -42,16 +42,7 @@ function calculateFreeTime(activities) {
  * Obter label do tempo livre
  */
 function getFreeTimeLabel(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-
-    if (hours > 0 && mins > 0) {
-        return `⏰ Tempo Livre (${hours}h ${mins}min)`;
-    } else if (hours > 0) {
-        return `⏰ Tempo Livre (${hours}h)`;
-    } else {
-        return `⏰ Tempo Livre (${mins}min)`;
-    }
+    return `⏰ Tempo Livre (${formatMinutesToReadable(minutes)})`;
 }
 
 /**
@@ -123,30 +114,14 @@ function getFreeTimeStats(dateKey) {
  * Calcular tempo de trabalho total do dia
  */
 function getWorkTimeTotal(activities) {
-    if (!activities) return 0;
-
-    return activities
-        .filter(act => act.type === 'work')
-        .reduce((total, act) => {
-            const start = timeToMinutes(act.startTime);
-            const end = timeToMinutes(act.endTime);
-            return total + (end - start);
-        }, 0);
+    return calculateTotalDuration(activities, 'work');
 }
 
 /**
  * Calcular tempo de estudo total do dia
  */
 function getStudyTimeTotal(activities) {
-    if (!activities) return 0;
-
-    return activities
-        .filter(act => act.type === 'study')
-        .reduce((total, act) => {
-            const start = timeToMinutes(act.startTime);
-            const end = timeToMinutes(act.endTime);
-            return total + (end - start);
-        }, 0);
+    return calculateTotalDuration(activities, 'study');
 }
 
 /**
@@ -155,18 +130,8 @@ function getStudyTimeTotal(activities) {
 function getSleepHours(activities) {
     if (!activities) return 0;
 
-    const sleep = activities.find(act => act.type === 'sleep');
-    if (!sleep) return 0;
-
-    const start = timeToMinutes(sleep.startTime);
-    let end = timeToMinutes(sleep.endTime);
-
-    // Se o fim é menor que o início, atravessa meia-noite
-    if (end < start) {
-        end += 1440; // adiciona 24 horas
-    }
-
-    return ((end - start) / 60).toFixed(1);
+    const sleepMinutes = calculateTotalDuration(activities, 'sleep');
+    return (sleepMinutes / 60).toFixed(1);
 }
 
 /**

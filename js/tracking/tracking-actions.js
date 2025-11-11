@@ -112,3 +112,20 @@ function resetWaterIntake(dateKey, activityIndex) {
         showScheduleView(appState.activeFilter);
     }
 }
+
+// === Tracking de Refeições ===
+
+// Marcar refeição como concluída e salvar horário
+function markMealComplete(dateKey, activityIndex) {
+    const currentTime = getCurrentTime();
+    const schedule = appState.userData.dailySchedules[dateKey];
+
+    schedule.activities[activityIndex].simpleTracking = {
+        status: 'complete',
+        completedAt: currentTime,
+        markedDate: new Date().toISOString()
+    };
+
+    saveToStorage();
+    showScheduleView(appState.activeFilter);
+}
