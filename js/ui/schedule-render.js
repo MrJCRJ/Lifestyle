@@ -30,6 +30,16 @@ function renderScheduleHeader(schedule) {
 
 // Renderizar horário livre entre eventos
 function renderFreeTimeSlot(previousActivity, currentActivity) {
+    // Não mostrar horário livre se a próxima atividade for refeição ou hidratação
+    if (currentActivity.type === 'meal' || currentActivity.type === 'hydration') {
+        return '';
+    }
+
+    // Não mostrar horário livre se a atividade anterior for refeição ou hidratação
+    if (previousActivity.type === 'meal' || previousActivity.type === 'hydration') {
+        return '';
+    }
+
     const [prevEndHour, prevEndMin] = previousActivity.endTime.split(':').map(Number);
     const [currStartHour, currStartMin] = currentActivity.startTime.split(':').map(Number);
 
@@ -64,42 +74,12 @@ function renderFreeTimeSlot(previousActivity, currentActivity) {
 
 // Renderizar informações de tracking
 function renderTrackingInfo(activity) {
-    const hasDetailedTracking = activity.detailedTracking;
     const hasSimpleTracking = activity.simpleTracking;
 
     let statusClass = '';
     let trackingInfo = '';
 
-    if (hasDetailedTracking) {
-        const hasStart = hasDetailedTracking.start;
-        const hasEnd = hasDetailedTracking.end;
-
-        if (hasStart && hasEnd) {
-            statusClass = 'completed';
-            trackingInfo = `
-                <div class="activity-tracking">
-                    <small>
-                        ▶️ Início: ${hasStart.markedAt}
-                        ${hasStart.notes ? ` - ${hasStart.notes}` : ''}
-                    </small>
-                    <small>
-                        ⏹️ Fim: ${hasEnd.markedAt}
-                        ${hasEnd.notes ? ` - ${hasEnd.notes}` : ''}
-                    </small>
-                </div>
-            `;
-        } else if (hasStart) {
-            statusClass = 'in-progress';
-            trackingInfo = `
-                <div class="activity-tracking">
-                    <small>
-                        ▶️ Iniciado às ${hasStart.markedAt}
-                        ${hasStart.notes ? ` - ${hasStart.notes}` : ''}
-                    </small>
-                </div>
-            `;
-        }
-    } else if (hasSimpleTracking) {
+    if (hasSimpleTracking) {
         statusClass = hasSimpleTracking.status === 'complete' ? 'completed' : 'not-done';
         trackingInfo = `
             <div class="activity-tracking">
@@ -118,25 +98,33 @@ function renderTrackingInfo(activity) {
 function renderActivityActions(schedule, activity, index, isToday) {
     if (!isToday) return '';
 
-    const hasDetailedTracking = activity.detailedTracking;
-    const hasSimpleTracking = activity.simpleTracking;
+    // Hidratação: sistema especial de tracking
+    if (activity.type === 'hydration') {
+        const waterData = activity.waterTracking || { consumed: 0, goal: activity.waterGoal || 2000 };
+        const percentage = Math.min(100, Math.round((waterData.consumed / waterData.goal) * 100));
 
-    const hasDetailedStart = hasDetailedTracking && hasDetailedTracking.start;
-    const hasDetailedEnd = hasDetailedTracking && hasDetailedTracking.end;
-    const hasCompleteDetailedTracking = hasDetailedTracking && hasDetailedStart && hasDetailedEnd;
-    const hasAnyCompleteTracking = hasCompleteDetailedTracking || hasSimpleTracking;
-
-    if (hasDetailedStart && !hasDetailedEnd) {
-        // Só início marcado: mostrar apenas botão de fim
         return `
-            <div class="activity-actions">
-                <button onclick="markEventEnd('${schedule.date}', ${index})" class="btn-icon btn-end" title="Marcar fim">⏹️</button>
+            <div class="activity-actions hydration-actions">
+                <div class="water-progress">
+                    <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
+                    <div class="water-progress-bar">
+                        <div class="water-progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+                <div class="water-buttons">
+                    <button onclick="addWaterIntake('${schedule.date}', ${index}, 250)" class="btn-icon btn-water" title="+ 250ml">💧</button>
+                    <button onclick="addWaterIntake('${schedule.date}', ${index}, 500)" class="btn-icon btn-water" title="+ 500ml">🥤</button>
+                    <button onclick="resetWaterIntake('${schedule.date}', ${index})" class="btn-icon btn-clear" title="Resetar">↻</button>
+                </div>
             </div>
         `;
     }
 
-    if (hasAnyCompleteTracking) {
-        // Tracking completo: mostrar apenas reset
+    // Refeições e outras atividades: marcação simples padrão
+    const hasSimpleTracking = activity.simpleTracking;
+
+    if (hasSimpleTracking) {
+        // Já marcado: mostrar apenas reset
         return `
             <div class="activity-actions">
                 <button onclick="clearEventStatus('${schedule.date}', ${index})" class="btn-icon btn-clear" title="Limpar status">↻</button>
@@ -144,38 +132,48 @@ function renderActivityActions(schedule, activity, index, isToday) {
         `;
     }
 
-    // Sem tracking: mostrar todos os botões
+    // Não marcado: mostrar botões de marcação simples
     return `
         <div class="activity-actions">
-            <div class="tracking-mode-buttons">
-                <div class="detailed-tracking-buttons">
-                    <span class="mode-label">Detalhado:</span>
-                    <button onclick="markEventStart('${schedule.date}', ${index})" class="btn-icon btn-start" title="Marcar início">▶️</button>
-                </div>
-                <div class="simple-tracking-buttons">
-                    <span class="mode-label">Simples:</span>
-                    <button onclick="markEventSimpleComplete('${schedule.date}', ${index})" class="btn-icon btn-success" title="Concluído">✓</button>
-                    <button onclick="markEventSimpleIncomplete('${schedule.date}', ${index})" class="btn-icon btn-danger" title="Não feito">✗</button>
-                </div>
-            </div>
+            <button onclick="markEventSimpleComplete('${schedule.date}', ${index})" class="btn-icon btn-success" title="Concluído">✓</button>
+            <button onclick="markEventSimpleIncomplete('${schedule.date}', ${index})" class="btn-icon btn-danger" title="Não feito">✗</button>
         </div>
     `;
 }
 
 // Renderizar atividade completa
 function renderActivity(schedule, activity, index, isToday) {
-    const duration = calculateDuration(activity.startTime, activity.endTime);
     const isActive = isToday && isEventActive(activity.startTime, activity.endTime);
 
     const { statusClass, trackingInfo } = renderTrackingInfo(activity);
     const actionsHtml = renderActivityActions(schedule, activity, index, isToday);
 
-    // Renderizar horário livre antes desta atividade (se não for a primeira)
+    // Renderizar horário livre antes desta atividade (se não for a primeira e não for refeição)
     let freeTimeHtml = '';
-    if (isToday && index > 0) {
+    if (isToday && index > 0 && activity.type !== 'meal' && activity.type !== 'hydration') {
         const previousActivity = schedule.activities[index - 1];
         freeTimeHtml = renderFreeTimeSlot(previousActivity, activity);
     }
+
+    // Refeições e hidratação: layout simplificado (tipo tarefa)
+    if (activity.type === 'meal' || activity.type === 'hydration') {
+        return `
+            ${freeTimeHtml}
+            <div class="activity task-style ${statusClass}">
+                <div class="activity-main">
+                    <div class="activity-info">
+                        <span class="activity-name">${activity.name}</span>
+                        <span class="activity-type type-${activity.type}">${getTypeLabel(activity.type)}</span>
+                    </div>
+                    ${actionsHtml}
+                </div>
+                ${trackingInfo}
+            </div>
+        `;
+    }
+
+    // Atividades normais: layout completo com horários
+    const duration = calculateDuration(activity.startTime, activity.endTime);
 
     return `
         ${freeTimeHtml}

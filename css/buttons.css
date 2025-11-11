@@ -1,25 +1,25 @@
 /* Botões */
 .button-group {
   display: flex;
-  gap: 15px;
-  margin-top: 30px;
+  gap: 12px;
+  margin-top: 25px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .btn {
-  padding: 12px 30px;
+  padding: 10px 24px;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   /* Mobile: Garante área de toque adequada */
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 42px;
+  min-width: 42px;
   /* Previne seleção de texto */
   -webkit-user-select: none;
   user-select: none;
@@ -64,18 +64,18 @@
 }
 
 .btn-small {
-  padding: 6px 12px;
-  font-size: 0.9rem;
+  padding: 5px 10px;
+  font-size: 0.8125rem;
 }
 
 .remove-btn {
   background: var(--danger-color);
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.8125rem;
   transition: all 0.3s ease;
 }
 
@@ -94,19 +94,19 @@
 
 /* Botões de ícone */
 .btn-icon {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   /* Mobile: Área de toque adequada */
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 38px;
+  min-height: 38px;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -163,31 +163,40 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .button-group {
-    gap: 10px;
-    margin-top: 20px;
+    gap: 8px;
+    margin-top: 18px;
   }
 
   .btn {
-    padding: 10px 20px;
-    font-size: 0.9375rem;
+    padding: 8px 16px;
+    font-size: 0.875rem;
     letter-spacing: 0.3px;
+    min-height: 38px;
   }
 
   .btn-small {
-    padding: 8px 14px;
-    font-size: 0.875rem;
+    padding: 6px 10px;
+    font-size: 0.75rem;
   }
 
   .remove-btn {
-    padding: 8px 14px;
-    font-size: 0.875rem;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .button-group {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .btn {
@@ -195,6 +204,8 @@
     justify-content: center;
     display: flex;
     align-items: center;
+    padding: 7px 14px;
+    font-size: 0.8125rem;
   }
 }
 

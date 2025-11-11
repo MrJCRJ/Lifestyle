@@ -213,6 +213,179 @@
         Voltar
       </button>
       <button onclick="savePlannerCleaning()" class="btn btn-primary">
+        Continuar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Planejamento Diário - Refeições -->
+<section id="planner-meals-screen" class="screen">
+  <div class="form-content">
+    <h2>🍽️ Alimentação</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-meals-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai fazer refeições regulares?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasMeals"
+            value="yes"
+            onchange="togglePlannerMealsForm(true); loadPlannerMealsData();"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasMeals"
+            value="no"
+            onchange="togglePlannerMealsForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-meals-details" style="display: none">
+      <p class="subtitle" style="margin-top: 20px">
+        Adicione os horários das suas refeições
+      </p>
+      <div id="planner-meals-times-container"></div>
+      <button
+        onclick="addPlannerMealTime()"
+        class="btn btn-secondary"
+        style="margin-top: 15px"
+      >
+        + Adicionar refeição
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevPlannerStep('meals')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="savePlannerMeals()" class="btn btn-primary">
+        Continuar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Planejamento Diário - Hidratação -->
+<section id="planner-hydration-screen" class="screen">
+  <div class="form-content">
+    <h2>💧 Hidratação</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-hydration-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label for="plannerUserWeight">Seu peso (kg)</label>
+      <input
+        type="number"
+        id="plannerUserWeight"
+        min="30"
+        max="300"
+        step="0.1"
+        placeholder="Ex: 70"
+        oninput="updatePlannerWaterRecommendation()"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="plannerUserHeight">Sua altura (cm)</label>
+      <input
+        type="number"
+        id="plannerUserHeight"
+        min="100"
+        max="250"
+        step="1"
+        placeholder="Ex: 175"
+        oninput="updatePlannerWaterRecommendation()"
+        required
+      />
+    </div>
+
+    <div id="planner-water-recommendation" style="margin-top: 20px"></div>
+
+    <div class="button-group">
+      <button onclick="prevPlannerStep('hydration')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="savePlannerHydration()" class="btn btn-primary">
+        Continuar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Planejamento Diário - Exercício -->
+<section id="planner-exercise-screen" class="screen">
+  <div class="form-content">
+    <h2>💪 Exercícios Físicos</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-exercise-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai praticar exercícios físicos?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasExercise"
+            value="yes"
+            onchange="togglePlannerExerciseForm(true); loadPlannerExerciseData();"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasExercise"
+            value="no"
+            onchange="togglePlannerExerciseForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-exercise-details" style="display: none">
+      <div class="form-group">
+        <label for="plannerExerciseType">Tipo de exercício</label>
+        <input
+          type="text"
+          id="plannerExerciseType"
+          placeholder="Ex: Musculação, Corrida, Yoga..."
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerExerciseStartTime">Horário de início</label>
+        <input type="time" id="plannerExerciseStartTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerExerciseEndTime">Horário de término</label>
+        <input type="time" id="plannerExerciseEndTime" />
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevPlannerStep('exercise')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="savePlannerExercise()" class="btn btn-primary">
         Finalizar
       </button>
     </div>

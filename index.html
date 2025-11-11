@@ -32,39 +32,46 @@
     <!-- Modal de Configurações será injetado no body -->
 
     <!-- Component Loader (deve ser carregado antes de tudo) -->
-    <script src="js/component-loader.js"></script>
+    <script src="js/ui/component-loader.js"></script>
 
     <!-- Core modules -->
-    <script src="js/state.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/data-transfer.js"></script>
-    <script src="js/free-time.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/forms.js"></script>
-    <script src="js/navigation.js"></script>
+    <script src="js/core/state.js"></script>
+    <script src="js/core/settings.js"></script>
+    <script src="js/core/data-transfer.js"></script>
+    <script src="js/core/navigation.js"></script>
 
-    <!-- Work and study modules -->
-    <script src="js/work.js"></script>
-    <script src="js/study.js"></script>
-    <script src="js/cleaning.js"></script>
-    <script src="js/planner.js"></script>
+    <!-- Utils -->
+    <script src="js/utils/free-time.js"></script>
+    <script src="js/utils/forms.js"></script>
+    <script src="js/utils/time-utils.js"></script>
+
+    <!-- UI modules -->
+    <script src="js/ui/dashboard.js"></script>
+
+    <!-- Category modules -->
+    <script src="js/categories/work.js"></script>
+    <script src="js/categories/study.js"></script>
+    <script src="js/categories/cleaning.js"></script>
+    <script src="js/categories/meals.js"></script>
+    <script src="js/categories/hydration.js"></script>
+    <script src="js/categories/exercise.js"></script>
 
     <!-- Schedule modules -->
-    <script src="js/schedule-generator.js?v=2025111001"></script>
-    <script src="js/schedule-filters.js?v=2025111001"></script>
-    <script src="js/schedule-render.js?v=2025111001"></script>
-    <script src="js/schedule-display.js?v=2025111001"></script>
-
-    <!-- Event tracking modules -->
-    <script src="js/time-utils.js"></script>
-    <script src="js/tracking-modals.js"></script>
-    <script src="js/tracking-actions.js"></script>
-    <script src="js/schedule-events.js"></script>
+    <script src="js/schedule/schedule-generator.js?v=2025111002"></script>
+    <script src="js/schedule/schedule-planner.js"></script>
+    <script src="js/schedule/schedule-events.js"></script>
+    <script src="js/ui/schedule-filters.js?v=2025111002"></script>
+    <script src="js/ui/schedule-render.js?v=2025111002"></script>
+    <script src="js/ui/schedule-display.js?v=2025111002"></script>
 
     <!-- Planner modules -->
-    <script src="js/planner-wizard.js"></script>
-    <script src="js/planner-data.js"></script>
-    <script src="js/schedule-planner.js"></script>
+    <script src="js/planner/planner.js"></script>
+    <script src="js/planner/planner-wizard.js"></script>
+    <script src="js/planner/planner-data.js"></script>
+
+    <!-- Tracking modules -->
+    <script src="js/ui/tracking-modals.js"></script>
+    <script src="js/tracking/tracking-actions.js"></script>
 
     <!-- Main app -->
     <script src="js/main.js"></script>

@@ -118,6 +118,75 @@ function loadFromStorage() {
 
         appState.userData = data;
         appState.activeFilter = data.activeFilter || 'today';
+
+        // Migração: Adicionar IDs às atividades antigas que não têm
+        migrateActivityIds();
+    }
+}
+
+// Função de migração para adicionar IDs às atividades antigas
+function migrateActivityIds() {
+    if (!appState.userData.dailySchedules) return;
+
+    let needsSave = false;
+
+    Object.keys(appState.userData.dailySchedules).forEach(dateKey => {
+        const schedule = appState.userData.dailySchedules[dateKey];
+
+        if (!schedule.activities) return;
+
+        // Contadores para gerar IDs consistentes
+        let workCount = 0;
+        let studyCount = 0;
+        let mealCount = 0;
+        const workIndexMap = new Map();
+        const studyIndexMap = new Map();
+
+        schedule.activities.forEach(activity => {
+            // Se já tem ID, pular
+            if (activity.id) return;
+
+            needsSave = true;
+
+            // Gerar ID baseado no tipo
+            if (activity.type === 'sleep') {
+                if (activity.name === '😴 Dormir' || activity.endTime === '23:59') {
+                    activity.id = 'sleep-dormir';
+                } else {
+                    activity.id = 'sleep-acordar';
+                }
+            } else if (activity.type === 'work') {
+                // Para trabalhos, usar o nome como chave
+                if (!workIndexMap.has(activity.name)) {
+                    workIndexMap.set(activity.name, 0);
+                }
+                const timeIndex = workIndexMap.get(activity.name);
+                activity.id = `work-${workCount}-${timeIndex}`;
+                workIndexMap.set(activity.name, timeIndex + 1);
+                if (timeIndex === 0) workCount++;
+            } else if (activity.type === 'study') {
+                // Para estudos, usar o nome como chave
+                if (!studyIndexMap.has(activity.name)) {
+                    studyIndexMap.set(activity.name, 0);
+                }
+                const timeIndex = studyIndexMap.get(activity.name);
+                activity.id = `study-${studyCount}-${timeIndex}`;
+                studyIndexMap.set(activity.name, timeIndex + 1);
+                if (timeIndex === 0) studyCount++;
+            } else if (activity.type === 'cleaning') {
+                activity.id = 'cleaning-0';
+            } else if (activity.type === 'meal') {
+                activity.id = `meal-${mealCount}`;
+                mealCount++;
+            } else if (activity.type === 'exercise') {
+                activity.id = 'exercise-0';
+            }
+        });
+    });
+
+    // Salvar se houve migração
+    if (needsSave) {
+        saveToStorage();
     }
 }
 

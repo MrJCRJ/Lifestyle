@@ -99,6 +99,7 @@ function generateTodaySchedule() {
     if (wakeMinutes < sleepMinutes) {
         // Parte 1: Dormir (do horário de sono até 23:59)
         schedule.push({
+            id: 'sleep-dormir',
             type: 'sleep',
             name: '😴 Dormir',
             startTime: planData.sleep,
@@ -107,6 +108,7 @@ function generateTodaySchedule() {
 
         // Parte 2: Acordar (de 00:00 até horário de acordar)
         schedule.push({
+            id: 'sleep-acordar',
             type: 'sleep',
             name: '😴 Acordar',
             startTime: '00:00',
@@ -115,6 +117,7 @@ function generateTodaySchedule() {
     } else {
         // Sono no mesmo dia (raro, mas possível para cochilos)
         schedule.push({
+            id: 'sleep-dormir',
             type: 'sleep',
             name: '😴 Dormir',
             startTime: planData.sleep,
@@ -124,9 +127,10 @@ function generateTodaySchedule() {
 
     // Adicionar trabalhos
     if (planData.jobs && Array.isArray(planData.jobs)) {
-        planData.jobs.forEach(job => {
-            job.times.forEach(time => {
+        planData.jobs.forEach((job, jobIndex) => {
+            job.times.forEach((time, timeIndex) => {
                 schedule.push({
+                    id: `work-${jobIndex}-${timeIndex}`,
                     type: 'work',
                     name: job.name,
                     startTime: time.start,
@@ -138,9 +142,10 @@ function generateTodaySchedule() {
 
     // Adicionar estudos
     if (planData.studies && Array.isArray(planData.studies)) {
-        planData.studies.forEach(study => {
-            study.times.forEach(time => {
+        planData.studies.forEach((study, studyIndex) => {
+            study.times.forEach((time, timeIndex) => {
                 schedule.push({
+                    id: `study-${studyIndex}-${timeIndex}`,
                     type: 'study',
                     name: study.name,
                     startTime: time.start,
@@ -153,6 +158,7 @@ function generateTodaySchedule() {
     // Adicionar limpeza
     if (planData.cleaning) {
         schedule.push({
+            id: 'cleaning-0',
             type: 'cleaning',
             name: 'Limpeza / Organização',
             startTime: planData.cleaning.start,
@@ -165,6 +171,7 @@ function generateTodaySchedule() {
     if (planData.meals && Array.isArray(planData.meals)) {
         planData.meals.forEach((mealTime, index) => {
             schedule.push({
+                id: `meal-${index}`,
                 type: 'meal',
                 name: `🍽️ Refeição ${index + 1}`,
                 startTime: mealTime,
@@ -177,6 +184,7 @@ function generateTodaySchedule() {
     // Adicionar exercício
     if (planData.exercise) {
         schedule.push({
+            id: 'exercise-0',
             type: 'exercise',
             name: `💪 ${planData.exercise.type}`,
             startTime: planData.exercise.start,
@@ -199,7 +207,48 @@ function generateTodaySchedule() {
     // Ordenar por horário
     schedule.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-    // Salvar no objeto de cronogramas diários
+    // Adicionar hidratação no final (meta diária - não tem horário fixo)
+    if (appState.userData.userProfile && appState.userData.userProfile.waterNeeds) {
+        schedule.push({
+            id: 'hydration-daily',
+            type: 'hydration',
+            name: '💧 Hidratação Diária',
+            startTime: '23:59',
+            endTime: '23:59',
+            waterGoal: appState.userData.userProfile.waterNeeds,
+            duration: 0
+        });
+    }
+
+    // Preservar status de atividades existentes
+    const existingSchedule = appState.userData.dailySchedules?.[todayKey];
+    if (existingSchedule && existingSchedule.activities) {
+        schedule.forEach(newActivity => {
+            // Encontrar atividade correspondente pelo ID (mais confiável) ou pelo tipo e nome
+            const existingActivity = existingSchedule.activities.find(
+                act => (act.id && act.id === newActivity.id) ||
+                    (act.type === newActivity.type && act.name === newActivity.name)
+            );
+
+            if (existingActivity) {
+                // Preservar rastreamento simples
+                if (existingActivity.simpleTracking) {
+                    newActivity.simpleTracking = { ...existingActivity.simpleTracking };
+                }
+
+                // Preservar tracking de água
+                if (existingActivity.waterTracking) {
+                    newActivity.waterTracking = { ...existingActivity.waterTracking };
+                }
+
+                // Preservar ajustes de horário
+                if (existingActivity.originalTime) {
+                    newActivity.originalTime = { ...existingActivity.originalTime };
+                    newActivity.timeAdjusted = existingActivity.timeAdjusted;
+                }
+            }
+        });
+    }    // Salvar no objeto de cronogramas diários
     if (!appState.userData.dailySchedules) {
         appState.userData.dailySchedules = {};
     }
@@ -210,7 +259,8 @@ function generateTodaySchedule() {
         formattedDate: getFormattedDate(),
         planData: planData,
         activities: schedule,
-        createdAt: new Date().toISOString(),
+        createdAt: existingSchedule?.createdAt || new Date().toISOString(),
+        lastSaved: new Date().toISOString(),
         isPlanned: false
     };
 
@@ -229,6 +279,7 @@ function generateScheduleFromData(planData) {
     if (wakeMinutes < sleepMinutes) {
         // Parte 1: Dormir (do horário de sono até 23:59)
         schedule.push({
+            id: 'sleep-dormir',
             type: 'sleep',
             name: '😴 Dormir',
             startTime: planData.sleep,
@@ -237,6 +288,7 @@ function generateScheduleFromData(planData) {
 
         // Parte 2: Acordar (de 00:00 até horário de acordar)
         schedule.push({
+            id: 'sleep-acordar',
             type: 'sleep',
             name: '😴 Acordar',
             startTime: '00:00',
@@ -245,6 +297,7 @@ function generateScheduleFromData(planData) {
     } else {
         // Sono no mesmo dia (raro, mas possível para cochilos)
         schedule.push({
+            id: 'sleep-dormir',
             type: 'sleep',
             name: '😴 Dormir',
             startTime: planData.sleep,
@@ -254,9 +307,10 @@ function generateScheduleFromData(planData) {
 
     // Adicionar trabalhos
     if (planData.jobs && Array.isArray(planData.jobs)) {
-        planData.jobs.forEach(job => {
-            job.times.forEach(time => {
+        planData.jobs.forEach((job, jobIndex) => {
+            job.times.forEach((time, timeIndex) => {
                 schedule.push({
+                    id: `work-${jobIndex}-${timeIndex}`,
                     type: 'work',
                     name: job.name,
                     startTime: time.start,
@@ -268,9 +322,10 @@ function generateScheduleFromData(planData) {
 
     // Adicionar estudos
     if (planData.studies && Array.isArray(planData.studies)) {
-        planData.studies.forEach(study => {
-            study.times.forEach(time => {
+        planData.studies.forEach((study, studyIndex) => {
+            study.times.forEach((time, timeIndex) => {
                 schedule.push({
+                    id: `study-${studyIndex}-${timeIndex}`,
                     type: 'study',
                     name: study.name,
                     startTime: time.start,
@@ -283,6 +338,7 @@ function generateScheduleFromData(planData) {
     // Adicionar limpeza se existir
     if (planData.cleaning) {
         schedule.push({
+            id: 'cleaning-0',
             type: 'cleaning',
             name: 'Limpeza / Organização',
             startTime: planData.cleaning.start,
@@ -295,6 +351,7 @@ function generateScheduleFromData(planData) {
     if (planData.meals && Array.isArray(planData.meals)) {
         planData.meals.forEach((mealTime, index) => {
             schedule.push({
+                id: `meal-${index}`,
                 type: 'meal',
                 name: `🍽️ Refeição ${index + 1}`,
                 startTime: mealTime,
@@ -307,6 +364,7 @@ function generateScheduleFromData(planData) {
     // Adicionar exercício
     if (planData.exercise) {
         schedule.push({
+            id: 'exercise-0',
             type: 'exercise',
             name: `💪 ${planData.exercise.type}`,
             startTime: planData.exercise.start,
@@ -315,6 +373,19 @@ function generateScheduleFromData(planData) {
     }
 
     schedule.sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+    // Adicionar hidratação no final (meta diária - não tem horário fixo)
+    if (appState.userData.userProfile && appState.userData.userProfile.waterNeeds) {
+        schedule.push({
+            id: 'hydration-daily',
+            type: 'hydration',
+            name: '💧 Hidratação Diária',
+            startTime: '23:59',
+            endTime: '23:59',
+            waterGoal: appState.userData.userProfile.waterNeeds,
+            duration: 0
+        });
+    }
 
     return schedule;
 }

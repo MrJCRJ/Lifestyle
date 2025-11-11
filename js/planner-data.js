@@ -73,6 +73,39 @@ function loadPlanDataToWizard(planData) {
         document.querySelector('input[name="plannerHasCleaning"][value="no"]').checked = true;
         togglePlannerCleaningForm(false);
     }
+
+    // Carregar refeições
+    if (planData.meals && planData.meals.length > 0) {
+        document.querySelector('input[name="plannerHasMeals"][value="yes"]').checked = true;
+        togglePlannerMealsForm(true);
+        const container = document.getElementById('planner-meals-times-container');
+        container.innerHTML = '';
+        planData.meals.forEach(mealTime => {
+            addPlannerMealTime();
+            const inputs = container.querySelectorAll('.planner-meal-time');
+            inputs[inputs.length - 1].value = mealTime;
+        });
+    } else {
+        document.querySelector('input[name="plannerHasMeals"][value="no"]')?.checked = true;
+        togglePlannerMealsForm(false);
+    }
+
+    // Carregar hidratação (perfil do usuário)
+    if (appState.userData.userProfile) {
+        loadPlannerUserProfile();
+    }
+
+    // Carregar exercício
+    if (planData.exercise) {
+        document.querySelector('input[name="plannerHasExercise"][value="yes"]').checked = true;
+        togglePlannerExerciseForm(true);
+        document.getElementById('plannerExerciseStartTime').value = planData.exercise.start || '';
+        document.getElementById('plannerExerciseEndTime').value = planData.exercise.end || '';
+        document.getElementById('plannerExerciseType').value = planData.exercise.type || '';
+    } else {
+        document.querySelector('input[name="plannerHasExercise"][value="no"]')?.checked = true;
+        togglePlannerExerciseForm(false);
+    }
 }
 
 // Carregar configuração do dia anterior
@@ -146,11 +179,6 @@ function finalizePlannerSave() {
     };
 
     saveToStorage();
-
-    // Re-agendar notificações se for o dia de hoje
-    if (isToday && typeof scheduleNotificationsForToday === 'function') {
-        scheduleNotificationsForToday();
-    }
 
     // Limpar dados temporários
     appState.tempPlanData = null;

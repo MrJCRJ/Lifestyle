@@ -20,7 +20,10 @@ function planSpecificDay(dateKey) {
         sleep: document.getElementById('planner-sleep-day-name'),
         work: document.getElementById('planner-work-day-name'),
         study: document.getElementById('planner-study-day-name'),
-        cleaning: document.getElementById('planner-cleaning-day-name')
+        cleaning: document.getElementById('planner-cleaning-day-name'),
+        meals: document.getElementById('planner-meals-day-name'),
+        hydration: document.getElementById('planner-hydration-day-name'),
+        exercise: document.getElementById('planner-exercise-day-name')
     };
 
     Object.values(elements).forEach(el => {
@@ -66,7 +69,7 @@ function savePlannerSleep() {
         return;
     }
 
-    // Armazenar temporariamente
+    // Armazenar temporariamente (preservar dados existentes se houver)
     if (!appState.tempPlanData) {
         appState.tempPlanData = {};
     }
@@ -89,6 +92,8 @@ function savePlannerWork() {
     if (!appState.tempPlanData) {
         appState.tempPlanData = {};
     }
+
+    // Preservar jobs existentes se não foram modificados
     appState.tempPlanData.jobs = [];
 
     if (hasWork.value === 'yes') {
