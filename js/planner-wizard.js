@@ -56,7 +56,7 @@ function cancelPlanner() {
     goToSchedules();
 }
 
-// Etapa 1: Salvar sono e ir para próxima categoria habilitada
+// Etapa 1: Salvar sono e ir para trabalho
 function savePlannerSleep() {
     const sleepTime = document.getElementById('plannerSleepTime').value;
     const wakeTime = document.getElementById('plannerWakeTime').value;
@@ -73,26 +73,11 @@ function savePlannerSleep() {
     appState.tempPlanData.sleep = sleepTime;
     appState.tempPlanData.wake = wakeTime;
 
-    // Verificar qual é a próxima categoria habilitada
-    if (isCategoryEnabled('work')) {
-        showScreen('planner-work');
-    } else if (isCategoryEnabled('study')) {
-        appState.tempPlanData.jobs = [];
-        showScreen('planner-study');
-    } else if (isCategoryEnabled('cleaning')) {
-        appState.tempPlanData.jobs = [];
-        appState.tempPlanData.studies = [];
-        showScreen('planner-cleaning');
-    } else {
-        // Finalizar sem nenhuma categoria adicional
-        appState.tempPlanData.jobs = [];
-        appState.tempPlanData.studies = [];
-        appState.tempPlanData.cleaning = null;
-        finalizePlannerSave();
-    }
+    // Ir para trabalho
+    showScreen('planner-work');
 }
 
-// Etapa 2: Salvar trabalho e ir para próxima categoria habilitada
+// Etapa 2: Salvar trabalho e ir para estudo
 function savePlannerWork() {
     const hasWork = document.querySelector('input[name="plannerHasWork"]:checked');
 
@@ -115,20 +100,11 @@ function savePlannerWork() {
         }
     }
 
-    // Verificar qual é a próxima categoria habilitada
-    if (isCategoryEnabled('study')) {
-        showScreen('planner-study');
-    } else if (isCategoryEnabled('cleaning')) {
-        showScreen('planner-cleaning');
-    } else {
-        // Salvar sem estudo nem limpeza
-        appState.tempPlanData.studies = [];
-        appState.tempPlanData.cleaning = null;
-        finalizePlannerSave();
-    }
+    // Ir para estudo
+    showScreen('planner-study');
 }
 
-// Etapa 3: Salvar estudo e ir para próxima categoria ou finalizar
+// Etapa 3: Salvar estudo e ir para limpeza
 function savePlannerStudy() {
     const hasStudy = document.querySelector('input[name="plannerHasStudy"]:checked');
 
@@ -151,14 +127,8 @@ function savePlannerStudy() {
         }
     }
 
-    // Verificar se limpeza está habilitada
-    if (isCategoryEnabled('cleaning')) {
-        showScreen('planner-cleaning');
-    } else {
-        // Finalizar sem limpeza
-        appState.tempPlanData.cleaning = null;
-        finalizePlannerSave();
-    }
+    // Ir para limpeza
+    showScreen('planner-cleaning');
 }
 
 // Etapa 4: Salvar limpeza e finalizar
@@ -201,21 +171,9 @@ function prevPlannerStep(current) {
     if (current === 'work') {
         showScreen('planner-sleep');
     } else if (current === 'study') {
-        // Se trabalho estiver habilitado, voltar para trabalho, senão para sono
-        if (isCategoryEnabled('work')) {
-            showScreen('planner-work');
-        } else {
-            showScreen('planner-sleep');
-        }
+        showScreen('planner-work');
     } else if (current === 'cleaning') {
-        // Voltar para a categoria anterior habilitada
-        if (isCategoryEnabled('study')) {
-            showScreen('planner-study');
-        } else if (isCategoryEnabled('work')) {
-            showScreen('planner-work');
-        } else {
-            showScreen('planner-sleep');
-        }
+        showScreen('planner-study');
     }
 }
 

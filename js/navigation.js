@@ -18,21 +18,9 @@ function prevStep(current) {
     if (current === 'work') {
         showScreen('sleep');
     } else if (current === 'study') {
-        // Se trabalho estiver habilitado, voltar para trabalho, senão para sono
-        if (isCategoryEnabled('work')) {
-            showScreen('work');
-        } else {
-            showScreen('sleep');
-        }
+        showScreen('work');
     } else if (current === 'cleaning') {
-        // Voltar para a categoria anterior habilitada
-        if (isCategoryEnabled('study')) {
-            showScreen('study');
-        } else if (isCategoryEnabled('work')) {
-            showScreen('work');
-        } else {
-            showScreen('sleep');
-        }
+        showScreen('study');
     }
 }
 
@@ -51,17 +39,8 @@ function saveSleep() {
 
     updateDayDisplay();
 
-    // Verificar qual é a próxima categoria habilitada
-    if (isCategoryEnabled('work')) {
-        showScreen('work');
-    } else if (isCategoryEnabled('study')) {
-        showScreen('study');
-    } else if (isCategoryEnabled('cleaning')) {
-        showScreen('cleaning');
-    } else {
-        generateTodaySchedule();
-        goToSchedules();
-    }
+    // Ir para trabalho
+    showScreen('work');
 }
 
 // Atualizar display do dia atual

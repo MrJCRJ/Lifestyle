@@ -2,110 +2,10 @@
 <div id="settings-modal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>⚙️ Configurações do Sistema</h3>
+      <h3>⚙️ Configurações</h3>
       <button onclick="closeSettings()" class="btn-close">×</button>
     </div>
     <div class="modal-body">
-      <p class="subtitle">
-        Selecione quais categorias estarão habilitadas no planejamento:
-      </p>
-
-      <div class="settings-list">
-        <label class="setting-item">
-          <input type="checkbox" id="setting-sleep" checked disabled />
-          <div class="setting-info">
-            <span class="setting-icon">😴</span>
-            <div>
-              <strong>Sono</strong>
-              <small>Obrigatório - Base da rotina</small>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-item">
-          <input type="checkbox" id="setting-work" checked />
-          <div class="setting-info">
-            <span class="setting-icon">💼</span>
-            <div>
-              <strong>Trabalho</strong>
-              <small>Atividades profissionais</small>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-item">
-          <input type="checkbox" id="setting-study" />
-          <div class="setting-info">
-            <span class="setting-icon">📚</span>
-            <div>
-              <strong>Estudos</strong>
-              <small>Desenvolvimento pessoal</small>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-item">
-          <input type="checkbox" id="setting-cleaning" />
-          <div class="setting-info">
-            <span class="setting-icon">🧹</span>
-            <div>
-              <strong>Limpeza / Organização</strong>
-              <small>Ambiente limpo e saudável</small>
-            </div>
-          </div>
-        </label>
-      </div>
-
-      <!-- Seção de Notificações -->
-      <div class="settings-section">
-        <h4>🔔 Notificações</h4>
-        <p class="subtitle">
-          Receba lembretes <strong>5 minutos antes</strong> e
-          <strong>na hora</strong> das suas atividades
-        </p>
-
-        <label class="setting-item">
-          <input
-            type="checkbox"
-            id="setting-notifications"
-            onchange="toggleNotifications(this.checked)"
-          />
-          <div class="setting-info">
-            <span class="setting-icon">🔔</span>
-            <div>
-              <strong>Ativar Notificações</strong>
-              <small>Lembretes automáticos de atividades</small>
-            </div>
-          </div>
-        </label>
-
-        <div id="notification-settings" style="display: none; margin-top: 15px">
-          <label class="setting-item">
-            <input
-              type="checkbox"
-              id="notification-sound"
-              checked
-              onchange="updateNotificationSettings({sound: this.checked})"
-            />
-            <div class="setting-info">
-              <span class="setting-icon">🔊</span>
-              <div>
-                <strong>Som de Notificação</strong>
-                <small>Tocar som ao notificar</small>
-              </div>
-            </div>
-          </label>
-
-          <button
-            onclick="testNotification()"
-            class="btn btn-outline"
-            style="margin-top: 10px"
-          >
-            🔔 Testar Notificação
-          </button>
-        </div>
-      </div>
-
       <!-- Seção de Backup e Importação -->
       <div class="settings-section">
         <h4>💾 Backup e Restauração</h4>
@@ -132,45 +32,10 @@
             style="display: none"
           />
         </div>
-
-        <div
-          id="data-stats"
-          style="
-            margin-top: 20px;
-            padding: 15px;
-            background: var(--bg-card);
-            border-radius: 8px;
-          "
-        >
-          <strong>📊 Estatísticas dos Dados:</strong>
-          <div
-            id="stats-content"
-            style="
-              margin-top: 10px;
-              font-size: 0.9rem;
-              color: var(--text-secondary);
-            "
-          >
-            Carregando...
-          </div>
-        </div>
-      </div>
-
-      <!-- Seção de Limpeza de Dados -->
-      <div class="settings-section" style="margin-top: 30px">
-        <h4>🗑️ Gerenciamento de Dados</h4>
-        <p class="subtitle">Ações destrutivas - use com cuidado</p>
-
-        <button onclick="confirmClearAllData()" class="btn btn-danger">
-          ⚠️ Limpar Todos os Dados
-        </button>
       </div>
     </div>
     <div class="modal-footer">
       <button onclick="closeSettings()" class="btn btn-outline">Fechar</button>
-      <button onclick="saveSettings()" class="btn btn-primary">
-        Salvar Configurações
-      </button>
     </div>
   </div>
 </div>

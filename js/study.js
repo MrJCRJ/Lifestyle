@@ -62,11 +62,6 @@ function saveStudy() {
     // Dados de estudo serão salvos no planData ao gerar o cronograma
     saveToStorage();
 
-    // Verificar qual é a próxima tela habilitada
-    if (isCategoryEnabled('cleaning')) {
-        showScreen('cleaning');
-    } else {
-        generateTodaySchedule();
-        goToSchedules();
-    }
+    // Ir para limpeza
+    showScreen('cleaning');
 }

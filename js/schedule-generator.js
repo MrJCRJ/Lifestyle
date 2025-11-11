@@ -59,13 +59,36 @@ function generateTodaySchedule() {
         cleaning: cleaning
     };
 
-    // Adicionar sono
-    schedule.push({
-        type: 'sleep',
-        name: 'Dormir',
-        startTime: planData.sleep,
-        endTime: planData.wake
-    });
+    // Adicionar sono dividido em duas partes: Dormir e Acordar
+    const sleepMinutes = timeToMinutes(planData.sleep);
+    const wakeMinutes = timeToMinutes(planData.wake);
+
+    // Se wake < sleep, significa que atravessa a meia-noite
+    if (wakeMinutes < sleepMinutes) {
+        // Parte 1: Dormir (do horário de sono até 23:59)
+        schedule.push({
+            type: 'sleep',
+            name: '😴 Dormir',
+            startTime: planData.sleep,
+            endTime: '23:59'
+        });
+
+        // Parte 2: Acordar (de 00:00 até horário de acordar)
+        schedule.push({
+            type: 'sleep',
+            name: '😴 Acordar',
+            startTime: '00:00',
+            endTime: planData.wake
+        });
+    } else {
+        // Sono no mesmo dia (raro, mas possível para cochilos)
+        schedule.push({
+            type: 'sleep',
+            name: '😴 Dormir',
+            startTime: planData.sleep,
+            endTime: planData.wake
+        });
+    }
 
     // Adicionar trabalhos
     if (planData.jobs && Array.isArray(planData.jobs)) {
@@ -143,12 +166,36 @@ function generateTodaySchedule() {
 function generateScheduleFromData(planData) {
     const schedule = [];
 
-    schedule.push({
-        type: 'sleep',
-        name: 'Dormir',
-        startTime: planData.sleep,
-        endTime: planData.wake
-    });
+    // Adicionar sono dividido em duas partes: Dormir e Acordar
+    const sleepMinutes = timeToMinutes(planData.sleep);
+    const wakeMinutes = timeToMinutes(planData.wake);
+
+    // Se wake < sleep, significa que atravessa a meia-noite
+    if (wakeMinutes < sleepMinutes) {
+        // Parte 1: Dormir (do horário de sono até 23:59)
+        schedule.push({
+            type: 'sleep',
+            name: '😴 Dormir',
+            startTime: planData.sleep,
+            endTime: '23:59'
+        });
+
+        // Parte 2: Acordar (de 00:00 até horário de acordar)
+        schedule.push({
+            type: 'sleep',
+            name: '😴 Acordar',
+            startTime: '00:00',
+            endTime: planData.wake
+        });
+    } else {
+        // Sono no mesmo dia (raro, mas possível para cochilos)
+        schedule.push({
+            type: 'sleep',
+            name: '😴 Dormir',
+            startTime: planData.sleep,
+            endTime: planData.wake
+        });
+    }
 
     // Adicionar trabalhos
     if (planData.jobs && Array.isArray(planData.jobs)) {

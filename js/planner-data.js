@@ -1,31 +1,5 @@
 // Gerenciamento de dados do planejador
 
-// Filtrar planData apenas com categorias habilitadas
-function filterPlanDataByEnabledCategories(planData) {
-    const filtered = {
-        sleep: planData.sleep,  // Sempre copiar (obrigatório)
-        wake: planData.wake,    // Sempre copiar (obrigatório)
-        jobs: [],
-        studies: [],
-        cleaning: null
-    };
-
-    // Copiar apenas se a categoria estiver habilitada
-    if (isCategoryEnabled('work') && planData.jobs) {
-        filtered.jobs = planData.jobs;
-    }
-
-    if (isCategoryEnabled('study') && planData.studies) {
-        filtered.studies = planData.studies;
-    }
-
-    if (isCategoryEnabled('cleaning') && planData.cleaning) {
-        filtered.cleaning = planData.cleaning;
-    }
-
-    return filtered;
-}
-
 // Limpar formulários do planejador
 function clearPlannerForms() {
     document.getElementById('plannerSleepTime').value = '';
@@ -60,50 +34,44 @@ function loadPlanDataToWizard(planData) {
     if (sleepInput) sleepInput.value = planData.sleep || '';
     if (wakeInput) wakeInput.value = planData.wake || '';
 
-    // Carregar trabalhos (apenas se estiver habilitado)
-    if (isCategoryEnabled('work')) {
-        if (planData.jobs && planData.jobs.length > 0) {
-            document.querySelector('input[name="plannerHasWork"][value="yes"]').checked = true;
-            togglePlannerWorkForm(true);
-            document.getElementById('planner-jobs-container').innerHTML = '';
-            plannerJobCounter = 0;
-            planData.jobs.forEach(job => {
-                addPlannerJobSlot(job);
-            });
-        } else {
-            document.querySelector('input[name="plannerHasWork"][value="no"]').checked = true;
-            togglePlannerWorkForm(false);
-        }
+    // Carregar trabalhos
+    if (planData.jobs && planData.jobs.length > 0) {
+        document.querySelector('input[name="plannerHasWork"][value="yes"]').checked = true;
+        togglePlannerWorkForm(true);
+        document.getElementById('planner-jobs-container').innerHTML = '';
+        plannerJobCounter = 0;
+        planData.jobs.forEach(job => {
+            addPlannerJobSlot(job);
+        });
+    } else {
+        document.querySelector('input[name="plannerHasWork"][value="no"]').checked = true;
+        togglePlannerWorkForm(false);
     }
 
-    // Carregar estudos (apenas se estiver habilitado)
-    if (isCategoryEnabled('study')) {
-        if (planData.studies && planData.studies.length > 0) {
-            document.querySelector('input[name="plannerHasStudy"][value="yes"]').checked = true;
-            togglePlannerStudyForm(true);
-            document.getElementById('planner-studies-container').innerHTML = '';
-            plannerStudyCounter = 0;
-            planData.studies.forEach(study => {
-                addPlannerStudySlot(study);
-            });
-        } else {
-            document.querySelector('input[name="plannerHasStudy"][value="no"]').checked = true;
-            togglePlannerStudyForm(false);
-        }
+    // Carregar estudos
+    if (planData.studies && planData.studies.length > 0) {
+        document.querySelector('input[name="plannerHasStudy"][value="yes"]').checked = true;
+        togglePlannerStudyForm(true);
+        document.getElementById('planner-studies-container').innerHTML = '';
+        plannerStudyCounter = 0;
+        planData.studies.forEach(study => {
+            addPlannerStudySlot(study);
+        });
+    } else {
+        document.querySelector('input[name="plannerHasStudy"][value="no"]').checked = true;
+        togglePlannerStudyForm(false);
     }
 
-    // Carregar limpeza (apenas se estiver habilitado)
-    if (isCategoryEnabled('cleaning')) {
-        if (planData.cleaning) {
-            document.querySelector('input[name="plannerHasCleaning"][value="yes"]').checked = true;
-            togglePlannerCleaningForm(true);
-            document.getElementById('plannerCleaningStartTime').value = planData.cleaning.start || '';
-            document.getElementById('plannerCleaningEndTime').value = planData.cleaning.end || '';
-            document.getElementById('plannerCleaningNotes').value = planData.cleaning.notes || '';
-        } else {
-            document.querySelector('input[name="plannerHasCleaning"][value="no"]').checked = true;
-            togglePlannerCleaningForm(false);
-        }
+    // Carregar limpeza
+    if (planData.cleaning) {
+        document.querySelector('input[name="plannerHasCleaning"][value="yes"]').checked = true;
+        togglePlannerCleaningForm(true);
+        document.getElementById('plannerCleaningStartTime').value = planData.cleaning.start || '';
+        document.getElementById('plannerCleaningEndTime').value = planData.cleaning.end || '';
+        document.getElementById('plannerCleaningNotes').value = planData.cleaning.notes || '';
+    } else {
+        document.querySelector('input[name="plannerHasCleaning"][value="no"]').checked = true;
+        togglePlannerCleaningForm(false);
     }
 }
 
@@ -117,9 +85,7 @@ function loadConfigFromPreviousDay() {
     const previousSchedule = appState.userData.dailySchedules?.[previousDayKey];
 
     if (previousSchedule && previousSchedule.planData) {
-        // Filtrar apenas categorias habilitadas
-        const filteredPlanData = filterPlanDataByEnabledCategories(previousSchedule.planData);
-        loadPlanDataToWizard(filteredPlanData);
+        loadPlanDataToWizard(previousSchedule.planData);
     } else {
         alert('Não há configuração no dia anterior para copiar.');
     }
@@ -135,9 +101,7 @@ function loadConfigFromLastWeek() {
     const lastWeekSchedule = appState.userData.dailySchedules?.[lastWeekKey];
 
     if (lastWeekSchedule && lastWeekSchedule.planData) {
-        // Filtrar apenas categorias habilitadas
-        const filteredPlanData = filterPlanDataByEnabledCategories(lastWeekSchedule.planData);
-        loadPlanDataToWizard(filteredPlanData);
+        loadPlanDataToWizard(lastWeekSchedule.planData);
     } else {
         alert('Não há configuração na semana passada para copiar.');
     }
