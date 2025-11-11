@@ -155,62 +155,66 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .schedule-header h3 {
   margin-bottom: 0;
+  font-size: 1.1rem;
 }
 
 .schedule-actions {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   align-items: center;
 }
 
 .btn-small {
-  padding: 8px 16px;
-  font-size: 0.9rem;
+  padding: 6px 12px;
+  font-size: 0.85rem;
 }
 
 .plan-badge {
   background: var(--secondary-color);
   color: white;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
 .day-schedule h3 {
   color: var(--primary-color);
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+  font-size: 1.15rem;
 }
 
 .activity {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 8px 10px;
   background: var(--bg-light);
-  border-radius: 5px;
-  margin-bottom: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
 }
 
 .activity-time {
   color: var(--text-secondary);
   font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .activity-name {
   flex: 1;
-  margin: 0 15px;
+  margin: 0 10px;
+  font-size: 0.9rem;
 }
 
 .activity-type {
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 5px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
@@ -311,7 +315,27 @@ header {
   .activity {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .schedule-header h3 {
+    font-size: 1rem;
+  }
+
+  .btn-small {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .plan-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+  }
+
+  .day-schedule h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
   }
 
   .time-inputs {

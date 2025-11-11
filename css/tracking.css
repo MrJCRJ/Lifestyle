@@ -8,33 +8,33 @@
 
 /* Estilo de tarefa (para refeições e hidratação) */
 .activity.task-style {
-  padding: 10px 15px;
+  padding: 8px 12px;
   background: var(--bg-card);
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .activity.task-style .activity-main {
-  gap: 10px;
+  gap: 8px;
 }
 
 .activity.task-style .activity-info {
-  gap: 8px;
+  gap: 6px;
 }
 
 .activity.task-style .activity-name {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .activity.task-style.completed {
-  background: rgba(34, 197, 94, 0.1);
-  border-left: 4px solid #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+  border-left: 3px solid #22c55e;
 }
 
 .activity.task-style.not-done {
-  background: rgba(239, 68, 68, 0.1);
-  border-left: 4px solid #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border-left: 3px solid #ef4444;
 }
 
 .activity.active-event {
@@ -54,13 +54,13 @@
 }
 
 .activity.completed {
-  background: rgba(34, 197, 94, 0.1);
-  border-left: 4px solid #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+  border-left: 3px solid #22c55e;
 }
 
 .activity.not-done {
-  background: rgba(239, 68, 68, 0.1);
-  border-left: 4px solid #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border-left: 3px solid #ef4444;
 }
 
 /* Layout de atividades */
@@ -68,40 +68,29 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .activity-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   flex: 1;
 }
 
 .activity-duration {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
-  padding: 2px 8px;
+  padding: 2px 6px;
   background: var(--bg-light);
   border-radius: 4px;
 }
 
 .activity-actions {
   display: flex;
-  gap: 5px;
-}
-
-/* Informações de rastreamento */
-.activity-tracking {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border-color);
-}
-
-.activity-tracking small {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 /* Horários livres */
@@ -197,6 +186,38 @@
 }
 
 @media (max-width: 768px) {
+  /* Reduzir ainda mais o espaçamento no mobile */
+  .activity.task-style {
+    padding: 6px 10px;
+    margin-bottom: 5px;
+  }
+
+  .activity.task-style .activity-name {
+    font-size: 0.85rem;
+  }
+
+  .activity {
+    padding: 6px 8px;
+    margin-bottom: 5px;
+  }
+
+  .activity-main {
+    gap: 8px;
+  }
+
+  .activity-info {
+    gap: 6px;
+  }
+
+  .activity-duration {
+    font-size: 0.75rem;
+    padding: 1px 4px;
+  }
+
+  .activity-actions {
+    gap: 3px;
+  }
+
   .water-buttons {
     gap: 8px;
   }
@@ -204,5 +225,36 @@
   .btn-water {
     min-width: 42px;
     min-height: 42px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Mobile pequeno: máxima compactação */
+  .activity.task-style {
+    padding: 5px 8px;
+    margin-bottom: 4px;
+  }
+
+  .activity.task-style .activity-name {
+    font-size: 0.8rem;
+  }
+
+  .activity-type {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  .activity-time {
+    font-size: 0.75rem;
+  }
+
+  .activity-name {
+    font-size: 0.85rem;
+  }
+
+  .free-time-slot {
+    padding: 8px 10px;
+    margin: 6px 0;
+    font-size: 0.85rem;
   }
 }

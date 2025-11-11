@@ -81,14 +81,8 @@ function renderTrackingInfo(activity) {
 
     if (hasSimpleTracking) {
         statusClass = hasSimpleTracking.status === 'complete' ? 'completed' : 'not-done';
-        trackingInfo = `
-            <div class="activity-tracking">
-                <small>
-                    ${hasSimpleTracking.status === 'complete' ? '✅ Concluído' : '❌ Não feito'} 
-                    às ${hasSimpleTracking.markedAt}
-                </small>
-            </div>
-        `;
+        // Não renderizar texto - apenas a classe CSS para cor visual
+        trackingInfo = '';
     }
 
     return { statusClass, trackingInfo };
