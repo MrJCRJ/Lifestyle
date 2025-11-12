@@ -166,21 +166,21 @@ function addHydrationActivity(schedule, waterGoal) {
 function buildScheduleFromPlanData(planData, waterGoal = null) {
   const schedule = [];
 
-  // Adicionar todas as atividades
+  // Adicionar atividades com horário fixo
   addSleepActivities(schedule, planData);
   addWorkActivities(schedule, planData.jobs);
   addStudyActivities(schedule, planData.studies);
   addCleaningActivity(schedule, planData.cleaning);
   addExerciseActivity(schedule, planData.exercise);
 
-  // Ordenar por horário (00:00 até 23:59) - apenas atividades com horário
+  // Ordenar por horário (00:00 até 23:59) - apenas atividades com horário fixo
   schedule.sort((a, b) => {
     const timeA = timeToMinutes(a.startTime);
     const timeB = timeToMinutes(b.startTime);
     return timeA - timeB;
   });
 
-  // Adicionar refeições (sem horário fixo)
+  // Adicionar refeições no final (não têm horário fixo, usuário marca quando fizer)
   addMealActivities(schedule, planData.mealsCount);
 
   // Adicionar hidratação no final (não tem horário fixo)

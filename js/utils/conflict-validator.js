@@ -32,6 +32,9 @@ function checkPreviousDayConflicts(schedule, currentDateKey) {
   schedule.forEach(event => {
     if (event.type === 'sleep') return; // Pular o sono do dia atual
 
+    // Pular atividades sem horário fixo (refeições e hidratação)
+    if (!event.startTime || !event.endTime) return;
+
     const eventStart = timeToMinutes(event.startTime);
     const eventEnd = timeToMinutes(event.endTime);
 
@@ -79,16 +82,19 @@ function checkSameDayConflicts(schedule) {
       const event1 = schedule[i];
       const event2 = schedule[j];
 
-      // Pular sono na validação entre eventos do mesmo dia
-      if (event1.type === 'sleep' || event2.type === 'sleep') {
-        continue;
+      // Pular atividades sem horário fixo (refeições e hidratação)
+      const time1 = event1.start || event1.startTime;
+      const time2 = event2.start || event2.startTime;
+
+      if (!time1 || !time2) {
+        continue; // Pular comparação se alguma não tem horário
       }
 
       // Converter horários para minutos
-      const start1 = timeToMinutes(event1.startTime);
-      let end1 = timeToMinutes(event1.endTime);
-      const start2 = timeToMinutes(event2.startTime);
-      let end2 = timeToMinutes(event2.endTime);
+      const start1 = timeToMinutes(time1);
+      let end1 = timeToMinutes(event1.end || event1.endTime);
+      const start2 = timeToMinutes(time2);
+      let end2 = timeToMinutes(event2.end || event2.endTime);
 
       // Se fim < início, o evento atravessa meia-noite (adicionar 24h)
       if (end1 < start1) end1 += 1440;
@@ -97,8 +103,11 @@ function checkSameDayConflicts(schedule) {
       // Verificar sobreposição
       if (eventsOverlap(start1, end1, start2, end2)) {
         conflicts.push({
+          type: 'overlap',
+          message: `${event1.name} (${event1.start || event1.startTime}-${event1.end || event1.endTime}) conflita com ${event2.name} (${event2.start || event2.startTime}-${event2.end || event2.endTime})`,
           event1: event1,
-          event2: event2
+          event2: event2,
+          activities: [event1, event2]
         });
       }
     }
@@ -146,4 +155,15 @@ function validateScheduleConflicts(schedule, currentDateKey) {
   conflicts.push(...sameDayConflicts);
 
   return conflicts;
+}
+
+// Exports para testes
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    validateScheduleConflicts,
+    checkSameDayConflicts,
+    checkPreviousDayConflicts,
+    formatConflictsMessage,
+    eventsOverlap
+  };
 }

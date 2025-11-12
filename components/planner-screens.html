@@ -1,35 +1,81 @@
+<!-- Navbar de Navegação do Planejador -->
+<nav id="planner-navbar" class="planner-navbar" style="display: none">
+  <div class="planner-nav-container">
+    <button
+      onclick="showPlannerScreen('planner-sleep')"
+      class="planner-nav-item active"
+      data-screen="planner-sleep"
+    >
+      <span class="nav-icon">😴</span>
+      <span class="nav-label">Sono</span>
+    </button>
+    <button
+      onclick="showPlannerScreen('planner-work')"
+      class="planner-nav-item"
+      data-screen="planner-work"
+    >
+      <span class="nav-icon">💼</span>
+      <span class="nav-label">Trabalho</span>
+    </button>
+    <button
+      onclick="showPlannerScreen('planner-study')"
+      class="planner-nav-item"
+      data-screen="planner-study"
+    >
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Estudo</span>
+    </button>
+    <button
+      onclick="showPlannerScreen('planner-cleaning')"
+      class="planner-nav-item"
+      data-screen="planner-cleaning"
+    >
+      <span class="nav-icon">🧹</span>
+      <span class="nav-label">Limpeza</span>
+    </button>
+    <button
+      onclick="showPlannerScreen('planner-meals')"
+      class="planner-nav-item"
+      data-screen="planner-meals"
+    >
+      <span class="nav-icon">🍽️</span>
+      <span class="nav-label">Refeições</span>
+    </button>
+    <button
+      onclick="showPlannerScreen('planner-hydration')"
+      class="planner-nav-item"
+      data-screen="planner-hydration"
+    >
+      <span class="nav-icon">💧</span>
+      <span class="nav-label">Hidratação</span>
+    </button>
+    <button
+      onclick="showPlannerScreen('planner-exercise')"
+      class="planner-nav-item"
+      data-screen="planner-exercise"
+    >
+      <span class="nav-icon">💪</span>
+      <span class="nav-label">Exercício</span>
+    </button>
+    <div class="planner-nav-divider"></div>
+    <button
+      onclick="finalizePlannerSave()"
+      class="planner-nav-item planner-nav-finalize"
+    >
+      <span class="nav-icon">✅</span>
+      <span class="nav-label">Finalizar</span>
+    </button>
+  </div>
+</nav>
+
 <!-- Planejamento Diário - Sono -->
-<section id="planner-sleep-screen" class="screen">
+<section id="planner-sleep-screen" class="screen planner-screen">
   <div class="form-content">
     <h2>😴 Rotina de Sono</h2>
     <p class="subtitle">
       Planejando:
       <strong><span id="planner-sleep-day-name">Amanhã</span></strong>
     </p>
-
-    <!-- Configurações Rápidas -->
-    <div class="quick-config-container" id="quick-config">
-      <h3 style="font-size: 1.1rem; margin-bottom: 10px">
-        ⚡ Configuração Rápida
-      </h3>
-      <div class="quick-config-buttons">
-        <button
-          onclick="loadConfigFromPreviousDay()"
-          class="btn btn-outline btn-small"
-        >
-          📅 Copiar Dia Anterior
-        </button>
-        <button
-          onclick="loadConfigFromLastWeek()"
-          class="btn btn-outline btn-small"
-        >
-          📆 Copiar Semana Passada
-        </button>
-        <button onclick="clearPlannerForms()" class="btn btn-outline btn-small">
-          🆕 Começar Vazio
-        </button>
-      </div>
-    </div>
 
     <div class="form-group">
       <label for="plannerSleepTime">Que horas vai dormir?</label>
@@ -46,14 +92,14 @@
         Cancelar
       </button>
       <button onclick="savePlannerSleep()" class="btn btn-primary">
-        Continuar
+        Salvar
       </button>
     </div>
   </div>
 </section>
 
 <!-- Planejamento Diário - Trabalho -->
-<section id="planner-work-screen" class="screen">
+<section id="planner-work-screen" class="screen planner-screen">
   <div class="form-content">
     <h2>💼 Trabalho</h2>
     <p class="subtitle">
@@ -62,7 +108,7 @@
     </p>
 
     <div class="form-group">
-      <label>Vai trabalhar neste dia?</label>
+      <label>Você vai trabalhar?</label>
       <div class="radio-group">
         <label>
           <input
@@ -87,24 +133,24 @@
 
     <div id="planner-work-details" style="display: none">
       <div id="planner-jobs-container"></div>
-      <button onclick="addPlannerJobSlot()" class="btn btn-secondary">
-        + Adicionar outro trabalho/bico
+      <button onclick="addPlannerJobSlot()" class="btn btn-outline btn-small">
+        ➕ Adicionar Trabalho
       </button>
     </div>
 
     <div class="button-group">
-      <button onclick="prevPlannerStep('work')" class="btn btn-outline">
-        Voltar
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
       </button>
       <button onclick="savePlannerWork()" class="btn btn-primary">
-        Continuar
+        Salvar
       </button>
     </div>
   </div>
 </section>
 
 <!-- Planejamento Diário - Estudo -->
-<section id="planner-study-screen" class="screen">
+<section id="planner-study-screen" class="screen planner-screen">
   <div class="form-content">
     <h2>📚 Estudos</h2>
     <p class="subtitle">
@@ -113,7 +159,7 @@
     </p>
 
     <div class="form-group">
-      <label>Vai estudar neste dia?</label>
+      <label>Você vai estudar?</label>
       <div class="radio-group">
         <label>
           <input
@@ -138,33 +184,33 @@
 
     <div id="planner-study-details" style="display: none">
       <div id="planner-studies-container"></div>
-      <button onclick="addPlannerStudySlot()" class="btn btn-secondary">
-        + Adicionar outro curso/estudo
+      <button onclick="addPlannerStudySlot()" class="btn btn-outline btn-small">
+        ➕ Adicionar Estudo
       </button>
     </div>
 
     <div class="button-group">
-      <button onclick="prevPlannerStep('study')" class="btn btn-outline">
-        Voltar
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
       </button>
       <button onclick="savePlannerStudy()" class="btn btn-primary">
-        Continuar
+        Salvar
       </button>
     </div>
   </div>
 </section>
 
 <!-- Planejamento Diário - Limpeza -->
-<section id="planner-cleaning-screen" class="screen">
+<section id="planner-cleaning-screen" class="screen planner-screen">
   <div class="form-content">
-    <h2>🧹 Limpeza / Organização</h2>
+    <h2>🧹 Limpeza</h2>
     <p class="subtitle">
       Planejando:
       <strong><span id="planner-cleaning-day-name">Amanhã</span></strong>
     </p>
 
     <div class="form-group">
-      <label>Vai fazer limpeza neste dia?</label>
+      <label>Vai fazer limpeza?</label>
       <div class="radio-group">
         <label>
           <input
@@ -209,20 +255,20 @@
     </div>
 
     <div class="button-group">
-      <button onclick="prevPlannerStep('cleaning')" class="btn btn-outline">
-        Voltar
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
       </button>
       <button onclick="savePlannerCleaning()" class="btn btn-primary">
-        Continuar
+        Salvar
       </button>
     </div>
   </div>
 </section>
 
 <!-- Planejamento Diário - Refeições -->
-<section id="planner-meals-screen" class="screen">
+<section id="planner-meals-screen" class="screen planner-screen">
   <div class="form-content">
-    <h2>🍽️ Alimentação</h2>
+    <h2>🍽️ Refeições</h2>
     <p class="subtitle">
       Planejando:
       <strong><span id="planner-meals-day-name">Amanhã</span></strong>
@@ -274,18 +320,18 @@
     </div>
 
     <div class="button-group">
-      <button onclick="prevPlannerStep('meals')" class="btn btn-outline">
-        Voltar
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
       </button>
       <button onclick="savePlannerMeals()" class="btn btn-primary">
-        Continuar
+        Salvar
       </button>
     </div>
   </div>
 </section>
 
 <!-- Planejamento Diário - Hidratação -->
-<section id="planner-hydration-screen" class="screen">
+<section id="planner-hydration-screen" class="screen planner-screen">
   <div class="form-content">
     <h2>💧 Hidratação</h2>
     <p class="subtitle">
@@ -324,18 +370,18 @@
     <div id="planner-water-recommendation" style="margin-top: 20px"></div>
 
     <div class="button-group">
-      <button onclick="prevPlannerStep('hydration')" class="btn btn-outline">
-        Voltar
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
       </button>
       <button onclick="savePlannerHydration()" class="btn btn-primary">
-        Continuar
+        Salvar
       </button>
     </div>
   </div>
 </section>
 
 <!-- Planejamento Diário - Exercício -->
-<section id="planner-exercise-screen" class="screen">
+<section id="planner-exercise-screen" class="screen planner-screen">
   <div class="form-content">
     <h2>💪 Exercícios Físicos</h2>
     <p class="subtitle">
@@ -389,12 +435,127 @@
     </div>
 
     <div class="button-group">
-      <button onclick="prevPlannerStep('exercise')" class="btn btn-outline">
-        Voltar
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
       </button>
       <button onclick="savePlannerExercise()" class="btn btn-primary">
-        Finalizar
+        Salvar
       </button>
+    </div>
+  </div>
+</section>
+
+<!-- Tela de Edição de Planejamento -->
+<section id="planner-edit-screen" class="screen">
+  <div class="edit-content">
+    <div class="edit-header">
+      <h2>✏️ Editar Planejamento</h2>
+      <p class="subtitle">Ajuste as categorias do seu dia</p>
+    </div>
+
+    <!-- Categorias Essenciais -->
+    <div class="category-section">
+      <h3 class="section-title">🎯 Essenciais</h3>
+      <div class="edit-categories-grid">
+        <div class="edit-category-card" data-category="sleep">
+          <span class="category-icon">😴</span>
+          <h3>Sono</h3>
+          <p class="category-description">Horários de dormir e acordar</p>
+          <button
+            onclick="editPlannerCategory('sleep')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="meals">
+          <span class="category-icon">🍽️</span>
+          <h3>Refeições</h3>
+          <p class="category-description">Quantidade de refeições diárias</p>
+          <button
+            onclick="editPlannerCategory('meals')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="hydration">
+          <span class="category-icon">💧</span>
+          <h3>Hidratação</h3>
+          <p class="category-description">Meta de água diária</p>
+          <button
+            onclick="editPlannerCategory('hydration')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorias de Atividades -->
+    <div class="category-section">
+      <h3 class="section-title">💼 Atividades</h3>
+      <div class="edit-categories-grid">
+        <div class="edit-category-card" data-category="work">
+          <span class="category-icon">��</span>
+          <h3>Trabalho</h3>
+          <p class="category-description">Horários e atividades de trabalho</p>
+          <button onclick="editPlannerCategory('work')" class="btn btn-primary">
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="study">
+          <span class="category-icon">📚</span>
+          <h3>Estudo</h3>
+          <p class="category-description">Cursos e horários de estudo</p>
+          <button
+            onclick="editPlannerCategory('study')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="exercise">
+          <span class="category-icon">💪</span>
+          <h3>Exercício</h3>
+          <p class="category-description">Atividades físicas planejadas</p>
+          <button
+            onclick="editPlannerCategory('exercise')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="cleaning">
+          <span class="category-icon">🧹</span>
+          <h3>Limpeza</h3>
+          <p class="category-description">Tarefas de limpeza e organização</p>
+          <button
+            onclick="editPlannerCategory('cleaning')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações -->
+    <div class="edit-actions">
+      <div class="button-group">
+        <button onclick="goToSchedules()" class="btn btn-outline">
+          ← Voltar
+        </button>
+        <button onclick="finalizePlannerSave()" class="btn btn-primary">
+          ✅ Salvar Alterações
+        </button>
+      </div>
     </div>
   </div>
 </section>

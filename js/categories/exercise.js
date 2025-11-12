@@ -97,8 +97,16 @@ function savePlannerExercise() {
         };
     }
 
-    // Salvar planejamento completo
-    finalizePlannerSave();
+    // Salvar automaticamente
+    saveToStorage();
+
+    alert('✅ Exercício salvo!');
+
+    // Voltar para tela de edição e atualizar status
+    showScreen('planner-edit');
+    if (typeof updateEditPlannerStatus === 'function') {
+        updateEditPlannerStatus();
+    }
 }
 
 // Voltar no wizard do planejador (de exercício para hidratação)
@@ -116,4 +124,11 @@ function loadPlannerExerciseData() {
     if (exerciseStart) exerciseStart.value = '';
     if (exerciseEnd) exerciseEnd.value = '';
     if (exerciseType) exerciseType.value = '';
+}
+
+// Exports para testes
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        savePlannerExercise
+    };
 }

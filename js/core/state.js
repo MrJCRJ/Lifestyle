@@ -1,10 +1,12 @@
 // Estado global da aplicação
 const appState = {
     currentScreen: 'welcome',
-    todayDate: new Date(),
-    todayName: '',
     userData: {
         dailySchedules: {} // Armazena cronogramas por data (YYYY-MM-DD)
+    },
+    // Getter que sempre retorna a data atual
+    get todayDate() {
+        return new Date();
     }
 };
 
@@ -102,6 +104,10 @@ function saveToStorage() {
         lastSaved: new Date().toISOString()
     };
     localStorage.setItem('lifestyleData', JSON.stringify(saveData));
+    console.log('💾 Dados salvos no localStorage', {
+        tempPlanData: appState.tempPlanData,
+        dailySchedules: Object.keys(appState.userData.dailySchedules || {})
+    });
 }
 
 // Carregar do localStorage

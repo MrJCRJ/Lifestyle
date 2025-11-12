@@ -46,10 +46,27 @@ function finalizePlannerSave() {
   const todayKey = getDateKey(new Date());
   const isToday = planningDateKey === todayKey;
 
-  const planData = appState.tempPlanData;
+  const planData = appState.tempPlanData
+    ? JSON.parse(JSON.stringify(appState.tempPlanData))
+    : null;
+
+  if (!planData) {
+    alert('Nenhum dado de planejamento encontrado. Salve pelo menos uma categoria antes de finalizar.');
+    return;
+  }
+
+  if (!planData.sleep || !planData.wake) {
+    alert('Por favor, salve os horários de sono e acordar antes de finalizar o planejamento.');
+    return;
+  }
 
   // Gerar cronograma do dia planejado
   const schedule = generateScheduleFromData(planData);
+
+  if (!Array.isArray(schedule) || schedule.length === 0) {
+    alert('Nenhuma atividade foi gerada. Verifique se todas as categorias foram salvas corretamente e tente novamente.');
+    return;
+  }
 
   // Validar conflitos incluindo sono do dia anterior
   const conflicts = validateScheduleConflicts(schedule, planningDateKey);
@@ -84,7 +101,19 @@ function finalizePlannerSave() {
   appState.isPlanningMode = false;
   appState.planningDate = null;
 
+  // Esconder navbar
+  const navbar = document.getElementById('planner-navbar');
+  if (navbar) navbar.style.display = 'none';
+
+
   const message = isToday ? 'Cronograma de hoje atualizado!' : `Planejamento para ${dayName} salvo!`;
   alert(`✅ ${message}`);
   goToSchedules();
+}
+
+// Exports para testes
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    finalizePlannerSave
+  };
 }

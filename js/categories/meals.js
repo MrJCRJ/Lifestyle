@@ -73,8 +73,16 @@ function savePlannerMeals() {
         appState.tempPlanData.mealsCount = 0;
     }
 
-    // Ir para hidratação
-    showScreen('planner-hydration');
+    // Salvar automaticamente
+    saveToStorage();
+
+    alert('✅ Refeições salvas!');
+
+    // Voltar para tela de edição e atualizar status
+    showScreen('planner-edit');
+    if (typeof updateEditPlannerStatus === 'function') {
+        updateEditPlannerStatus();
+    }
 }
 
 // Carregar dados de refeições no planejador
@@ -83,4 +91,11 @@ function loadPlannerMealsData() {
     if (mealsCount && mealsCount > 0) {
         document.getElementById('plannerMealsCount').value = mealsCount;
     }
+}
+
+// Exports para testes
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        savePlannerMeals
+    };
 }

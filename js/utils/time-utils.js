@@ -6,6 +6,10 @@
  * @returns {number} Total de minutos
  */
 function timeToMinutes(time) {
+    if (!time || typeof time !== 'string') {
+        console.error('timeToMinutes: horário inválido', time);
+        return 0;
+    }
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
 }

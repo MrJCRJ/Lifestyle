@@ -116,7 +116,7 @@ function generateTodaySchedule() {
     appState.userData.dailySchedules[todayKey] = {
         date: todayKey,
         dayName: getTodayName(),
-        formattedDate: getFormattedDate(),
+        formattedDate: getFormattedDate(new Date()),
         planData: planData,
         activities: schedule,
         createdAt: existingSchedule?.createdAt || new Date().toISOString(),

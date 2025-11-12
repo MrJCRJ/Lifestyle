@@ -114,7 +114,7 @@ function removeCategorySlot(type, id) {
 /**
  * Coleta dados de categorias do DOM
  * @param {string} containerId - ID do container
- * @param {string} slotPrefix - Prefixo dos slots (ex: 'job', 'study')
+ * @param {string} slotPrefix - Prefixo dos slots (ex: 'job', 'study', 'planner-job', 'planner-study')
  * @returns {Array} Array com os dados coletados
  */
 function collectCategoryData(containerId, slotPrefix) {
@@ -126,33 +126,104 @@ function collectCategoryData(containerId, slotPrefix) {
   const items = [];
   const slots = container.querySelectorAll('.item-card');
 
+  if (slots.length === 0) {
+    throw new Error(`Nenhum item encontrado em ${containerId}!`);
+  }
+
   slots.forEach(slot => {
-    const nameInput = slot.querySelector(`.${slotPrefix}-name`);
-    const name = nameInput?.value.trim();
+    const slotId = slot.id.split('-').pop();
+    let nameInput = null;
+    let name = '';
+
+    // Tentar buscar por ID primeiro (usado no planejador: planner-job-name-1)
+    if (slotPrefix.includes('planner-')) {
+      nameInput = document.getElementById(`${slotPrefix}-name-${slotId}`);
+    }
+
+    // Se não encontrou por ID, buscar por classe (usado no setup: .job-name)
+    if (!nameInput) {
+      const classPrefix = slotPrefix.replace('planner-', '');
+      nameInput = slot.querySelector(`.${classPrefix}-name`);
+    }
+
+    if (!nameInput) {
+      console.error(`Slot problemático:`, slot);
+      console.error(`Tentou buscar por ID: ${slotPrefix}-name-${slotId}`);
+      console.error(`Tentou buscar por classe: .${slotPrefix.replace('planner-', '')}-name`);
+      throw new Error(`Input de nome não encontrado no slot!`);
+    }
+
+    name = nameInput.value.trim();
 
     if (!name) {
       throw new Error('Por favor, preencha o nome de todos os itens!');
     }
 
-    const timeGroups = slot.querySelectorAll('.time-input-group');
+    // Buscar horários - tentar ambas as estruturas
     const times = [];
 
-    timeGroups.forEach(group => {
-      const startInput = group.querySelector(`.${slotPrefix}-time-start`);
-      const endInput = group.querySelector(`.${slotPrefix}-time-end`);
+    // Estrutura do planejador: .time-slot com IDs
+    const timeSlots = slot.querySelectorAll('.time-slot');
+    if (timeSlots.length > 0) {
+      timeSlots.forEach(timeSlot => {
+        const timeIndex = timeSlot.id ? timeSlot.id.split('-').pop() : null;
 
-      const start = startInput?.value;
-      const end = endInput?.value;
+        let startInput, endInput;
 
-      if (!start || !end) {
-        throw new Error(`Preencha todos os horários de ${name}!`);
+        if (timeIndex !== null) {
+          // Buscar por ID (planejador)
+          startInput = document.getElementById(`${slotPrefix}-start-${slotId}-${timeIndex}`);
+          endInput = document.getElementById(`${slotPrefix}-end-${slotId}-${timeIndex}`);
+        }
+
+        // Se não encontrou por ID, buscar dentro do timeSlot
+        if (!startInput) {
+          startInput = timeSlot.querySelector('input[type="time"]');
+          endInput = timeSlot.querySelectorAll('input[type="time"]')[1];
+        }
+
+        if (!startInput || !endInput) {
+          console.error(`TimeSlot problemático:`, timeSlot);
+          throw new Error(`Inputs de horário não encontrados para ${name}!`);
+        }
+
+        const start = startInput.value;
+        const end = endInput.value;
+
+        if (!start || !end) {
+          throw new Error(`Preencha todos os horários de ${name}!`);
+        }
+
+        times.push({ start, end });
+      });
+    } else {
+      // Estrutura do setup: .time-input-group com classes
+      const timeGroups = slot.querySelectorAll('.time-input-group');
+
+      if (timeGroups.length === 0) {
+        console.error(`Slot sem horários:`, slot);
+        throw new Error(`Nenhum horário encontrado para ${name}!`);
       }
 
-      times.push({ start, end });
-    });
+      timeGroups.forEach(group => {
+        const classPrefix = slotPrefix.replace('planner-', '');
+        const startInput = group.querySelector(`.${classPrefix}-time-start`);
+        const endInput = group.querySelector(`.${classPrefix}-time-end`);
 
-    if (times.length === 0) {
-      throw new Error(`Adicione pelo menos um horário para ${name}!`);
+        if (!startInput || !endInput) {
+          console.error(`TimeGroup problemático:`, group);
+          throw new Error(`Inputs de horário não encontrados para ${name}!`);
+        }
+
+        const start = startInput.value;
+        const end = endInput.value;
+
+        if (!start || !end) {
+          throw new Error(`Preencha todos os horários de ${name}!`);
+        }
+
+        times.push({ start, end });
+      });
     }
 
     items.push({ name, times });
@@ -165,11 +236,11 @@ function collectCategoryData(containerId, slotPrefix) {
  * Wrappers para compatibilidade com código existente
  */
 function collectJobsData(containerName, itemPrefix) {
-  return collectCategoryData(`${containerName}-container`, 'job');
+  return collectCategoryData(`${containerName}-container`, itemPrefix || 'job');
 }
 
 function collectStudiesData(containerName, itemPrefix) {
-  return collectCategoryData(`${containerName}-container`, 'study');
+  return collectCategoryData(`${containerName}-container`, itemPrefix || 'study');
 }
 
 /**
