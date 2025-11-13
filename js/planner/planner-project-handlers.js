@@ -30,8 +30,27 @@ function togglePlannerProjectForm(show) {
 
 // Adicionar projeto no planejador
 function addPlannerProjectSlot(projectData = null) {
-  plannerProjectCounter++;
   const container = document.getElementById('planner-projects-container');
+
+  // Se projectData foi fornecido (configuração rápida), verificar se há slot vazio
+  if (projectData) {
+    const existingSlots = container.querySelectorAll('.item-card');
+
+    // Verificar se existe um slot vazio (sem nome preenchido)
+    for (let slot of existingSlots) {
+      const slotId = slot.id.split('-').pop();
+      const nameInput = document.getElementById(`planner-project-name-${slotId}`);
+
+      if (nameInput && !nameInput.value.trim()) {
+        // Encontrou slot vazio, preencher com os dados
+        fillPlannerProjectSlot(slotId, projectData);
+        return; // Não criar novo slot
+      }
+    }
+  }
+
+  // Se não há projectData ou não há slots vazios, criar novo
+  plannerProjectCounter++;
   const slotDiv = document.createElement('div');
   slotDiv.className = 'item-card';
   slotDiv.id = `planner-project-slot-${plannerProjectCounter}`;
@@ -40,6 +59,42 @@ function addPlannerProjectSlot(projectData = null) {
   slotDiv.innerHTML = createProjectCardHTML('planner-project', plannerProjectCounter, projectData, isFirstItem);
 
   container.appendChild(slotDiv);
+}
+
+// Preencher slot existente com dados
+function fillPlannerProjectSlot(slotId, projectData) {
+  if (!projectData) return;
+
+  // Preencher nome
+  const nameInput = document.getElementById(`planner-project-name-${slotId}`);
+  if (nameInput) {
+    nameInput.value = projectData.name || '';
+  }
+
+  // Remover horários existentes e adicionar os novos
+  const timesContainer = document.getElementById(`planner-project-times-${slotId}`);
+  if (timesContainer && projectData.times) {
+    timesContainer.innerHTML = '';
+
+    projectData.times.forEach((time, index) => {
+      const timeSlot = document.createElement('div');
+      timeSlot.className = 'time-slot';
+      timeSlot.id = `planner-project-time-${slotId}-${index}`;
+      timeSlot.innerHTML = `
+        <input type="time" 
+               id="planner-project-start-${slotId}-${index}"
+               value="${time.start}" 
+               required />
+        <span>até</span>
+        <input type="time" 
+               id="planner-project-end-${slotId}-${index}"
+               value="${time.end}" 
+               required />
+        ${index > 0 ? `<button type="button" onclick="removePlannerProjectTime(${slotId}, ${index})" class="btn-remove">×</button>` : ''}
+      `;
+      timesContainer.appendChild(timeSlot);
+    });
+  }
 }
 
 // Adicionar horário de projeto no planejador

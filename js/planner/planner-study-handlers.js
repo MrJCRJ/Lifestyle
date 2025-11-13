@@ -30,8 +30,27 @@ function togglePlannerStudyForm(show) {
 
 // Adicionar estudo no planejador
 function addPlannerStudySlot(studyData = null) {
-  plannerStudyCounter++;
   const container = document.getElementById('planner-studies-container');
+
+  // Se studyData foi fornecido (configuração rápida), verificar se há slot vazio
+  if (studyData) {
+    const existingSlots = container.querySelectorAll('.item-card');
+
+    // Verificar se existe um slot vazio (sem nome preenchido)
+    for (let slot of existingSlots) {
+      const slotId = slot.id.split('-').pop();
+      const nameInput = document.getElementById(`planner-study-name-${slotId}`);
+
+      if (nameInput && !nameInput.value.trim()) {
+        // Encontrou slot vazio, preencher com os dados
+        fillPlannerStudySlot(slotId, studyData);
+        return; // Não criar novo slot
+      }
+    }
+  }
+
+  // Se não há studyData ou não há slots vazios, criar novo
+  plannerStudyCounter++;
   const slotDiv = document.createElement('div');
   slotDiv.className = 'item-card';
   slotDiv.id = `planner-study-slot-${plannerStudyCounter}`;
@@ -40,6 +59,29 @@ function addPlannerStudySlot(studyData = null) {
   slotDiv.innerHTML = createStudyCardHTML('planner-study', plannerStudyCounter, studyData, isFirstItem);
 
   container.appendChild(slotDiv);
+}
+
+// Preencher slot existente com dados
+function fillPlannerStudySlot(slotId, studyData) {
+  if (!studyData) return;
+
+  // Preencher nome
+  const nameInput = document.getElementById(`planner-study-name-${slotId}`);
+  if (nameInput) {
+    nameInput.value = studyData.name || '';
+  }
+
+  // Remover horários existentes e adicionar os novos
+  const timesContainer = document.getElementById(`planner-study-times-${slotId}`);
+  if (timesContainer && studyData.times) {
+    timesContainer.innerHTML = '';
+
+    studyData.times.forEach((time, index) => {
+      const timeSlot = document.createElement('div');
+      timeSlot.innerHTML = createGenericTimeSlotHTML('planner-study', slotId, index, time);
+      timesContainer.appendChild(timeSlot.firstElementChild);
+    });
+  }
 }
 
 // Adicionar horário de estudo no planejador

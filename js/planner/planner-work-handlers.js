@@ -30,8 +30,27 @@ function togglePlannerWorkForm(show) {
 
 // Adicionar trabalho no planejador
 function addPlannerJobSlot(jobData = null) {
-  plannerJobCounter++;
   const container = document.getElementById('planner-jobs-container');
+
+  // Se jobData foi fornecido (configuração rápida), verificar se há slot vazio
+  if (jobData) {
+    const existingSlots = container.querySelectorAll('.item-card');
+
+    // Verificar se existe um slot vazio (sem nome preenchido)
+    for (let slot of existingSlots) {
+      const slotId = slot.id.split('-').pop();
+      const nameInput = document.getElementById(`planner-job-name-${slotId}`);
+
+      if (nameInput && !nameInput.value.trim()) {
+        // Encontrou slot vazio, preencher com os dados
+        fillPlannerJobSlot(slotId, jobData);
+        return; // Não criar novo slot
+      }
+    }
+  }
+
+  // Se não há jobData ou não há slots vazios, criar novo
+  plannerJobCounter++;
   const slotDiv = document.createElement('div');
   slotDiv.className = 'item-card';
   slotDiv.id = `planner-job-slot-${plannerJobCounter}`;
@@ -40,6 +59,29 @@ function addPlannerJobSlot(jobData = null) {
   slotDiv.innerHTML = createJobCardHTML('planner-job', plannerJobCounter, jobData, isFirstItem);
 
   container.appendChild(slotDiv);
+}
+
+// Preencher slot existente com dados
+function fillPlannerJobSlot(slotId, jobData) {
+  if (!jobData) return;
+
+  // Preencher nome
+  const nameInput = document.getElementById(`planner-job-name-${slotId}`);
+  if (nameInput) {
+    nameInput.value = jobData.name || '';
+  }
+
+  // Remover horários existentes e adicionar os novos
+  const timesContainer = document.getElementById(`planner-job-times-${slotId}`);
+  if (timesContainer && jobData.times) {
+    timesContainer.innerHTML = '';
+
+    jobData.times.forEach((time, index) => {
+      const timeSlot = document.createElement('div');
+      timeSlot.innerHTML = createGenericTimeSlotHTML('planner-job', slotId, index, time);
+      timesContainer.appendChild(timeSlot.firstElementChild);
+    });
+  }
 }
 
 // Adicionar horário de trabalho no planejador
