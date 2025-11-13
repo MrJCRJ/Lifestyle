@@ -1,20 +1,127 @@
+/* ===== CAROUSEL LAYOUT ===== */
+.schedule-nav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.schedule-nav-header h2 {
+  margin: 0;
+}
+
+.schedule-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: var(--spacing-lg);
+  padding: 0 60px; /* Espaço para os botões */
+}
+
+.schedule-carousel {
+  overflow: hidden;
+  width: 100%;
+}
+
+.schedule-carousel-track {
+  display: flex;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  gap: 0;
+}
+
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-card-medium);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-nav-btn:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-light);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+}
+
+.carousel-nav-btn:active {
+  transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-nav-btn.prev {
+  left: 0;
+}
+
+.carousel-nav-btn.next {
+  right: 0;
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: var(--spacing-md);
+  padding: 12px;
+  flex-wrap: wrap;
+}
+
+.carousel-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.carousel-indicator.active {
+  background: var(--primary-color);
+  width: 32px;
+  border-radius: 5px;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+}
+
+.carousel-indicator:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.2);
+}
+
 /* Cronograma com visual aprimorado */
 .day-schedule {
   background: var(--bg-card-medium);
   backdrop-filter: blur(8px);
   padding: var(--spacing-lg);
   border-radius: var(--radius-lg);
-  margin-bottom: var(--spacing-md);
   border-left: 4px solid var(--primary-color);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-left: 4px solid var(--primary-color);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 100%;
+  max-width: 100%;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .day-schedule:hover {
   border-left-color: var(--primary-light);
   box-shadow: var(--shadow-md);
-  transform: translateX(4px);
 }
 
 .day-schedule.planned-schedule {

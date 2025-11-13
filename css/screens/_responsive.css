@@ -12,7 +12,7 @@
   .form-content,
   .schedule-content,
   .planner-content {
-    padding: 25px;
+    padding: 20px;
   }
 
   h2 {
@@ -54,5 +54,87 @@
 
   .time-inputs {
     grid-template-columns: 1fr;
+  }
+
+  /* Carrossel responsivo */
+  .schedule-nav-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .schedule-nav-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .filter-container {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .filter-btn {
+    flex: 1;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  .schedule-carousel-wrapper {
+    padding: 0 40px;
+    margin-bottom: 16px;
+  }
+
+  .carousel-nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+  }
+
+  .carousel-nav-btn.prev {
+    left: 0;
+  }
+
+  .carousel-nav-btn.next {
+    right: 0;
+  }
+
+  .day-schedule {
+    padding: 16px;
+  }
+
+  .carousel-indicators {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .carousel-indicator {
+    width: 8px;
+    height: 8px;
+  }
+
+  .carousel-indicator.active {
+    width: 24px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .schedule-carousel-wrapper {
+    padding: 0 32px;
+  }
+
+  .carousel-nav-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+
+  .day-schedule {
+    padding: 12px;
+  }
+
+  .schedule-content {
+    padding: 12px;
   }
 }

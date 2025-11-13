@@ -3,8 +3,8 @@ function initializeApp() {
     loadFromStorage();
     appState.todayName = getTodayName();
 
-    // Sempre mostra o cronograma (hoje por padrão)
-    const savedFilter = appState.activeFilter || 'today';
+    // Sempre mostra o cronograma da semana (carrossel começa no dia de hoje)
+    const savedFilter = 'week'; // Sempre mostra a semana inteira
     showScheduleView(savedFilter);
 }
 

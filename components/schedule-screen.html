@@ -1,52 +1,50 @@
 <!-- Tela de Cronograma -->
 <section id="schedule-screen" class="screen">
   <div class="schedule-content">
-    <h2>Seus Cronogramas</h2>
+    <div class="schedule-nav-header">
+      <h2>Seus Cronogramas</h2>
+      <div class="filter-container">
+        <button
+          class="filter-btn"
+          onclick="goToToday()"
+          title="Voltar para hoje"
+        >
+          📅 Hoje
+        </button>
+        <button
+          class="filter-btn"
+          onclick="showDashboard()"
+          style="
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+          "
+        >
+          📊 Dashboard
+        </button>
+      </div>
+    </div>
 
-    <div class="filter-container">
+    <div class="schedule-carousel-wrapper">
       <button
-        class="filter-btn active"
-        data-filter="today"
-        onclick="showScheduleView('today')"
+        class="carousel-nav-btn prev"
+        onclick="navigateCarousel(-1)"
+        aria-label="Dia anterior"
       >
-        Hoje
+        ‹
       </button>
+      <div id="schedule-carousel" class="schedule-carousel">
+        <div id="schedule-display" class="schedule-carousel-track"></div>
+      </div>
       <button
-        class="filter-btn"
-        data-filter="3days"
-        onclick="showScheduleView('3days')"
+        class="carousel-nav-btn next"
+        onclick="navigateCarousel(1)"
+        aria-label="Próximo dia"
       >
-        3 Dias
-      </button>
-      <button
-        class="filter-btn"
-        data-filter="week"
-        onclick="showScheduleView('week')"
-      >
-        Semana
-      </button>
-      <button
-        class="filter-btn"
-        data-filter="7days"
-        onclick="showScheduleView('7days')"
-      >
-        7 Dias
-      </button>
-      <button
-        class="filter-btn"
-        data-filter="dashboard"
-        onclick="showDashboard()"
-        style="
-          background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-          color: white;
-          margin-left: 10px;
-        "
-      >
-        📊 Dashboard
+        ›
       </button>
     </div>
 
-    <div id="schedule-display"></div>
+    <div class="carousel-indicators" id="carousel-indicators"></div>
   </div>
 </section>
 
