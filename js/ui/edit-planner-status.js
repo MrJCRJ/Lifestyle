@@ -13,6 +13,7 @@ function updateEditPlannerStatus() {
   updateCategoryStatus('work', planData);
   updateCategoryStatus('study', planData);
   updateCategoryStatus('exercise', planData);
+  updateCategoryStatus('projects', planData);
   updateCategoryStatus('cleaning', planData);
 }
 
@@ -116,6 +117,16 @@ function getCategoryStatusText(category, planData) {
         return {
           configured: true,
           text: `${planData.exercise.start} - ${planData.exercise.end}`
+        };
+      }
+      return { configured: false };
+
+    case 'projects':
+      if (planData.projects && planData.projects.length > 0) {
+        const count = planData.projects.length;
+        return {
+          configured: true,
+          text: `${count} projeto${count > 1 ? 's' : ''}`
         };
       }
       return { configured: false };

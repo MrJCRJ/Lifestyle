@@ -5,9 +5,26 @@ let plannerJobCounter = 0;
 
 // Toggle trabalho no planejador
 function togglePlannerWorkForm(show) {
-  document.getElementById('planner-work-details').style.display = show ? 'block' : 'none';
-  if (show && document.querySelectorAll('#planner-jobs-container .item-card').length === 0) {
-    addPlannerJobSlot();
+  const detailsDiv = document.getElementById('planner-work-details');
+  if (!detailsDiv) return;
+
+  detailsDiv.style.display = show ? 'block' : 'none';
+
+  if (show) {
+    // Pequeno delay para garantir que o DOM está pronto
+    setTimeout(() => {
+      // Renderizar configurações rápidas
+      if (typeof renderQuickConfigs === 'function') {
+        renderQuickConfigs('jobs', 'planner-work-quick-configs', addPlannerJobSlot);
+      } else {
+        console.warn('[Planner Work] renderQuickConfigs não disponível');
+      }
+
+      // Adicionar primeiro slot se não houver nenhum
+      if (document.querySelectorAll('#planner-jobs-container .item-card').length === 0) {
+        addPlannerJobSlot();
+      }
+    }, 50);
   }
 }
 

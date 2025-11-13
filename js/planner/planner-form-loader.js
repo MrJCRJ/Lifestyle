@@ -24,6 +24,11 @@ function clearPlannerForms() {
   document.getElementById('plannerCleaningStartTime').value = '';
   document.getElementById('plannerCleaningEndTime').value = '';
   document.getElementById('plannerCleaningNotes').value = '';
+
+  // Limpar projetos
+  document.querySelectorAll('input[name="plannerHasProject"]').forEach(radio => radio.checked = false);
+  document.getElementById('planner-project-details').style.display = 'none';
+  document.getElementById('planner-projects-container').innerHTML = '';
 }
 
 /**
@@ -47,7 +52,17 @@ function loadPlannerWorkData(planData) {
   if (planData.jobs && planData.jobs.length > 0) {
     const yesRadio = document.querySelector('input[name="plannerHasWork"][value="yes"]');
     if (yesRadio) yesRadio.checked = true;
-    togglePlannerWorkForm(true);
+
+    // Mostrar detalhes primeiro
+    const detailsDiv = document.getElementById('planner-work-details');
+    if (detailsDiv) detailsDiv.style.display = 'block';
+
+    // Renderizar quick configs
+    if (typeof renderQuickConfigs === 'function') {
+      renderQuickConfigs('jobs', 'planner-work-quick-configs', addPlannerJobSlot);
+    }
+
+    // Carregar jobs existentes
     plannerJobsContainer.innerHTML = '';
     plannerJobCounter = 0;
     planData.jobs.forEach(job => {
@@ -70,7 +85,17 @@ function loadPlannerStudyData(planData) {
   if (planData.studies && planData.studies.length > 0) {
     const yesRadio = document.querySelector('input[name="plannerHasStudy"][value="yes"]');
     if (yesRadio) yesRadio.checked = true;
-    togglePlannerStudyForm(true);
+
+    // Mostrar detalhes primeiro
+    const detailsDiv = document.getElementById('planner-study-details');
+    if (detailsDiv) detailsDiv.style.display = 'block';
+
+    // Renderizar quick configs
+    if (typeof renderQuickConfigs === 'function') {
+      renderQuickConfigs('studies', 'planner-study-quick-configs', addPlannerStudySlot);
+    }
+
+    // Carregar estudos existentes
     plannerStudiesContainer.innerHTML = '';
     plannerStudyCounter = 0;
     planData.studies.forEach(study => {
@@ -108,6 +133,39 @@ function loadPlannerCleaningData(planData) {
 }
 
 /**
+ * Carregar dados de projetos no planejador
+ */
+function loadPlannerProjectData(planData) {
+  const plannerProjectsContainer = document.getElementById('planner-projects-container');
+  if (!plannerProjectsContainer) return;
+
+  if (planData.projects && planData.projects.length > 0) {
+    const yesRadio = document.querySelector('input[name="plannerHasProject"][value="yes"]');
+    if (yesRadio) yesRadio.checked = true;
+
+    // Mostrar detalhes primeiro
+    const detailsDiv = document.getElementById('planner-project-details');
+    if (detailsDiv) detailsDiv.style.display = 'block';
+
+    // Renderizar quick configs
+    if (typeof renderQuickConfigs === 'function') {
+      renderQuickConfigs('projects', 'planner-project-quick-configs', addPlannerProjectSlot);
+    }
+
+    // Carregar projetos existentes
+    plannerProjectsContainer.innerHTML = '';
+    plannerProjectCounter = 0;
+    planData.projects.forEach(project => {
+      addPlannerProjectSlot(project);
+    });
+  } else {
+    const noRadio = document.querySelector('input[name="plannerHasProject"][value="no"]');
+    if (noRadio) noRadio.checked = true;
+    togglePlannerProjectForm(false);
+  }
+}
+
+/**
  * Carregar dados de refeições no planejador
  */
 function loadPlannerMealsFormData(planData) {
@@ -141,5 +199,6 @@ function loadPlanDataToWizard(planData) {
   loadPlannerWorkData(planData);
   loadPlannerStudyData(planData);
   loadPlannerCleaningData(planData);
+  loadPlannerProjectData(planData);
   loadPlannerMealsFormData(planData);
 }

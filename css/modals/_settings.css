@@ -1,0 +1,30 @@
+/* Settings Sections */
+.settings-section {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-section h4 {
+  color: var(--primary-light);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+}
+
+.settings-section .subtitle {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.backup-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.backup-actions .btn {
+  flex: 1;
+  min-width: 150px;
+}

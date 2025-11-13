@@ -100,8 +100,22 @@ function getTimeRemaining(endTime) {
 function calculateFreeTime(schedules) {
     const freeSlots = [];
 
+    // Filtrar apenas atividades com horários válidos
+    const validActivities = schedules.filter(activity =>
+        activity &&
+        activity.startTime &&
+        activity.endTime &&
+        typeof activity.startTime === 'string' &&
+        typeof activity.endTime === 'string'
+    );
+
+    // Se não houver atividades válidas suficientes, retornar vazio
+    if (validActivities.length < 2) {
+        return freeSlots;
+    }
+
     // Ordenar atividades por horário
-    const sortedActivities = [...schedules].sort((a, b) =>
+    const sortedActivities = validActivities.sort((a, b) =>
         a.startTime.localeCompare(b.startTime)
     );
 

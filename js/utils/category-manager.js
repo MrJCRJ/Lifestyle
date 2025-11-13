@@ -11,7 +11,8 @@
 function createCategoryCardHTML(type, id, data = null, isFirst = false) {
   const typeConfig = {
     job: { label: 'Trabalho', namePlaceholder: 'Nome do trabalho' },
-    study: { label: 'Estudo', namePlaceholder: 'Disciplina/Curso' }
+    study: { label: 'Estudo', namePlaceholder: 'Disciplina/Curso' },
+    project: { label: 'Projeto', namePlaceholder: 'Nome do projeto' }
   };
 
   const config = typeConfig[type];
@@ -106,6 +107,8 @@ function removeCategorySlot(type, id) {
         addJobSlot();
       } else if (type === 'study') {
         addStudySlot();
+      } else if (type === 'project') {
+        addProjectSlot();
       }
     }
   }
@@ -243,6 +246,10 @@ function collectStudiesData(containerName, itemPrefix) {
   return collectCategoryData(`${containerName}-container`, itemPrefix || 'study');
 }
 
+function collectProjectsData(containerName, itemPrefix) {
+  return collectCategoryData(`${containerName}-container`, itemPrefix || 'project');
+}
+
 /**
  * Capitaliza primeira letra
  * @param {string} str - String a capitalizar
@@ -274,6 +281,8 @@ function toggleCategoryForm(type, show) {
         addJobSlot();
       } else if (type === 'study') {
         addStudySlot();
+      } else if (type === 'project') {
+        addProjectSlot();
       }
     }
   }

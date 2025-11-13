@@ -1,0 +1,58 @@
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .welcome-content,
+  .form-content,
+  .schedule-content,
+  .planner-content {
+    padding: 25px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .radio-group {
+    flex-direction: column;
+  }
+
+  .activity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .schedule-header h3 {
+    font-size: 1rem;
+  }
+
+  .plan-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+  }
+
+  .day-schedule h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .time-inputs {
+    grid-template-columns: 1fr;
+  }
+}

@@ -83,6 +83,27 @@ function addStudyActivities(schedule, studies) {
 }
 
 /**
+ * Adiciona atividades de projetos ao cronograma
+ * @param {Array} schedule - Array de atividades
+ * @param {Array} projects - Array de projetos
+ */
+function addProjectActivities(schedule, projects) {
+  if (projects && Array.isArray(projects)) {
+    projects.forEach((project, projectIndex) => {
+      project.times.forEach((time, timeIndex) => {
+        schedule.push({
+          id: `project-${projectIndex}-${timeIndex}`,
+          type: 'project',
+          name: `🎯 ${project.name}`,
+          startTime: time.start,
+          endTime: time.end
+        });
+      });
+    });
+  }
+}
+
+/**
  * Adiciona atividade de limpeza ao cronograma
  * @param {Array} schedule - Array de atividades
  * @param {Object} cleaning - Dados da limpeza
@@ -171,6 +192,7 @@ function buildScheduleFromPlanData(planData, waterGoal = null) {
   addWorkActivities(schedule, planData.jobs);
   addStudyActivities(schedule, planData.studies);
   addCleaningActivity(schedule, planData.cleaning);
+  addProjectActivities(schedule, planData.projects);
   addExerciseActivity(schedule, planData.exercise);
 
   // Ordenar por horário (00:00 até 23:59) - apenas atividades com horário fixo

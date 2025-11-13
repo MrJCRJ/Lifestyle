@@ -10,11 +10,22 @@
     />
     <link rel="manifest" href="/manifest.json" />
     <title>Lifestyle - Gerenciador de Rotinas</title>
+
+    <!-- CSS Architecture: Variables → Utilities → Base → Components -->
+    <link rel="stylesheet" href="css/_variables.css" />
+    <link rel="stylesheet" href="css/_utilities.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/buttons.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/cards.css" />
+    <link rel="stylesheet" href="css/modals.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/screens.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/meals.css" />
+    <link rel="stylesheet" href="css/hydration.css" />
+    <link rel="stylesheet" href="css/activity-states.css" />
   </head>
   <body>
     <div class="container">
@@ -50,6 +61,7 @@
     <script src="js/utils/schedule-builder.js"></script>
     <script src="js/utils/meals-manager.js"></script>
     <script src="js/utils/conflict-validator.js"></script>
+    <script src="js/utils/quick-config.js"></script>
 
     <!-- UI modules -->
     <script src="js/ui/activity-components.js"></script>
@@ -59,6 +71,7 @@
     <script src="js/categories/work.js"></script>
     <script src="js/categories/study.js"></script>
     <script src="js/categories/cleaning.js"></script>
+    <script src="js/categories/projects.js"></script>
     <script src="js/categories/meals.js"></script>
     <script src="js/categories/hydration.js"></script>
     <script src="js/categories/exercise.js"></script>
@@ -75,6 +88,7 @@
     <!-- Planner modules -->
     <script src="js/planner/planner-work-handlers.js"></script>
     <script src="js/planner/planner-study-handlers.js"></script>
+    <script src="js/planner/planner-project-handlers.js"></script>
     <script src="js/planner/planner-navigation.js"></script>
     <script src="js/planner/planner-wizard.js"></script>
     <script src="js/planner/planner-form-loader.js"></script>

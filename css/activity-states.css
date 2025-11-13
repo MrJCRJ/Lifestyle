@@ -47,7 +47,7 @@
 }
 
 .activity.not-done {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--danger-translucent);
   border-left-color: #ef4444;
 }
 

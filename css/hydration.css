@@ -71,11 +71,11 @@
 }
 
 .btn-clear-small {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--danger-translucent);
 }
 
 .btn-clear-small:hover {
-  background: rgba(239, 68, 68, 0.3);
+  background: var(--danger-translucent-strong);
   transform: scale(1.05);
 }
 

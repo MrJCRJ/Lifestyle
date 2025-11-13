@@ -1,31 +1,47 @@
-/* Botões */
+/**
+ * Botões - Sistema unificado
+ */
+
+/* ============================================
+   BUTTON GROUP
+   ============================================ */
+
 .button-group {
   display: flex;
-  gap: 12px;
-  margin-top: 25px;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
   justify-content: center;
   flex-wrap: wrap;
 }
 
+/* ============================================
+   BASE BUTTON
+   ============================================ */
+
 .btn {
   padding: 10px 24px;
   border: none;
-  border-radius: 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-slow) var(--ease-out);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  /* Mobile: Garante área de toque adequada */
   min-height: 42px;
   min-width: 42px;
-  /* Previne seleção de texto */
   -webkit-user-select: none;
   user-select: none;
-  /* Remove highlight do tap */
   -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
 }
+
+/* ============================================
+   BUTTON VARIANTS
+   ============================================ */
 
 .btn-primary {
   background: linear-gradient(
@@ -44,7 +60,7 @@
 .btn-secondary {
   background: var(--bg-card);
   color: var(--text-primary);
-  border: 2px solid var(--primary-color);
+  border: var(--border-width-thick) solid var(--primary-color);
 }
 
 .btn-secondary:hover {
@@ -55,7 +71,7 @@
 .btn-outline {
   background: transparent;
   color: var(--text-primary);
-  border: 2px solid var(--border-color);
+  border: var(--border-width-thick) solid var(--border-color);
 }
 
 .btn-outline:hover {
@@ -63,71 +79,23 @@
   border-color: var(--primary-color);
 }
 
-.btn-small {
-  padding: 5px 10px;
-  font-size: 0.8125rem;
-}
-
-.remove-btn {
-  background: var(--danger-color);
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.8125rem;
-  transition: all 0.3s ease;
-}
-
-.remove-btn:hover {
-  background: #dc2626;
-}
-
-.btn-danger {
-  background: #ef4444;
-  color: white;
-}
-
-.btn-danger:hover {
-  background: #dc2626;
-}
-
-/* Botões de ícone */
-.btn-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  /* Mobile: Área de toque adequada */
-  min-width: 32px;
-  min-height: 32px;
-  -webkit-tap-highlight-color: transparent;
-}
-
 .btn-success {
-  background: #22c55e;
+  background: var(--success-color);
   color: white;
 }
 
 .btn-success:hover {
-  background: #16a34a;
+  background: var(--success-dark);
   transform: scale(1.05);
 }
 
 .btn-danger {
-  background: #ef4444;
+  background: var(--danger-color);
   color: white;
 }
 
 .btn-danger:hover {
-  background: #dc2626;
+  background: var(--danger-dark);
   transform: scale(1.05);
 }
 
@@ -141,18 +109,56 @@
   transform: scale(1.05);
 }
 
+/* ============================================
+   BUTTON SIZES
+   ============================================ */
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: var(--font-size-sm);
+  min-height: 32px;
+}
+
+.btn-large {
+  padding: 14px 32px;
+  font-size: var(--font-size-lg);
+  min-height: 52px;
+}
+
+/* ============================================
+   ICON BUTTONS
+   ============================================ */
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all var(--transition-base) var(--ease-out);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 32px;
+  min-height: 32px;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .btn-start {
-  background: #3b82f6;
+  background: var(--primary-color);
   color: white;
 }
 
 .btn-start:hover {
-  background: #2563eb;
+  background: var(--primary-dark);
   transform: scale(1.1);
 }
 
 .btn-end {
-  background: #8b5cf6;
+  background: var(--secondary-color);
   color: white;
 }
 
@@ -161,28 +167,46 @@
   transform: scale(1.1);
 }
 
-/* Mobile optimizations */
+/* ============================================
+   SPECIAL BUTTONS
+   ============================================ */
+
+.remove-btn {
+  background: var(--danger-color);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-slow) var(--ease-out);
+}
+
+.remove-btn:hover {
+  background: var(--danger-dark);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
 @media (max-width: 768px) {
   .button-group {
-    gap: 8px;
-    margin-top: 18px;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-md);
   }
 
   .btn {
     padding: 8px 16px;
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     letter-spacing: 0.3px;
     min-height: 38px;
   }
 
   .btn-small {
-    padding: 6px 10px;
-    font-size: 0.75rem;
-  }
-
-  .remove-btn {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+    padding: 5px 10px;
+    font-size: var(--font-size-xs);
+    min-height: 28px;
   }
 
   .btn-icon {
@@ -190,27 +214,25 @@
     height: 36px;
     min-width: 36px;
     min-height: 36px;
-    font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .button-group {
     flex-direction: column;
-    gap: 6px;
+    gap: var(--spacing-xs);
   }
 
   .btn {
     width: 100%;
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    padding: 7px 14px;
-    font-size: 0.8125rem;
+    padding: 8px 14px;
   }
 }
 
-/* Touch feedback para mobile */
+/* ============================================
+   TOUCH DEVICE FEEDBACK
+   ============================================ */
+
 @media (hover: none) and (pointer: coarse) {
   .btn:active {
     transform: scale(0.97);
@@ -221,16 +243,17 @@
     transform: scale(0.9);
   }
 
-  /* Remove hover effects em touch devices */
+  /* Remove hover effects on touch devices */
   .btn-primary:hover,
   .btn-secondary:hover,
   .btn-outline:hover,
-  .remove-btn:hover,
-  .btn-danger:hover,
   .btn-success:hover,
+  .btn-danger:hover,
   .btn-clear:hover,
   .btn-start:hover,
-  .btn-end:hover {
+  .btn-end:hover,
+  .remove-btn:hover {
     transform: none;
+    box-shadow: none;
   }
 }

@@ -1,0 +1,49 @@
+/* Base Screen Styles */
+.screen {
+  display: none;
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.screen.active {
+  display: block;
+}
+
+/* Content Wrappers */
+.welcome-content,
+.form-content,
+.schedule-content,
+.planner-content {
+  background: var(--bg-card-medium);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Header */
+header {
+  position: relative;
+}
+
+.settings-btn {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  font-size: 22px;
+  background: var(--bg-card-translucent);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-sm) 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-btn:hover {
+  border-color: var(--primary-color);
+  background: var(--primary-translucent-medium);
+  transform: rotate(45deg) scale(1.1);
+  box-shadow: var(--shadow-md);
+}

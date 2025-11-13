@@ -54,9 +54,19 @@ function calculateAllStats() {
             }
         });
 
-        // Calcular tempo livre
-        const freeTime = calculateFreeTime(schedule.activities);
-        totalFreeMinutes += freeTime.reduce((sum, slot) => sum + slot.duration, 0);
+        // Calcular tempo livre (apenas para atividades com horários válidos)
+        if (schedule.activities && schedule.activities.length > 0) {
+            const freeTime = calculateFreeTime(schedule.activities);
+            freeTime.forEach(slot => {
+                // Calcular minutos da duração em formato "Xh Ymin"
+                const duration = slot.duration || '';
+                const hoursMatch = duration.match(/(\d+)h/);
+                const minutesMatch = duration.match(/(\d+)min/);
+                const hours = hoursMatch ? parseInt(hoursMatch[1]) : 0;
+                const minutes = minutesMatch ? parseInt(minutesMatch[1]) : 0;
+                totalFreeMinutes += (hours * 60) + minutes;
+            });
+        }
     });
 
     return {

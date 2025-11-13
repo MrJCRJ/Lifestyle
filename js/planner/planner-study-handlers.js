@@ -5,9 +5,26 @@ let plannerStudyCounter = 0;
 
 // Toggle estudo no planejador
 function togglePlannerStudyForm(show) {
-  document.getElementById('planner-study-details').style.display = show ? 'block' : 'none';
-  if (show && document.querySelectorAll('#planner-studies-container .item-card').length === 0) {
-    addPlannerStudySlot();
+  const detailsDiv = document.getElementById('planner-study-details');
+  if (!detailsDiv) return;
+
+  detailsDiv.style.display = show ? 'block' : 'none';
+
+  if (show) {
+    // Pequeno delay para garantir que o DOM está pronto
+    setTimeout(() => {
+      // Renderizar configurações rápidas
+      if (typeof renderQuickConfigs === 'function') {
+        renderQuickConfigs('studies', 'planner-study-quick-configs', addPlannerStudySlot);
+      } else {
+        console.warn('[Planner Study] renderQuickConfigs não disponível');
+      }
+
+      // Adicionar primeiro slot se não houver nenhum
+      if (document.querySelectorAll('#planner-studies-container .item-card').length === 0) {
+        addPlannerStudySlot();
+      }
+    }, 50);
   }
 }
 

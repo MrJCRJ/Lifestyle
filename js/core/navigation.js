@@ -21,6 +21,8 @@ function prevStep(current) {
         showScreen('work');
     } else if (current === 'cleaning') {
         showScreen('study');
+    } else if (current === 'projects') {
+        showScreen('cleaning');
     } else if (current === 'meals') {
         showScreen('cleaning');
     } else if (current === 'hydration') {
@@ -56,12 +58,16 @@ function updateDayDisplay() {
 
     const workDay = document.getElementById('current-work-day');
     const studyDay = document.getElementById('current-study-day');
+    const projectDay = document.getElementById('current-project-day');
 
     if (workDay) {
         workDay.textContent = `${todayName}, ${todayDate}`;
     }
     if (studyDay) {
         studyDay.textContent = `${todayName}, ${todayDate}`;
+    }
+    if (projectDay) {
+        projectDay.textContent = `${todayName}, ${todayDate}`;
     }
 }
 

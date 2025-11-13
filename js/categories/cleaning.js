@@ -16,7 +16,7 @@ function saveCleaning() {
 
     // Dados de limpeza serão salvos no planData ao gerar o cronograma
     saveToStorage();
-    
-    // Ir para refeições
-    showScreen('meals');
+
+    // Ir para projetos
+    showScreen('projects');
 }

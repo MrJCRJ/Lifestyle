@@ -49,6 +49,17 @@ function generateTodaySchedule() {
         };
     }
 
+    let projects = [];
+    const hasProject = document.querySelector('input[name="hasProject"]:checked');
+    if (hasProject && hasProject.value === 'yes') {
+        try {
+            projects = collectProjectsData('projects', 'project');
+        } catch (error) {
+            alert(error.message);
+            return;
+        }
+    }
+
     let meals = [];
     const hasMeals = document.querySelector('input[name="hasMeals"]:checked');
     if (hasMeals && hasMeals.value === 'yes') {
@@ -86,6 +97,7 @@ function generateTodaySchedule() {
         jobs: jobs,
         studies: studies,
         cleaning: cleaning,
+        projects: projects,
         meals: meals,
         exercise: exercise
     };

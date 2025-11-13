@@ -34,6 +34,14 @@
       <span class="nav-label">Limpeza</span>
     </button>
     <button
+      onclick="showPlannerScreen('planner-projects')"
+      class="planner-nav-item"
+      data-screen="planner-projects"
+    >
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Projetos</span>
+    </button>
+    <button
       onclick="showPlannerScreen('planner-meals')"
       class="planner-nav-item"
       data-screen="planner-meals"
@@ -76,6 +84,9 @@
       Planejando:
       <strong><span id="planner-sleep-day-name">Amanhã</span></strong>
     </p>
+
+    <!-- Configurações Rápidas -->
+    <div id="planner-sleep-quick-configs" class="quick-config-section"></div>
 
     <div class="form-group">
       <label for="plannerSleepTime">Que horas vai dormir?</label>
@@ -132,6 +143,7 @@
     </div>
 
     <div id="planner-work-details" style="display: none">
+      <div id="planner-work-quick-configs" class="quick-config-section"></div>
       <div id="planner-jobs-container"></div>
       <button onclick="addPlannerJobSlot()" class="btn btn-outline btn-small">
         ➕ Adicionar Trabalho
@@ -183,6 +195,7 @@
     </div>
 
     <div id="planner-study-details" style="display: none">
+      <div id="planner-study-quick-configs" class="quick-config-section"></div>
       <div id="planner-studies-container"></div>
       <button onclick="addPlannerStudySlot()" class="btn btn-outline btn-small">
         ➕ Adicionar Estudo
@@ -234,6 +247,12 @@
     </div>
 
     <div id="planner-cleaning-details" style="display: none">
+      <!-- Configurações Rápidas -->
+      <div
+        id="planner-cleaning-quick-configs"
+        class="quick-config-section"
+      ></div>
+
       <div class="form-group">
         <label for="plannerCleaningStartTime">Horário de início</label>
         <input type="time" id="plannerCleaningStartTime" />
@@ -259,6 +278,64 @@
         Cancelar
       </button>
       <button onclick="savePlannerCleaning()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Planejamento Diário - Projetos -->
+<section id="planner-projects-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>🎯 Projetos Pessoais</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-projects-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai trabalhar em projetos pessoais?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasProject"
+            value="yes"
+            onchange="togglePlannerProjectForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasProject"
+            value="no"
+            onchange="togglePlannerProjectForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-project-details" style="display: none">
+      <div
+        id="planner-project-quick-configs"
+        class="quick-config-section"
+      ></div>
+      <div id="planner-projects-container"></div>
+      <button
+        onclick="addPlannerProjectSlot()"
+        class="btn btn-outline btn-small"
+      >
+        ➕ Adicionar Projeto
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerProjects()" class="btn btn-primary">
         Salvar
       </button>
     </div>
@@ -299,6 +376,9 @@
     </div>
 
     <div id="planner-meals-details" style="display: none">
+      <!-- Configurações Rápidas -->
+      <div id="planner-meals-quick-configs" class="quick-config-section"></div>
+
       <p class="subtitle" style="margin-top: 20px">
         Quantas refeições você faz por dia?
       </p>
@@ -338,6 +418,12 @@
       Planejando:
       <strong><span id="planner-hydration-day-name">Amanhã</span></strong>
     </p>
+
+    <!-- Configurações Rápidas -->
+    <div
+      id="planner-hydration-quick-configs"
+      class="quick-config-section"
+    ></div>
 
     <div class="form-group">
       <label for="plannerUserWeight">Seu peso (kg)</label>
@@ -414,6 +500,12 @@
     </div>
 
     <div id="planner-exercise-details" style="display: none">
+      <!-- Configurações Rápidas -->
+      <div
+        id="planner-exercise-quick-configs"
+        class="quick-config-section"
+      ></div>
+
       <div class="form-group">
         <label for="plannerExerciseType">Tipo de exercício</label>
         <input
@@ -526,6 +618,18 @@
           <p class="category-description">Atividades físicas planejadas</p>
           <button
             onclick="editPlannerCategory('exercise')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="projects">
+          <span class="category-icon">🎯</span>
+          <h3>Projetos</h3>
+          <p class="category-description">Projetos pessoais e side projects</p>
+          <button
+            onclick="editPlannerCategory('projects')"
             class="btn btn-primary"
           >
             Editar

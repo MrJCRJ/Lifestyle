@@ -1,0 +1,45 @@
+/* Close Buttons */
+.close-modal-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.close-modal-btn:hover {
+  background: var(--danger-translucent-medium);
+  border-color: var(--danger-translucent-dark);
+  transform: rotate(90deg);
+}
+
+.btn-close {
+  background: var(--danger-translucent-light);
+  border: 1px solid var(--danger-translucent-strong);
+  border-radius: var(--radius-md);
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  padding: 4px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  color: var(--danger-color);
+  background: var(--danger-translucent-medium);
+  border-color: var(--danger-color);
+  transform: rotate(90deg);
+}

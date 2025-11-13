@@ -4,61 +4,43 @@
   box-sizing: border-box;
 }
 
-:root {
-  /* Paleta moderna e acessível */
-  --primary-color: #3b82f6;
-  --primary-dark: #2563eb;
-  --primary-light: #60a5fa;
-  --secondary-color: #8b5cf6;
-  --secondary-light: #a78bfa;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --danger-color: #ef4444;
+/**
+ * Base - Estilos globais
+ * Importa variáveis de _variables.css
+ */
 
-  /* Backgrounds com melhor contraste */
-  --bg-color: #0f172a;
-  --bg-light: #1e293b;
-  --bg-card: #1e293b;
-  --bg-card-hover: #334155;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  /* Texto com melhor legibilidade */
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  /* Bordas sutis */
-  --border-color: #334155;
-  --border-light: #475569;
+body {
+  font-family: var(--font-family-base);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
 
-  /* Sombras mais suaves */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
 
-  /* Raios de borda */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
-
-  /* Espaçamento consistente */
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 0.75rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 2.5rem;
-
-  /* Tipografia */
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-
-  --touch-target: 44px;
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
 }
 
 html {
