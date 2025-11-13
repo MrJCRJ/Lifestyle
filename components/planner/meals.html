@@ -1,0 +1,67 @@
+<!-- Planejamento Diário - Refeições -->
+<section id="planner-meals-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>🍽️ Refeições</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-meals-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai fazer refeições regulares?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasMeals"
+            value="yes"
+            onchange="togglePlannerMealsForm(true); loadPlannerMealsData();"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasMeals"
+            value="no"
+            onchange="togglePlannerMealsForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-meals-details" style="display: none">
+      <!-- Configurações Rápidas -->
+      <div id="planner-meals-quick-configs" class="quick-config-section"></div>
+
+      <p class="subtitle" style="margin-top: 20px">
+        Quantas refeições você faz por dia?
+      </p>
+      <div class="form-group">
+        <label for="plannerMealsCount">Número de refeições</label>
+        <input
+          type="number"
+          id="plannerMealsCount"
+          min="1"
+          max="8"
+          value="3"
+          placeholder="Ex: 3"
+        />
+        <small
+          >As refeições não têm horário fixo. Você vai marcá-las conforme fizer
+          ao longo do dia.</small
+        >
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerMeals()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

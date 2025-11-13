@@ -81,7 +81,7 @@
   }
 
   .schedule-carousel-wrapper {
-    padding: 0 40px;
+    padding: 0 0px;
     margin-bottom: 16px;
   }
 
@@ -121,7 +121,7 @@
 /* Extra small devices */
 @media (max-width: 480px) {
   .schedule-carousel-wrapper {
-    padding: 0 32px;
+    padding: 0 0px;
   }
 
   .carousel-nav-btn {

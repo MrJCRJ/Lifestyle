@@ -1,0 +1,126 @@
+<!-- Tela de Edição de Planejamento -->
+<section id="planner-edit-screen" class="screen">
+  <div class="edit-content">
+    <div class="edit-header">
+      <h2>✏️ Editar Planejamento</h2>
+      <p class="subtitle">Ajuste as categorias do seu dia</p>
+    </div>
+
+    <!-- Categorias Essenciais -->
+    <div class="category-section">
+      <h3 class="section-title">🎯 Essenciais</h3>
+      <div class="edit-categories-grid">
+        <div class="edit-category-card" data-category="sleep">
+          <span class="category-icon">😴</span>
+          <h3>Sono</h3>
+          <p class="category-description">Horários de dormir e acordar</p>
+          <button
+            onclick="editPlannerCategory('sleep')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="meals">
+          <span class="category-icon">🍽️</span>
+          <h3>Refeições</h3>
+          <p class="category-description">Quantidade de refeições diárias</p>
+          <button
+            onclick="editPlannerCategory('meals')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="hydration">
+          <span class="category-icon">💧</span>
+          <h3>Hidratação</h3>
+          <p class="category-description">Meta de água diária</p>
+          <button
+            onclick="editPlannerCategory('hydration')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorias de Atividades -->
+    <div class="category-section">
+      <h3 class="section-title">💼 Atividades</h3>
+      <div class="edit-categories-grid">
+        <div class="edit-category-card" data-category="work">
+          <span class="category-icon">💼</span>
+          <h3>Trabalho</h3>
+          <p class="category-description">Horários e atividades de trabalho</p>
+          <button onclick="editPlannerCategory('work')" class="btn btn-primary">
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="study">
+          <span class="category-icon">📚</span>
+          <h3>Estudo</h3>
+          <p class="category-description">Cursos e horários de estudo</p>
+          <button
+            onclick="editPlannerCategory('study')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="exercise">
+          <span class="category-icon">💪</span>
+          <h3>Exercício</h3>
+          <p class="category-description">Atividades físicas planejadas</p>
+          <button
+            onclick="editPlannerCategory('exercise')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="projects">
+          <span class="category-icon">🎯</span>
+          <h3>Projetos</h3>
+          <p class="category-description">Projetos pessoais e side projects</p>
+          <button
+            onclick="editPlannerCategory('projects')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="edit-category-card" data-category="cleaning">
+          <span class="category-icon">🧹</span>
+          <h3>Limpeza</h3>
+          <p class="category-description">Tarefas de limpeza e organização</p>
+          <button
+            onclick="editPlannerCategory('cleaning')"
+            class="btn btn-primary"
+          >
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações -->
+    <div class="edit-actions">
+      <div class="button-group">
+        <button onclick="goToSchedules()" class="btn btn-outline">
+          ← Voltar
+        </button>
+        <button onclick="finalizePlannerSave()" class="btn btn-primary">
+          ✅ Salvar Alterações
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

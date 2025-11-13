@@ -129,3 +129,28 @@ function markMealComplete(dateKey, activityIndex) {
     saveToStorage();
     showScheduleView(appState.activeFilter);
 }
+
+// === Navegação de Tabs (Refeições/Hidratação) ===
+
+// Alternar entre tabs de nutrição
+function switchNutritionTab(event, tabName) {
+    // Salvar escolha do usuário
+    localStorage.setItem('activeNutritionTab', tabName);
+
+    // Remover classe active de todos os tabs
+    const tabs = document.querySelectorAll('.nutrition-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    // Remover classe active de todos os painéis
+    const panels = document.querySelectorAll('.tab-panel');
+    panels.forEach(panel => panel.classList.remove('active'));
+
+    // Adicionar classe active ao tab clicado
+    event.currentTarget.classList.add('active');
+
+    // Mostrar painel correspondente
+    const panel = document.getElementById(`${tabName}-panel`);
+    if (panel) {
+        panel.classList.add('active');
+    }
+}

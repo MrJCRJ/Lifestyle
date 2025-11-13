@@ -1,0 +1,70 @@
+<!-- Planejamento Diário - Limpeza -->
+<section id="planner-cleaning-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>🧹 Limpeza</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-cleaning-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai fazer limpeza?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasCleaning"
+            value="yes"
+            onchange="togglePlannerCleaningForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasCleaning"
+            value="no"
+            onchange="togglePlannerCleaningForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-cleaning-details" style="display: none">
+      <!-- Configurações Rápidas -->
+      <div
+        id="planner-cleaning-quick-configs"
+        class="quick-config-section"
+      ></div>
+
+      <div class="form-group">
+        <label for="plannerCleaningStartTime">Horário de início</label>
+        <input type="time" id="plannerCleaningStartTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerCleaningEndTime">Horário de término</label>
+        <input type="time" id="plannerCleaningEndTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerCleaningNotes">Áreas/Tarefas (opcional)</label>
+        <textarea
+          id="plannerCleaningNotes"
+          placeholder="Ex: Cozinha, banheiro, organizar quarto..."
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerCleaning()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

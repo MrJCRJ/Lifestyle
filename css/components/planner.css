@@ -1,0 +1,198 @@
+/**
+ * PLANNER COMPONENTS CSS
+ * Estilos específicos para componentes de planejamento
+ * Carregado sob demanda (lazy loading)
+ */
+
+/* Navbar do Planejador */
+.planner-navbar {
+  position: sticky;
+  top: 0;
+  background: var(--bg-card-medium);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 100;
+  padding: var(--spacing-sm) 0;
+}
+
+.planner-nav-container {
+  display: flex;
+  gap: var(--spacing-xs);
+  padding: 0 var(--spacing-md);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.planner-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-sm);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  white-space: nowrap;
+}
+
+.planner-nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+.planner-nav-item.active {
+  background: var(--primary-color);
+  border-color: var(--primary-light);
+  color: white;
+}
+
+.planner-nav-item .nav-icon {
+  font-size: 1.5rem;
+}
+
+.planner-nav-item .nav-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.planner-nav-divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 var(--spacing-xs);
+}
+
+.planner-nav-finalize {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+  color: white;
+  font-weight: 600;
+}
+
+.planner-nav-finalize:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: scale(1.05);
+}
+
+/* Telas do Planejador */
+.planner-screen {
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Tela de Edição */
+.edit-content {
+  padding: var(--spacing-lg);
+}
+
+.edit-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.category-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-title {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.edit-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.edit-category-card {
+  background: var(--bg-card-medium);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.edit-category-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.edit-category-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-color);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.edit-category-card:hover::before {
+  opacity: 1;
+}
+
+.category-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.edit-category-card h3 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+  font-size: 1.1rem;
+}
+
+.category-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.edit-category-card .btn {
+  width: 100%;
+}
+
+.edit-actions {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .planner-nav-container {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .planner-nav-item {
+    min-width: 70px;
+    padding: var(--spacing-xs);
+  }
+
+  .planner-nav-item .nav-icon {
+    font-size: 1.3rem;
+  }
+
+  .planner-nav-item .nav-label {
+    font-size: 0.7rem;
+  }
+
+  .edit-categories-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -152,6 +152,117 @@ function renderActivity(schedule, activity, index, isToday) {
     `;
 }
 
+// Renderizar card unificado de Nutrição (Refeições + Hidratação)
+function renderNutritionCard(schedule, hydrationActivity, mealActivities) {
+    const totalMeals = mealActivities.length;
+    const completedMeals = mealActivities.filter(m => m.simpleTracking?.status === 'complete').length;
+
+    let waterData = { consumed: 0, goal: 2000 };
+    let waterPercentage = 0;
+    let hydrationIndex = -1;
+
+    if (hydrationActivity) {
+        waterData = hydrationActivity.waterTracking || { consumed: 0, goal: hydrationActivity.waterGoal || 2000 };
+        waterPercentage = Math.min(100, Math.round((waterData.consumed / waterData.goal) * 100));
+        hydrationIndex = schedule.activities.indexOf(hydrationActivity);
+    }
+
+    // Recuperar tab ativa salva (default: 'meals')
+    const activeTab = localStorage.getItem('activeNutritionTab') || 'meals';
+    const isMealsActive = activeTab === 'meals';
+    const isHydrationActive = activeTab === 'hydration';
+
+    // Renderizar conteúdo de hidratação
+    const hydrationContent = hydrationActivity ? `
+        <div class="hydration-summary">
+            <div class="hydration-header">
+                <span class="hydration-icon">💧</span>
+                <span class="hydration-title">Hidratação Diária</span>
+                <span class="hydration-percentage">${waterPercentage}%</span>
+            </div>
+            <div class="water-progress">
+                <div class="water-progress-bar">
+                    <div class="water-progress-fill" style="width: ${waterPercentage}%"></div>
+                </div>
+            </div>
+            <div class="hydration-info">
+                <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
+                <div class="water-buttons-compact">
+                    <button onclick="addWaterIntake('${schedule.date}', ${hydrationIndex}, 250)" class="btn-icon btn-water-small" title="+ 250ml">💧</button>
+                    <button onclick="addWaterIntake('${schedule.date}', ${hydrationIndex}, 500)" class="btn-icon btn-water-small" title="+ 500ml">🥤</button>
+                    <button onclick="resetWaterIntake('${schedule.date}', ${hydrationIndex})" class="btn-icon btn-clear-small" title="Resetar">↻</button>
+                </div>
+            </div>
+        </div>
+    ` : '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Nenhuma meta de hidratação definida</p>';
+
+    // Renderizar conteúdo de refeições
+    const mealsContent = mealActivities.length > 0 ? `
+        <div class="meals-summary">
+            <div class="meals-header">
+                <span class="meals-icon">🍽️</span>
+                <span class="meals-title">Refeições do Dia</span>
+                <span class="meals-percentage">${completedMeals}/${totalMeals}</span>
+            </div>
+            <div class="meals-progress">
+                <div class="meals-progress-bar">
+                    <div class="meals-progress-fill" style="width: ${Math.round((completedMeals / totalMeals) * 100)}%"></div>
+                </div>
+            </div>
+            <div class="meals-list">
+                ${mealActivities.map(meal => {
+        const mealIndex = schedule.activities.indexOf(meal);
+        const isCompleted = meal.simpleTracking?.status === 'complete';
+        const completedTime = meal.simpleTracking?.completedAt || '';
+
+        return `
+                        <div class="meal-item ${isCompleted ? 'completed' : ''}">
+                            <div class="meal-info">
+                                <span class="meal-name">${meal.name}</span>
+                                ${isCompleted && completedTime ? `<span class="meal-time">✓ ${completedTime}</span>` : ''}
+                            </div>
+                            <div class="meal-actions">
+                                ${!isCompleted ? `
+                                    <button onclick="markMealComplete('${schedule.date}', ${mealIndex})" class="btn-icon btn-success btn-small" title="Marcar como feita">✓</button>
+                                ` : `
+                                    <button onclick="clearEventStatus('${schedule.date}', ${mealIndex})" class="btn-icon btn-clear btn-small" title="Desmarcar">↻</button>
+                                `}
+                            </div>
+                        </div>
+                    `;
+    }).join('')}
+            </div>
+        </div>
+    ` : '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Nenhuma refeição planejada</p>';
+
+    return `
+        <div class="nutrition-hydration-card">
+            <div class="nutrition-card-inner">
+                <div class="nutrition-tabs">
+                    <button class="nutrition-tab ${isMealsActive ? 'active' : ''}" onclick="switchNutritionTab(event, 'meals')">
+                        <span class="tab-icon">🍽️</span>
+                        <span>Refeições</span>
+                        ${totalMeals > 0 ? `<span class="tab-badge">${completedMeals}/${totalMeals}</span>` : ''}
+                    </button>
+                    <button class="nutrition-tab ${isHydrationActive ? 'active' : ''}" onclick="switchNutritionTab(event, 'hydration')">
+                        <span class="tab-icon">💧</span>
+                        <span>Hidratação</span>
+                        ${hydrationActivity ? `<span class="tab-badge">${waterPercentage}%</span>` : ''}
+                    </button>
+                </div>
+                <div class="nutrition-content">
+                    <div id="meals-panel" class="tab-panel ${isMealsActive ? 'active' : ''}">
+                        ${mealsContent}
+                    </div>
+                    <div id="hydration-panel" class="tab-panel ${isHydrationActive ? 'active' : ''}">
+                        ${hydrationContent}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // Renderizar card de dia com cronograma
 function renderScheduleDayCard(schedule, isToday) {
     const headerHtml = renderScheduleHeader(schedule);
@@ -166,81 +277,10 @@ function renderScheduleDayCard(schedule, isToday) {
     const mealActivities = schedule.activities.filter(act => act.type === 'meal');
     const regularActivities = schedule.activities.filter(act => act.type !== 'hydration' && act.type !== 'meal');
 
-    // Renderizar hidratação no topo (se for hoje)
-    let hydrationHtml = '';
-    if (isToday && hydrationActivity) {
-        const waterData = hydrationActivity.waterTracking || { consumed: 0, goal: hydrationActivity.waterGoal || 2000 };
-        const percentage = Math.min(100, Math.round((waterData.consumed / waterData.goal) * 100));
-        const hydrationIndex = schedule.activities.indexOf(hydrationActivity);
-
-        hydrationHtml = `
-            <div class="hydration-summary">
-                <div class="hydration-header">
-                    <span class="hydration-icon">💧</span>
-                    <span class="hydration-title">Hidratação Diária</span>
-                    <span class="hydration-percentage">${percentage}%</span>
-                </div>
-                <div class="water-progress">
-                    <div class="water-progress-bar">
-                        <div class="water-progress-fill" style="width: ${percentage}%"></div>
-                    </div>
-                </div>
-                <div class="hydration-info">
-                    <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
-                    <div class="water-buttons-compact">
-                        <button onclick="addWaterIntake('${schedule.date}', ${hydrationIndex}, 250)" class="btn-icon btn-water-small" title="+ 250ml">💧</button>
-                        <button onclick="addWaterIntake('${schedule.date}', ${hydrationIndex}, 500)" class="btn-icon btn-water-small" title="+ 500ml">🥤</button>
-                        <button onclick="resetWaterIntake('${schedule.date}', ${hydrationIndex})" class="btn-icon btn-clear-small" title="Resetar">↻</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // Renderizar refeições no topo (se for hoje)
-    let mealsHtml = '';
-    if (isToday && mealActivities.length > 0) {
-        const totalMeals = mealActivities.length;
-        const completedMeals = mealActivities.filter(m => m.simpleTracking?.status === 'complete').length;
-        const percentage = Math.round((completedMeals / totalMeals) * 100);
-
-        mealsHtml = `
-            <div class="meals-summary">
-                <div class="meals-header">
-                    <span class="meals-icon">🍽️</span>
-                    <span class="meals-title">Refeições do Dia</span>
-                    <span class="meals-percentage">${completedMeals}/${totalMeals}</span>
-                </div>
-                <div class="meals-progress">
-                    <div class="meals-progress-bar">
-                        <div class="meals-progress-fill" style="width: ${percentage}%"></div>
-                    </div>
-                </div>
-                <div class="meals-list">
-                    ${mealActivities.map((meal, idx) => {
-            const mealIndex = schedule.activities.indexOf(meal);
-            const isCompleted = meal.simpleTracking?.status === 'complete';
-            const completedTime = meal.simpleTracking?.completedAt || '';
-
-            return `
-                            <div class="meal-item ${isCompleted ? 'completed' : ''}">
-                                <div class="meal-info">
-                                    <span class="meal-name">${meal.name}</span>
-                                    ${isCompleted && completedTime ? `<span class="meal-time">✓ ${completedTime}</span>` : ''}
-                                </div>
-                                <div class="meal-actions">
-                                    ${!isCompleted ? `
-                                        <button onclick="markMealComplete('${schedule.date}', ${mealIndex})" class="btn-icon btn-success btn-small" title="Marcar como feita">✓</button>
-                                    ` : `
-                                        <button onclick="clearEventStatus('${schedule.date}', ${mealIndex})" class="btn-icon btn-clear btn-small" title="Desmarcar">↻</button>
-                                    `}
-                                </div>
-                            </div>
-                        `;
-        }).join('')}
-                </div>
-            </div>
-        `;
+    // Renderizar card unificado de nutrição (refeições + hidratação)
+    let nutritionCardHtml = '';
+    if (isToday && (hydrationActivity || mealActivities.length > 0)) {
+        nutritionCardHtml = renderNutritionCard(schedule, hydrationActivity, mealActivities);
     }
 
     // Renderizar atividades regulares
@@ -255,8 +295,7 @@ function renderScheduleDayCard(schedule, isToday) {
     return `
         <div class="day-schedule ${schedule.isPlanned ? 'planned-schedule' : ''}">
             ${headerHtml}
-            ${hydrationHtml}
-            ${mealsHtml}
+            ${nutritionCardHtml}
             <div class="schedule-activities">
                 ${activitiesHtml}
             </div>

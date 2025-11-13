@@ -27,6 +27,9 @@
 /* Schedule - Day Schedule, Activities */
 @import "screens/_schedule.css";
 
+/* Nutrition Card - Meals & Hydration Unified */
+@import "screens/_nutrition-card.css";
+
 /* Forms - Radio Groups, Daily Planning */
 @import "screens/_forms.css";
 

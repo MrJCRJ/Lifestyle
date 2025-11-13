@@ -1,0 +1,51 @@
+<!-- Planejamento Diário - Trabalho -->
+<section id="planner-work-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>💼 Trabalho</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-work-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Você vai trabalhar?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasWork"
+            value="yes"
+            onchange="togglePlannerWorkForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasWork"
+            value="no"
+            onchange="togglePlannerWorkForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-work-details" style="display: none">
+      <div id="planner-work-quick-configs" class="quick-config-section"></div>
+      <div id="planner-jobs-container"></div>
+      <button onclick="addPlannerJobSlot()" class="btn btn-outline btn-small">
+        ➕ Adicionar Trabalho
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerWork()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

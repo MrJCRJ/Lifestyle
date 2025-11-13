@@ -1,0 +1,59 @@
+<!-- Formulário de Refeições -->
+<section id="meals-screen" class="screen">
+  <div class="form-content">
+    <h2>🍽️ Alimentação</h2>
+    <p class="subtitle">Configure seus horários de refeições</p>
+
+    <div class="form-group">
+      <label>Você faz refeições regulares?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="hasMeals"
+            value="yes"
+            onchange="toggleMealsForm(true); loadMealsData();"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="hasMeals"
+            value="no"
+            onchange="toggleMealsForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="meals-details" style="display: none">
+      <p class="subtitle" style="margin-top: 20px">
+        Quantas refeições você faz por dia?
+      </p>
+      <div class="form-group">
+        <label for="mealsCount">Número de refeições</label>
+        <input
+          type="number"
+          id="mealsCount"
+          min="1"
+          max="8"
+          value="3"
+          placeholder="Ex: 3"
+        />
+        <small
+          >As refeições não têm horário fixo. Você vai marcá-las conforme fizer
+          ao longo do dia.</small
+        >
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="prevStep('meals')" class="btn btn-outline">
+        Voltar
+      </button>
+      <button onclick="saveMeals()" class="btn btn-primary">Continuar</button>
+    </div>
+  </div>
+</section>

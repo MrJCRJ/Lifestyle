@@ -1,0 +1,57 @@
+<!-- Planejamento Diário - Projetos -->
+<section id="planner-projects-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>🎯 Projetos Pessoais</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-projects-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai trabalhar em projetos pessoais?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasProject"
+            value="yes"
+            onchange="togglePlannerProjectForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasProject"
+            value="no"
+            onchange="togglePlannerProjectForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-project-details" style="display: none">
+      <div
+        id="planner-project-quick-configs"
+        class="quick-config-section"
+      ></div>
+      <div id="planner-projects-container"></div>
+      <button
+        onclick="addPlannerProjectSlot()"
+        class="btn btn-outline btn-small"
+      >
+        ➕ Adicionar Projeto
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerProjects()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

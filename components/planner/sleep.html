@@ -1,0 +1,32 @@
+<!-- Planejamento Diário - Sono -->
+<section id="planner-sleep-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>😴 Rotina de Sono</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-sleep-day-name">Amanhã</span></strong>
+    </p>
+
+    <!-- Configurações Rápidas -->
+    <div id="planner-sleep-quick-configs" class="quick-config-section"></div>
+
+    <div class="form-group">
+      <label for="plannerSleepTime">Que horas vai dormir?</label>
+      <input type="time" id="plannerSleepTime" required />
+    </div>
+
+    <div class="form-group">
+      <label for="plannerWakeTime">Que horas vai acordar?</label>
+      <input type="time" id="plannerWakeTime" required />
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerSleep()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

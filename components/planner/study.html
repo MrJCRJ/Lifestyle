@@ -1,0 +1,51 @@
+<!-- Planejamento Diário - Estudo -->
+<section id="planner-study-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>📚 Estudos</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-study-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Você vai estudar?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasStudy"
+            value="yes"
+            onchange="togglePlannerStudyForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasStudy"
+            value="no"
+            onchange="togglePlannerStudyForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-study-details" style="display: none">
+      <div id="planner-study-quick-configs" class="quick-config-section"></div>
+      <div id="planner-studies-container"></div>
+      <button onclick="addPlannerStudySlot()" class="btn btn-outline btn-small">
+        ➕ Adicionar Estudo
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerStudy()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

@@ -2,6 +2,9 @@
 .screen {
   display: none;
   animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Performance: Melhor renderização e redução de layout shifts */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }
 
 .screen.active {

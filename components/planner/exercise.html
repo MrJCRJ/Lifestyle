@@ -1,0 +1,70 @@
+<!-- Planejamento Diário - Exercício -->
+<section id="planner-exercise-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>💪 Exercícios Físicos</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-exercise-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai praticar exercícios físicos?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasExercise"
+            value="yes"
+            onchange="togglePlannerExerciseForm(true); loadPlannerExerciseData();"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasExercise"
+            value="no"
+            onchange="togglePlannerExerciseForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-exercise-details" style="display: none">
+      <!-- Configurações Rápidas -->
+      <div
+        id="planner-exercise-quick-configs"
+        class="quick-config-section"
+      ></div>
+
+      <div class="form-group">
+        <label for="plannerExerciseType">Tipo de exercício</label>
+        <input
+          type="text"
+          id="plannerExerciseType"
+          placeholder="Ex: Musculação, Corrida, Yoga..."
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerExerciseStartTime">Horário de início</label>
+        <input type="time" id="plannerExerciseStartTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerExerciseEndTime">Horário de término</label>
+        <input type="time" id="plannerExerciseEndTime" />
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerExercise()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

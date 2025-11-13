@@ -1,0 +1,434 @@
+/* ===== NUTRITION & HYDRATION CARD ===== */
+
+/* Card unificado para refeições e hidratação */
+.nutrition-hydration-card {
+  background: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  padding: 0 0px;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+/* Wrapper interno com estilo do card */
+.nutrition-card-inner {
+  background: var(--bg-card-medium);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Navbar de navegação (Tabs) */
+.nutrition-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.nutrition-tab {
+  flex: 1;
+  padding: var(--spacing-md);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.nutrition-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.nutrition-tab.active {
+  color: var(--primary-color);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.nutrition-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--primary-light)
+  );
+  border-radius: 3px 3px 0 0;
+}
+
+/* Ícones dos tabs */
+.nutrition-tab .tab-icon {
+  font-size: 1.2rem;
+}
+
+.nutrition-tab .tab-badge {
+  background: var(--primary-color);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* Conteúdo dos tabs */
+.nutrition-content {
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== HYDRATION SECTION ===== */
+.hydration-summary {
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(37, 99, 235, 0.05)
+  );
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hydration-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.hydration-icon {
+  font-size: 1.5rem;
+}
+
+.hydration-title {
+  flex: 1;
+  margin-left: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.hydration-percentage {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.water-progress {
+  margin: var(--spacing-md) 0;
+}
+
+.water-progress-bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.water-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.hydration-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-sm);
+}
+
+.water-amount {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.water-buttons-compact {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-water-small,
+.btn-clear-small {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-water-small:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: scale(1.1);
+}
+
+.btn-clear-small {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.btn-clear-small:hover {
+  background: rgba(239, 68, 68, 0.3);
+  transform: scale(1.1);
+}
+
+/* ===== MEALS SECTION ===== */
+.meals-summary {
+  background: linear-gradient(
+    135deg,
+    rgba(251, 146, 60, 0.1),
+    rgba(249, 115, 22, 0.05)
+  );
+  border: 1px solid rgba(251, 146, 60, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.meals-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.meals-icon {
+  font-size: 1.5rem;
+}
+
+.meals-title {
+  flex: 1;
+  margin-left: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.meals-percentage {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fb923c;
+}
+
+.meals-progress {
+  margin: var(--spacing-md) 0;
+}
+
+.meals-progress-bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.meals-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #fb923c, #f97316);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(251, 146, 60, 0.5);
+}
+
+.meals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: var(--spacing-md);
+  width: 100%;
+}
+
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.meal-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.meal-item.completed {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.meal-item.completed .meal-name {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.meal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.meal-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.meal-time {
+  font-size: 0.8rem;
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.meal-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.btn-success {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--success-color);
+}
+
+.btn-success:hover {
+  background: rgba(34, 197, 94, 0.3);
+  transform: scale(1.1);
+}
+
+.btn-clear {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger-color);
+}
+
+.btn-clear:hover {
+  background: rgba(239, 68, 68, 0.3);
+  transform: scale(1.1);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nutrition-tab {
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+
+  .nutrition-tab .tab-icon {
+    font-size: 1rem;
+  }
+
+  .nutrition-content {
+    padding: 0;
+  }
+
+  .water-buttons-compact,
+  .meal-actions {
+    gap: 4px;
+  }
+
+  .btn-water-small,
+  .btn-clear-small {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nutrition-tab {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 8px;
+  }
+
+  .nutrition-tab .tab-badge {
+    margin-left: 0;
+  }
+
+  .hydration-info,
+  .meal-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .water-buttons-compact,
+  .meal-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

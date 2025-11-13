@@ -1,0 +1,149 @@
+/**
+ * SETUP COMPONENTS CSS
+ * Estilos específicos para componentes de configuração inicial
+ * Carregado sob demanda (lazy loading)
+ */
+
+/* Container de Setup */
+.setup-screen {
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Formulários de Setup */
+.setup-screen .form-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.setup-screen h2 {
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+}
+
+.setup-screen .subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Dia atual no setup */
+#current-work-day,
+#current-study-day,
+#current-project-day {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Containers de itens no setup */
+#jobs-container,
+#studies-container,
+#projects-container {
+  margin: var(--spacing-lg) 0;
+}
+
+/* Estilos específicos de setup */
+.setup-screen .radio-group {
+  justify-content: center;
+  gap: var(--spacing-lg);
+}
+
+.setup-screen .radio-group label {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--bg-card-light);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-align: center;
+}
+
+.setup-screen .radio-group label:hover {
+  border-color: var(--primary-color);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.setup-screen .radio-group input:checked + span {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Detalhes do setup */
+[id$="-details"] {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--bg-card-light);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Botões de navegação */
+.setup-screen .button-group {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+
+.setup-screen .button-group .btn {
+  flex: 1;
+}
+
+/* Animação de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Progress indicator (opcional para futuro) */
+.setup-progress {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xl);
+}
+
+.setup-progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.setup-progress-dot.active {
+  background: var(--primary-color);
+  width: 30px;
+  border-radius: 5px;
+}
+
+.setup-progress-dot.completed {
+  background: var(--success-color);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .setup-screen .form-content {
+    padding: var(--spacing-md);
+  }
+
+  .setup-screen .radio-group {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .setup-screen .radio-group label {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .setup-screen .button-group {
+    flex-direction: column;
+  }
+}
