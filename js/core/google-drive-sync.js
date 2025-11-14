@@ -352,7 +352,21 @@ async function findOrCreateDriveFile() {
     }
 
     if (driveState.fileId) {
-      return driveState.fileId;
+      try {
+        await gapi.client.drive.files.get({
+          fileId: driveState.fileId,
+          fields: 'id'
+        });
+        return driveState.fileId;
+      } catch (error) {
+        if (error.status === 404) {
+          console.warn('Arquivo salvo anteriormente não encontrado, recriando...');
+          driveState.fileId = null;
+          localStorage.removeItem('googleDrive_fileId');
+        } else {
+          throw error;
+        }
+      }
     }
 
     const searchStrategies = [
@@ -447,43 +461,32 @@ async function googleDrivePushData() {
       userData: appState.userData
     };
 
-    const boundary = '-------314159265358979323846';
-    const delimiter = "\r\n--" + boundary + "\r\n";
-    const close_delim = "\r\n--" + boundary + "--";
-
-    const contentType = 'application/json';
-    const metadata = {
-      name: GOOGLE_DRIVE_CONFIG.FILE_NAME,
-      mimeType: contentType
-    };
-
-    const base64Data = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-    const multipartRequestBody =
-      delimiter +
-      'Content-Type: application/json\r\n\r\n' +
-      JSON.stringify(metadata) +
-      delimiter +
-      'Content-Type: ' + contentType + '\r\n' +
-      'Content-Transfer-Encoding: base64\r\n' +
-      '\r\n' +
-      base64Data +
-      close_delim;
-
-    await gapi.client.request({
-      path: '/upload/drive/v3/files/' + fileId,
-      method: 'PATCH',
-      params: { uploadType: 'multipart' },
-      headers: {
-        'Content-Type': 'multipart/related; boundary="' + boundary + '"'
+    const response = await gapi.client.drive.files.update({
+      fileId,
+      fields: 'id, modifiedTime',
+      resource: {
+        name: GOOGLE_DRIVE_CONFIG.FILE_NAME,
+        mimeType: 'application/json'
       },
-      body: multipartRequestBody
+      media: {
+        mimeType: 'application/json',
+        body: JSON.stringify(data)
+      }
     });
 
     driveState.lastSync = new Date();
     localStorage.setItem('googleDrive_lastSync', driveState.lastSync.toISOString());
     updateDriveUI();
+    console.info('Dados enviados para o Google Drive. Última modificação:', response.result?.modifiedTime);
 
   } catch (error) {
+    if (error.status === 404) {
+      console.warn('Arquivo do Drive não encontrado durante upload. Tentando recriar...');
+      driveState.fileId = null;
+      localStorage.removeItem('googleDrive_fileId');
+      await googleDrivePushData();
+      return;
+    }
     console.error('Erro ao enviar dados para o Drive:', error);
     throw error;
   }
