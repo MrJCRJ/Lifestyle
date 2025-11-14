@@ -10,6 +10,9 @@ const appState = {
     }
 };
 
+// Expor estado globalmente para integrações (ex: Google Drive)
+window.appState = appState;
+
 // Converter string YYYY-MM-DD para Date local (sem timezone)
 function parseDateKey(dateKey) {
     if (typeof dateKey !== 'string') return null;
