@@ -50,6 +50,8 @@ Após o deploy:
 - `scripts/vercel-build.sh` - Script executado durante o build
 - `.env.example` - Template de variáveis de ambiente
 
+> ℹ️ **Nota**: o `vercel.json` já está configurado apenas com `headers`, `cleanUrls` e `trailingSlash`. Não adicione a chave `routes` ao mesmo tempo, pois o Vercel não aceita essas propriedades juntas e o deploy falhará.
+
 ### 📚 Documentação Completa
 
 Para mais detalhes, consulte:
