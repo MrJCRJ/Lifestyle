@@ -1,6 +1,7 @@
 (function (global) {
   const session = global.GoogleDriveSession;
   const configProvider = global.GoogleDriveConfig;
+  const conflictResolver = global.GoogleDriveConflictResolver;
   const {
     state,
     setFileId,
@@ -21,6 +22,51 @@
       return;
     }
     console.info(`[GoogleDrive] ${action}: ${fileId} → ${buildDriveFileLink(fileId)}`);
+  }
+
+  function getLocalSnapshot() {
+    const saved = localStorage.getItem('lifestyleData');
+    if (!saved) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(saved);
+    } catch (error) {
+      console.warn('Não foi possível interpretar os dados locais para comparação com o Drive', error);
+      return null;
+    }
+  }
+
+  function summarizeForConflict(data, fallbackDate) {
+    if (!conflictResolver) {
+      return null;
+    }
+
+    const payload = {
+      userData: data?.userData,
+      lastModified: data?.lastModified || data?.exportDate || fallbackDate || null
+    };
+
+    return conflictResolver.summarize(payload);
+  }
+
+  function shouldPromptConflict(driveSummary, localSummary) {
+    if (!conflictResolver || !driveSummary || !localSummary) {
+      return false;
+    }
+    return conflictResolver.shouldResolveConflict(driveSummary, localSummary);
+  }
+
+  async function downloadDriveData(fileId) {
+    const response = await global.gapi.client.drive.files.get({
+      fileId,
+      alt: 'media'
+    });
+    if (!response.body) {
+      return null;
+    }
+    return JSON.parse(response.body);
   }
 
   async function ensureValidFileId() {
@@ -119,7 +165,8 @@
     return createFile();
   }
 
-  async function pushData() {
+  async function pushData(options = {}) {
+    const { skipConflictCheck = false } = options;
     if (!state.isAuthenticated) {
       return false;
     }
@@ -133,12 +180,36 @@
     const fileId = await findOrCreateFile();
     const config = configProvider.get();
 
+    const exportDate = new Date().toISOString();
     const payload = {
-      exportDate: new Date().toISOString(),
+      exportDate,
       version: '2.0',
       appName: 'Lifestyle App',
       userData: global.appState?.userData
     };
+
+    if (!skipConflictCheck && conflictResolver) {
+      try {
+        const currentDriveData = await downloadDriveData(fileId);
+        const driveSummary = summarizeForConflict(currentDriveData);
+        const localSummary = summarizeForConflict(payload, exportDate);
+
+        if (shouldPromptConflict(driveSummary, localSummary) && driveSummary.lastModified > localSummary.lastModified) {
+          const choice = conflictResolver.promptResolution({
+            driveSummary,
+            localSummary,
+            context: 'push'
+          });
+
+          if (choice === 'drive') {
+            console.info('Sincronização cancelada: usuário preferiu manter os dados atuais do Google Drive.');
+            return false;
+          }
+        }
+      } catch (error) {
+        console.warn('Não foi possível comparar o arquivo do Drive antes do envio. Continuando com o push.', error);
+      }
+    }
 
     let response;
 
@@ -159,7 +230,7 @@
       if (error.status === 404) {
         console.warn('Arquivo do Drive não encontrado durante upload. Tentando recriar...');
         clearFileId();
-        return pushData();
+        return pushData({ skipConflictCheck });
       }
       throw error;
     }
@@ -183,48 +254,49 @@
     }
 
     const fileId = await findOrCreateFile();
-    let response;
+    let driveData;
 
     try {
-      response = await global.gapi.client.drive.files.get({
-        fileId,
-        alt: 'media'
-      });
+      driveData = await downloadDriveData(fileId);
     } catch (error) {
       if (error.status === 404) {
         console.log('Arquivo não existe no Drive, criando...');
         clearFileId();
-        await pushData();
+        await pushData({ skipConflictCheck: true });
         return true;
       }
       throw error;
     }
 
-    if (!response.body) {
-      await pushData();
+    if (!driveData) {
+      await pushData({ skipConflictCheck: true });
       return true;
     }
 
-    const driveData = JSON.parse(response.body);
     if (!driveData.userData) {
       return false;
     }
 
-    const driveDate = new Date(driveData.exportDate);
-    const localDataStr = localStorage.getItem('lifestyleData');
+    const localSnapshot = getLocalSnapshot();
+    const driveSummary = summarizeForConflict(driveData);
+    const localSummary = summarizeForConflict(localSnapshot);
 
-    if (localDataStr) {
-      try {
-        const localData = JSON.parse(localDataStr);
-        const localLastModified = new Date(localData.lastModified || 0);
-        if (localLastModified > driveDate) {
-          console.log('Dados locais mais recentes, enviando para o Drive...');
-          await pushData();
-          return true;
-        }
-      } catch (error) {
-        console.warn('Não foi possível comparar dados locais com os dados do Drive', error);
+    if (shouldPromptConflict(driveSummary, localSummary)) {
+      const choice = conflictResolver.promptResolution({
+        driveSummary,
+        localSummary,
+        context: 'pull'
+      });
+
+      if (choice === 'local') {
+        console.info('Usuário optou por manter os dados locais. Enviando para o Google Drive...');
+        await pushData({ skipConflictCheck: true });
+        return true;
       }
+    } else if (localSummary?.lastModified && driveSummary?.lastModified && localSummary.lastModified > driveSummary.lastModified) {
+      console.log('Dados locais mais recentes detectados automaticamente, enviando para o Drive...');
+      await pushData({ skipConflictCheck: true });
+      return true;
     }
 
     if (driveData.userData) {
@@ -263,7 +335,7 @@
       clearFileId();
     }
 
-    await pushData();
+    await pushData({ skipConflictCheck: true });
     logFileLocation('Backup recriado no Google Drive', state.fileId);
     return true;
   }
