@@ -53,6 +53,7 @@ Após o deploy:
 ### 📚 Documentação Completa
 
 Para mais detalhes, consulte:
+
 - [docs/VERCEL_SETUP.md](../docs/VERCEL_SETUP.md) - Guia detalhado
 - [docs/ENV_QUICKSTART.md](../docs/ENV_QUICKSTART.md) - Quick start de variáveis
 
