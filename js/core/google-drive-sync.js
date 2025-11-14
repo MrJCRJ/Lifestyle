@@ -136,9 +136,7 @@ function loadGoogleDriveAPI() {
  */
 function initGoogleDriveClient() {
   const config = {
-    clientId: GOOGLE_DRIVE_CONFIG.CLIENT_ID,
-    discoveryDocs: GOOGLE_DRIVE_CONFIG.DISCOVERY_DOCS,
-    scope: GOOGLE_DRIVE_CONFIG.SCOPES
+    discoveryDocs: GOOGLE_DRIVE_CONFIG.DISCOVERY_DOCS
   };
 
   // API Key é opcional - adicionar somente se configurada
