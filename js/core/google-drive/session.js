@@ -41,6 +41,16 @@
   async function ensureSession({ promptUser = false } = {}) {
     await loader.ensureLibraries();
 
+    const cachedTokenApplied = applyCachedTokenToClient();
+    if (!cachedTokenApplied && state.tokenExpiresAt && Date.now() >= state.tokenExpiresAt) {
+      setAccessToken(null, null);
+      setAuthenticated(false);
+    }
+
+    if (cachedTokenApplied && !state.isAuthenticated) {
+      setAuthenticated(true);
+    }
+
     if (!state.isAuthenticated) {
       if (promptUser) {
         await requestAccessToken(true);
@@ -98,6 +108,25 @@
 
     global.gapi?.client?.setToken(null);
     clearSession();
+  }
+
+  function applyCachedTokenToClient() {
+    if (!state.accessToken || !state.tokenExpiresAt) {
+      return false;
+    }
+
+    const stillValid = Date.now() < (state.tokenExpiresAt - TOKEN_REFRESH_BUFFER_MS / 2);
+    if (!stillValid) {
+      return false;
+    }
+
+    try {
+      global.gapi?.client?.setToken({ access_token: state.accessToken });
+      return true;
+    } catch (error) {
+      console.warn('Não foi possível reaplicar token em cache', error);
+      return false;
+    }
   }
 
   global.GoogleDriveSession = {

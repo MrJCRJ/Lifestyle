@@ -6,6 +6,11 @@
     wasConnected: 'googleDrive_wasConnected'
   };
 
+  const SESSION_KEYS = {
+    accessToken: 'googleDrive_sessionToken',
+    tokenExpiresAt: 'googleDrive_sessionTokenExpiresAt'
+  };
+
   const state = {
     isAuthenticated: false,
     fileId: null,
@@ -37,8 +42,37 @@
 
       const savedConnection = localStorage.getItem(STORAGE_KEYS.wasConnected);
       state.wasConnected = savedConnection === 'true';
+      hydrateSessionToken();
     } catch (error) {
       console.warn('[DriveState] Falha ao carregar preferências do localStorage', error);
+    }
+  }
+
+  function hydrateSessionToken() {
+    if (typeof sessionStorage === 'undefined') {
+      return;
+    }
+
+    try {
+      const cachedToken = sessionStorage.getItem(SESSION_KEYS.accessToken);
+      const cachedExpiry = sessionStorage.getItem(SESSION_KEYS.tokenExpiresAt);
+
+      if (!cachedToken || !cachedExpiry) {
+        return;
+      }
+
+      const expiresAt = Number(cachedExpiry);
+      if (Number.isNaN(expiresAt) || expiresAt <= Date.now()) {
+        clearPersistedSessionToken();
+        return;
+      }
+
+      state.accessToken = cachedToken;
+      state.tokenExpiresAt = expiresAt;
+      state.isAuthenticated = true;
+      state.wasConnected = true;
+    } catch (error) {
+      console.warn('[DriveState] Não foi possível restaurar token do Google Drive', error);
     }
   }
 
@@ -100,6 +134,7 @@
     } else {
       state.tokenExpiresAt = null;
     }
+    persistSessionToken(state.accessToken, state.tokenExpiresAt);
   }
 
   function clearSession() {
@@ -114,6 +149,7 @@
     persist(STORAGE_KEYS.lastSync, null);
     persist(STORAGE_KEYS.fileId, null);
     persist(STORAGE_KEYS.autoSync, null);
+    clearPersistedSessionToken();
     requestRender();
   }
 
@@ -128,6 +164,36 @@
 
   function requestRender() {
     document.dispatchEvent(new CustomEvent('googleDrive:update-ui'));
+  }
+
+  function persistSessionToken(token, expiresAt) {
+    if (typeof sessionStorage === 'undefined') {
+      return;
+    }
+
+    try {
+      if (token && expiresAt) {
+        sessionStorage.setItem(SESSION_KEYS.accessToken, token);
+        sessionStorage.setItem(SESSION_KEYS.tokenExpiresAt, String(expiresAt));
+      } else {
+        clearPersistedSessionToken();
+      }
+    } catch (error) {
+      console.warn('[DriveState] Não foi possível salvar token do Google Drive', error);
+    }
+  }
+
+  function clearPersistedSessionToken() {
+    if (typeof sessionStorage === 'undefined') {
+      return;
+    }
+
+    try {
+      sessionStorage.removeItem(SESSION_KEYS.accessToken);
+      sessionStorage.removeItem(SESSION_KEYS.tokenExpiresAt);
+    } catch (error) {
+      console.warn('[DriveState] Não foi possível limpar token em cache', error);
+    }
   }
 
   hydrateFromStorage();

@@ -32,6 +32,7 @@
       showLoading('Reconectando ao Google Drive...');
       const ready = await session.ensureSession({ promptUser: false });
       if (ready) {
+        await session.fetchUserInfo();
         await files.pullData();
         console.info('[GoogleDrive] Dados recuperados automaticamente do Drive');
       }

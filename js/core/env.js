@@ -59,8 +59,7 @@ function getGoogleDriveConfig() {
     API_KEY: ENV.GOOGLE_API_KEY,
     DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
     SCOPES: [
-      'https://www.googleapis.com/auth/drive.file',
-      'https://www.googleapis.com/auth/drive.appdata'
+      'https://www.googleapis.com/auth/drive.file'
     ].join(' '),
     FILE_NAME: ENV.DRIVE_FILE_NAME
   };

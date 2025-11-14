@@ -12,6 +12,17 @@
     document.dispatchEvent(new CustomEvent('googleDrive:update-ui'));
   }
 
+  function buildDriveFileLink(fileId) {
+    return `https://drive.google.com/file/d/${fileId}/view?usp=drivesdk`;
+  }
+
+  function logFileLocation(action, fileId) {
+    if (!fileId) {
+      return;
+    }
+    console.info(`[GoogleDrive] ${action}: ${fileId} → ${buildDriveFileLink(fileId)}`);
+  }
+
   async function ensureValidFileId() {
     if (!state.fileId) {
       return false;
@@ -57,6 +68,7 @@
           const foundFile = response.result.files[0];
           const foundId = foundFile.id;
           setFileId(foundId);
+          logFileLocation('Arquivo encontrado no Drive', foundId);
           return foundId;
         }
       } catch (error) {
@@ -81,6 +93,7 @@
 
       if (response.result && response.result.id) {
         setFileId(response.result.id);
+        logFileLocation('Arquivo criado no Drive', response.result.id);
         return response.result.id;
       }
     } catch (error) {
@@ -153,6 +166,7 @@
 
     setLastSync(new Date());
     emitUIUpdate();
+    logFileLocation('Dados enviados para o Google Drive', fileId);
     console.info('Dados enviados para o Google Drive. Última modificação:', response.result?.modifiedTime);
     return true;
   }
@@ -250,6 +264,7 @@
     }
 
     await pushData();
+    logFileLocation('Backup recriado no Google Drive', state.fileId);
     return true;
   }
 
