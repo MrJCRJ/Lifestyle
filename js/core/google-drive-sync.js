@@ -18,7 +18,10 @@ const GOOGLE_DRIVE_CONFIG = window.AppEnv ? window.AppEnv.getGoogleDriveConfig()
   CLIENT_ID: '977777984787-5l6tf7jdsp44fra6fses0kv5hfanem4r.apps.googleusercontent.com',
   API_KEY: '',
   DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-  SCOPES: 'https://www.googleapis.com/auth/drive.appdata',
+  SCOPES: [
+    'https://www.googleapis.com/auth/drive.appdata',
+    'https://www.googleapis.com/auth/userinfo.email'
+  ].join(' '),
   FILE_NAME: 'lifestyle-app-data.json'
 };
 
@@ -29,31 +32,103 @@ const driveState = {
   lastSync: null,
   autoSync: true,
   userEmail: null,
-  isLoaded: false
+  isLoaded: false,
+  accessToken: null,
+  tokenExpiresAt: null
 };
 
-/**
- * Carregar Google API Client Library
- */
-function loadGoogleDriveAPI() {
+const TOKEN_REFRESH_BUFFER_MS = 60 * 1000;
+let gapiLoadPromise = null;
+let gisLoadPromise = null;
+let driveInitPromise = null;
+let tokenClientInstance = null;
+
+const savedAutoSync = localStorage.getItem('googleDrive_autoSync');
+if (savedAutoSync !== null) {
+  driveState.autoSync = savedAutoSync === 'true';
+}
+
+const savedLastSync = localStorage.getItem('googleDrive_lastSync');
+if (savedLastSync) {
+  driveState.lastSync = new Date(savedLastSync);
+}
+
+const savedFileId = localStorage.getItem('googleDrive_fileId');
+if (savedFileId) {
+  driveState.fileId = savedFileId;
+}
+
+function loadExternalScript(src, id) {
   return new Promise((resolve, reject) => {
-    if (window.gapi) {
+    if (id && document.getElementById(id)) {
       resolve();
       return;
     }
 
     const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.onload = () => {
-      gapi.load('client:auth2', () => {
-        initGoogleDriveClient()
-          .then(resolve)
-          .catch(reject);
-      });
-    };
-    script.onerror = () => reject(new Error('Falha ao carregar Google API'));
+    script.src = src;
+    script.async = true;
+    script.defer = true;
+    if (id) {
+      script.id = id;
+    }
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Falha ao carregar script: ${src}`));
     document.body.appendChild(script);
   });
+}
+
+function ensureGapiLoaded() {
+  if (window.gapi && window.gapi.client) {
+    return Promise.resolve();
+  }
+
+  if (!gapiLoadPromise) {
+    gapiLoadPromise = loadExternalScript('https://apis.google.com/js/api.js', 'google-api-script')
+      .then(() => new Promise((resolve, reject) => {
+        window.gapi.load('client', {
+          callback: resolve,
+          onerror: () => reject(new Error('Falha ao inicializar gapi.client'))
+        });
+      }));
+  }
+
+  return gapiLoadPromise;
+}
+
+function ensureGoogleIdentityLoaded() {
+  if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+    return Promise.resolve();
+  }
+
+  if (!gisLoadPromise) {
+    gisLoadPromise = loadExternalScript('https://accounts.google.com/gsi/client', 'google-identity-script');
+  }
+
+  return gisLoadPromise;
+}
+
+/**
+ * Carregar Google API Client Library
+ */
+function loadGoogleDriveAPI() {
+  if (driveState.isLoaded && tokenClientInstance) {
+    return Promise.resolve();
+  }
+
+  if (!driveInitPromise) {
+    driveInitPromise = Promise.all([ensureGapiLoaded(), ensureGoogleIdentityLoaded()])
+      .then(() => initGoogleDriveClient())
+      .then(() => {
+        initGoogleIdentityClient();
+      })
+      .catch(error => {
+        driveInitPromise = null;
+        throw error;
+      });
+  }
+
+  return driveInitPromise;
 }
 
 /**
@@ -73,51 +148,99 @@ function initGoogleDriveClient() {
 
   return gapi.client.init(config).then(() => {
     driveState.isLoaded = true;
-
-    // Escutar mudanças no estado de autenticação
-    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
-
-    // Verificar estado inicial
-    updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
   });
 }
 
-/**
- * Atualizar status de autenticação
- */
-function updateSignInStatus(isSignedIn) {
-  driveState.isAuthenticated = isSignedIn;
+function initGoogleIdentityClient() {
+  if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
+    throw new Error('Google Identity Services não disponível');
+  }
 
-  if (isSignedIn) {
-    const user = gapi.auth2.getAuthInstance().currentUser.get();
-    const profile = user.getBasicProfile();
-    driveState.userEmail = profile.getEmail();
+  tokenClientInstance = window.google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_DRIVE_CONFIG.CLIENT_ID,
+    scope: GOOGLE_DRIVE_CONFIG.SCOPES,
+    callback: () => {
+      // A callback será definida dinamicamente em requestGoogleAccessToken
+    }
+  });
+}
 
-    // Carregar preferências salvas
-    const savedAutoSync = localStorage.getItem('googleDrive_autoSync');
-    if (savedAutoSync !== null) {
-      driveState.autoSync = savedAutoSync === 'true';
+function requestGoogleAccessToken(forcePrompt = false) {
+  return new Promise((resolve, reject) => {
+    if (!tokenClientInstance) {
+      reject(new Error('Cliente OAuth ainda não inicializado'));
+      return;
     }
 
-    const savedLastSync = localStorage.getItem('googleDrive_lastSync');
-    if (savedLastSync) {
-      driveState.lastSync = new Date(savedLastSync);
+    tokenClientInstance.callback = response => {
+      if (response.error) {
+        reject(response);
+        return;
+      }
+
+      driveState.isAuthenticated = true;
+      driveState.accessToken = response.access_token;
+      driveState.tokenExpiresAt = response.expires_in
+        ? Date.now() + Number(response.expires_in) * 1000
+        : null;
+
+      gapi.client.setToken({ access_token: response.access_token });
+      resolve(response);
+    };
+
+    try {
+      tokenClientInstance.requestAccessToken({ prompt: forcePrompt ? 'consent' : '' });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function ensureDriveSession({ promptUser = false } = {}) {
+  await loadGoogleDriveAPI();
+
+  if (!driveState.isAuthenticated) {
+    if (!promptUser) {
+      return false;
     }
 
-    const savedFileId = localStorage.getItem('googleDrive_fileId');
-    if (savedFileId) {
-      driveState.fileId = savedFileId;
-    }
-
+    await requestGoogleAccessToken(true);
+    await fetchGoogleUserInfo();
     updateDriveUI();
 
-    // Sincronizar automaticamente ao conectar
     if (driveState.autoSync) {
-      googleDrivePullData();
+      googleDrivePullData().catch(error => {
+        console.error('Erro ao sincronizar automaticamente após autenticação:', error);
+      });
     }
-  } else {
-    driveState.userEmail = null;
-    updateDriveUI();
+
+    return true;
+  }
+
+  if (driveState.tokenExpiresAt && Date.now() >= (driveState.tokenExpiresAt - TOKEN_REFRESH_BUFFER_MS)) {
+    try {
+      await requestGoogleAccessToken(false);
+    } catch (error) {
+      console.warn('Não foi possível renovar o token automaticamente:', error);
+      driveState.isAuthenticated = false;
+      return promptUser ? ensureDriveSession({ promptUser: true }) : false;
+    }
+  }
+
+  return true;
+}
+
+async function fetchGoogleUserInfo() {
+  try {
+    const response = await gapi.client.request({
+      path: 'https://www.googleapis.com/oauth2/v2/userinfo'
+    });
+
+    if (response.result && response.result.email) {
+      driveState.userEmail = response.result.email;
+    }
+  } catch (error) {
+    console.warn('Não foi possível obter informações do usuário', error);
   }
 }
 
@@ -126,25 +249,25 @@ function updateSignInStatus(isSignedIn) {
  */
 async function googleDriveConnect() {
   try {
-    if (!driveState.isLoaded) {
-      showLoading('Carregando Google Drive...');
-      await loadGoogleDriveAPI();
-      hideLoading();
-    }
+    showLoading('Carregando Google Drive...');
+    await ensureDriveSession({ promptUser: true });
+    await fetchGoogleUserInfo();
+    hideLoading();
 
-    await gapi.auth2.getAuthInstance().signIn();
-
+    updateDriveUI();
     showNotification('✅ Conectado ao Google Drive com sucesso!', 'success');
   } catch (error) {
     console.error('Erro ao conectar ao Google Drive:', error);
 
-    if (error.error === 'popup_closed_by_user') {
+    if (error?.error === 'access_denied') {
       showNotification('❌ Conexão cancelada pelo usuário', 'error');
-    } else if (error.error === 'idpiframe_initialization_failed') {
-      showNotification('❌ Erro: Verifique se as credenciais do Google estão configuradas corretamente', 'error');
+    } else if (error?.type === 'tokenFailed') {
+      showNotification('❌ O Google retornou um erro de token. Confirme se as origens autorizadas no Google Cloud Console incluem este domínio.', 'error');
     } else {
       showNotification('❌ Erro ao conectar ao Google Drive', 'error');
     }
+  } finally {
+    hideLoading();
   }
 }
 
@@ -157,7 +280,13 @@ function googleDriveDisconnect() {
   }
 
   try {
-    gapi.auth2.getAuthInstance().signOut();
+    if (driveState.accessToken && window.google?.accounts?.oauth2) {
+      window.google.accounts.oauth2.revoke(driveState.accessToken, () => {
+        console.log('Token do Google Drive revogado');
+      });
+    }
+
+    gapi.client.setToken(null);
 
     // Limpar dados salvos
     localStorage.removeItem('googleDrive_autoSync');
@@ -167,8 +296,12 @@ function googleDriveDisconnect() {
     driveState.fileId = null;
     driveState.lastSync = null;
     driveState.userEmail = null;
+    driveState.isAuthenticated = false;
+    driveState.accessToken = null;
+    driveState.tokenExpiresAt = null;
 
     showNotification('✅ Desconectado do Google Drive', 'success');
+    updateDriveUI();
   } catch (error) {
     console.error('Erro ao desconectar:', error);
     showNotification('❌ Erro ao desconectar', 'error');
@@ -186,6 +319,11 @@ async function googleDriveSyncNow() {
 
   try {
     showLoading('Sincronizando...');
+
+    const ready = await ensureDriveSession({ promptUser: true });
+    if (!ready) {
+      throw new Error('Não foi possível confirmar a sessão com o Google Drive');
+    }
 
     // Primeiro puxar dados do Drive
     await googleDrivePullData();
@@ -207,6 +345,11 @@ async function googleDriveSyncNow() {
  */
 async function findOrCreateDriveFile() {
   try {
+    const ready = await ensureDriveSession({ promptUser: false });
+    if (!ready) {
+      throw new Error('Sessão do Google Drive indisponível');
+    }
+
     // Buscar arquivo existente no appDataFolder
     const response = await gapi.client.drive.files.list({
       spaces: 'appDataFolder',
@@ -248,6 +391,12 @@ async function googleDrivePushData() {
   }
 
   try {
+    const ready = await ensureDriveSession({ promptUser: false });
+    if (!ready) {
+      console.warn('Push ignorado: sessão não autenticada');
+      return;
+    }
+
     const fileId = await findOrCreateDriveFile();
 
     const data = {
@@ -308,6 +457,12 @@ async function googleDrivePullData() {
   }
 
   try {
+    const ready = await ensureDriveSession({ promptUser: false });
+    if (!ready) {
+      console.warn('Pull ignorado: sessão não autenticada');
+      return;
+    }
+
     const fileId = await findOrCreateDriveFile();
 
     const response = await gapi.client.drive.files.get({
@@ -387,6 +542,11 @@ function updateDriveUI() {
   const userEmailEl = document.getElementById('drive-user-email');
   const lastSyncEl = document.getElementById('drive-last-sync');
   const autoSyncCheckbox = document.getElementById('auto-sync-checkbox');
+
+  if (!disconnectedState || !connectedState) {
+    console.debug('[DriveSync] UI ainda não carregada, aguardando evento componentsLoaded...');
+    return;
+  }
 
   if (driveState.isAuthenticated) {
     disconnectedState.style.display = 'none';
@@ -470,6 +630,11 @@ function showLoading(message) {
 function hideLoading() {
   // Implementar loading spinner se necessário
 }
+
+// Atualizar UI assim que os componentes essenciais forem carregados
+document.addEventListener('componentsLoaded', () => {
+  updateDriveUI();
+});
 
 // Inicializar ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
