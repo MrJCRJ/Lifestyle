@@ -19,8 +19,11 @@ const GOOGLE_DRIVE_CONFIG = window.AppEnv ? window.AppEnv.getGoogleDriveConfig()
   API_KEY: '',
   DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
   SCOPES: [
+    'https://www.googleapis.com/auth/calendar.events.freebusy',
+    'https://www.googleapis.com/auth/calendar.freebusy',
+    'https://www.googleapis.com/auth/drive.file',
     'https://www.googleapis.com/auth/drive.appdata',
-    'https://www.googleapis.com/auth/userinfo.email'
+    'https://www.googleapis.com/auth/drive.install'
   ].join(' '),
   FILE_NAME: 'lifestyle-app-data.json'
 };
@@ -230,12 +233,12 @@ async function ensureDriveSession({ promptUser = false } = {}) {
 
 async function fetchGoogleUserInfo() {
   try {
-    const response = await gapi.client.request({
-      path: 'https://www.googleapis.com/oauth2/v2/userinfo'
+    const response = await gapi.client.drive.about.get({
+      fields: 'user(emailAddress, displayName)'
     });
 
-    if (response.result && response.result.email) {
-      driveState.userEmail = response.result.email;
+    if (response.result && response.result.user) {
+      driveState.userEmail = response.result.user.emailAddress || response.result.user.displayName;
     }
   } catch (error) {
     console.warn('Não foi possível obter informações do usuário', error);
@@ -348,31 +351,71 @@ async function findOrCreateDriveFile() {
       throw new Error('Sessão do Google Drive indisponível');
     }
 
-    // Buscar arquivo existente no appDataFolder
-    const response = await gapi.client.drive.files.list({
-      spaces: 'appDataFolder',
-      fields: 'files(id, name)',
-      q: `name='${GOOGLE_DRIVE_CONFIG.FILE_NAME}'`
-    });
-
-    if (response.result.files && response.result.files.length > 0) {
-      driveState.fileId = response.result.files[0].id;
-      localStorage.setItem('googleDrive_fileId', driveState.fileId);
+    if (driveState.fileId) {
       return driveState.fileId;
     }
 
-    // Criar novo arquivo se não existir
-    const createResponse = await gapi.client.drive.files.create({
-      resource: {
-        name: GOOGLE_DRIVE_CONFIG.FILE_NAME,
-        parents: ['appDataFolder']
-      },
-      fields: 'id'
-    });
+    const searchStrategies = [
+      () => gapi.client.drive.files.list({
+        q: `name='${GOOGLE_DRIVE_CONFIG.FILE_NAME}' and trashed=false`,
+        spaces: 'drive',
+        fields: 'files(id, name)'
+      }),
+      () => gapi.client.drive.files.list({
+        q: `name='${GOOGLE_DRIVE_CONFIG.FILE_NAME}'`,
+        spaces: 'appDataFolder',
+        fields: 'files(id, name)'
+      })
+    ];
 
-    driveState.fileId = createResponse.result.id;
-    localStorage.setItem('googleDrive_fileId', driveState.fileId);
-    return driveState.fileId;
+    for (const search of searchStrategies) {
+      try {
+        const response = await search();
+        if (response.result.files && response.result.files.length > 0) {
+          driveState.fileId = response.result.files[0].id;
+          localStorage.setItem('googleDrive_fileId', driveState.fileId);
+          return driveState.fileId;
+        }
+      } catch (error) {
+        console.warn('Busca de arquivo falhou (continuando com fallback):', error);
+      }
+    }
+
+    const createStrategies = [
+      {
+        resource: {
+          name: GOOGLE_DRIVE_CONFIG.FILE_NAME,
+          parents: ['root'],
+          mimeType: 'application/json'
+        }
+      },
+      {
+        resource: {
+          name: GOOGLE_DRIVE_CONFIG.FILE_NAME,
+          parents: ['appDataFolder'],
+          mimeType: 'application/json'
+        }
+      }
+    ];
+
+    for (const strategy of createStrategies) {
+      try {
+        const response = await gapi.client.drive.files.create({
+          resource: strategy.resource,
+          fields: 'id'
+        });
+
+        if (response.result && response.result.id) {
+          driveState.fileId = response.result.id;
+          localStorage.setItem('googleDrive_fileId', driveState.fileId);
+          return driveState.fileId;
+        }
+      } catch (error) {
+        console.warn('Criação de arquivo falhou (tentando fallback):', error);
+      }
+    }
+
+    throw new Error('Não foi possível criar o arquivo no Google Drive');
 
   } catch (error) {
     console.error('Erro ao buscar/criar arquivo:', error);
