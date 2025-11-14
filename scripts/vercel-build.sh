@@ -12,11 +12,19 @@ mkdir -p js/generated
 # Verificar se as variáveis de ambiente estão definidas
 if [ -z "$VITE_GOOGLE_CLIENT_ID" ]; then
     echo "⚠️ VITE_GOOGLE_CLIENT_ID não definida!"
-    echo "❌ Configure as variáveis de ambiente no Vercel"
-    exit 1
+    echo "ℹ️  Tentando carregar do arquivo .env local..."
+    
+    # Tentar carregar do .env se existir (para testes locais)
+    if [ -f .env ]; then
+        export $(cat .env | grep -v '^#' | xargs)
+        echo "✅ Variáveis carregadas do arquivo .env"
+    else
+        echo "❌ Configure as variáveis de ambiente no Vercel ou crie um arquivo .env"
+        exit 1
+    fi
+else
+    echo "✅ Variáveis de ambiente detectadas (Vercel/CI)"
 fi
-
-echo "✅ Variáveis de ambiente detectadas"
 
 # Criar arquivo de configuração
 cat > js/generated/env-config.js << EOF

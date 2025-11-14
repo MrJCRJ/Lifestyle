@@ -21,6 +21,7 @@ logs/
 
 # Generated files
 js/generated/env-config.js
+!js/generated/.gitkeep
 
 # OS files
 .DS_Store
