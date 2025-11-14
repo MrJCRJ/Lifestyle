@@ -3,7 +3,7 @@
     autoSync: 'googleDrive_autoSync',
     lastSync: 'googleDrive_lastSync',
     fileId: 'googleDrive_fileId',
-    folderId: 'googleDrive_folderId'
+    wasConnected: 'googleDrive_wasConnected'
   };
 
   const state = {
@@ -15,7 +15,7 @@
     isLoaded: false,
     accessToken: null,
     tokenExpiresAt: null,
-    folderId: null
+    wasConnected: false
   };
 
   function hydrateFromStorage() {
@@ -35,10 +35,8 @@
         state.fileId = savedFileId;
       }
 
-      const savedFolderId = localStorage.getItem(STORAGE_KEYS.folderId);
-      if (savedFolderId) {
-        state.folderId = savedFolderId;
-      }
+      const savedConnection = localStorage.getItem(STORAGE_KEYS.wasConnected);
+      state.wasConnected = savedConnection === 'true';
     } catch (error) {
       console.warn('[DriveState] Falha ao carregar preferências do localStorage', error);
     }
@@ -82,18 +80,16 @@
     persist(STORAGE_KEYS.fileId, null);
   }
 
-  function setFolderId(id) {
-    state.folderId = id || null;
-    persist(STORAGE_KEYS.folderId, state.folderId);
-  }
-
-  function clearFolderId() {
-    state.folderId = null;
-    persist(STORAGE_KEYS.folderId, null);
+  function setWasConnected(value) {
+    state.wasConnected = Boolean(value);
+    persist(STORAGE_KEYS.wasConnected, state.wasConnected ? 'true' : null);
   }
 
   function setAuthenticated(isAuthenticated) {
     state.isAuthenticated = Boolean(isAuthenticated);
+    if (state.isAuthenticated) {
+      setWasConnected(true);
+    }
     requestRender();
   }
 
@@ -114,11 +110,10 @@
     state.lastSync = null;
     state.fileId = null;
     state.autoSync = true;
-    state.folderId = null;
+    setWasConnected(false);
     persist(STORAGE_KEYS.lastSync, null);
     persist(STORAGE_KEYS.fileId, null);
     persist(STORAGE_KEYS.autoSync, null);
-    persist(STORAGE_KEYS.folderId, null);
     requestRender();
   }
 
@@ -144,8 +139,7 @@
     setLastSync,
     setFileId,
     clearFileId,
-    setFolderId,
-    clearFolderId,
+    setWasConnected,
     setAuthenticated,
     setAccessToken,
     clearSession,

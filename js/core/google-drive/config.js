@@ -7,8 +7,7 @@
       'https://www.googleapis.com/auth/drive.file',
       'https://www.googleapis.com/auth/drive.appdata'
     ].join(' '),
-    FILE_NAME: 'lifestyle-app-data.json',
-    FOLDER_NAME: 'Lifestyle Backups'
+    FILE_NAME: 'lifestyle-app-data.json'
   };
 
   function resolveConfig() {

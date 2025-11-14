@@ -1,98 +1,15 @@
 (function (global) {
-  const DEFAULT_BACKUP_FOLDER_NAME = 'Lifestyle Backups';
   const session = global.GoogleDriveSession;
   const configProvider = global.GoogleDriveConfig;
   const {
     state,
     setFileId,
     clearFileId,
-    setLastSync,
-    setFolderId,
-    clearFolderId
+    setLastSync
   } = global.GoogleDriveState;
 
   function emitUIUpdate() {
     document.dispatchEvent(new CustomEvent('googleDrive:update-ui'));
-  }
-
-  function getBackupFolderName() {
-    const config = configProvider.get() || {};
-    return config.FOLDER_NAME || DEFAULT_BACKUP_FOLDER_NAME;
-  }
-
-  async function ensureBackupFolder() {
-    const folderName = getBackupFolderName();
-    if (state.folderId) {
-      try {
-        await global.gapi.client.drive.files.get({
-          fileId: state.folderId,
-          fields: 'id'
-        });
-        return state.folderId;
-      } catch (error) {
-        if (error.status === 404) {
-          clearFolderId();
-        } else {
-          throw error;
-        }
-      }
-    }
-
-    const searchQuery = {
-      q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false`,
-      spaces: 'drive',
-      fields: 'files(id, name)'
-    };
-
-    try {
-      const response = await global.gapi.client.drive.files.list(searchQuery);
-      if (response.result.files && response.result.files.length > 0) {
-        const folderId = response.result.files[0].id;
-        setFolderId(folderId);
-        return folderId;
-      }
-    } catch (error) {
-      console.warn('Não foi possível localizar a pasta de backups. Tentando criar uma nova...', error);
-    }
-
-    const createResponse = await global.gapi.client.drive.files.create({
-      resource: {
-        name: folderName,
-        mimeType: 'application/vnd.google-apps.folder',
-        parents: ['root']
-      },
-      fields: 'id'
-    });
-
-    if (!createResponse.result || !createResponse.result.id) {
-      throw new Error('Não foi possível criar a pasta de backups no Google Drive');
-    }
-
-    setFolderId(createResponse.result.id);
-    return createResponse.result.id;
-  }
-
-  async function moveFileToBackupFolder(fileId, parents = []) {
-    try {
-      const folderId = await ensureBackupFolder();
-      const folderName = getBackupFolderName();
-      const request = {
-        fileId,
-        addParents: folderId,
-        fields: 'id, parents'
-      };
-
-      if (parents && parents.length) {
-        request.removeParents = parents.join(',');
-      }
-
-      await global.gapi.client.drive.files.update(request);
-      console.info(`[GoogleDrive] Arquivo de backup movido para a pasta "${folderName}"`);
-      return folderId;
-    } catch (error) {
-      console.warn('Não foi possível mover o arquivo de backup para a pasta de backups configurada', error);
-      return null;
-    }
   }
 
   async function ensureValidFileId() {
@@ -101,16 +18,10 @@
     }
 
     try {
-      const response = await global.gapi.client.drive.files.get({
+      await global.gapi.client.drive.files.get({
         fileId: state.fileId,
-        fields: 'id, parents'
+        fields: 'id'
       });
-      const parents = response.result?.parents || [];
-      const isInAppData = parents.includes('appDataFolder');
-      const shouldMove = isInAppData || (state.folderId && !parents.includes(state.folderId));
-      if (shouldMove) {
-        await moveFileToBackupFolder(state.fileId, parents);
-      }
       return true;
     } catch (error) {
       if (error.status === 404) {
@@ -145,12 +56,7 @@
         if (response.result.files && response.result.files.length > 0) {
           const foundFile = response.result.files[0];
           const foundId = foundFile.id;
-          const parents = foundFile.parents || [];
           setFileId(foundId);
-          const shouldMove = query.isAppData || (state.folderId && !parents.includes(state.folderId));
-          if (shouldMove) {
-            await moveFileToBackupFolder(foundId, parents);
-          }
           return foundId;
         }
       } catch (error) {
@@ -163,13 +69,11 @@
 
   async function createFile() {
     const config = configProvider.get();
-    const folderId = await ensureBackupFolder();
 
     try {
       const response = await global.gapi.client.drive.files.create({
         resource: {
           name: config.FILE_NAME,
-          parents: [folderId],
           mimeType: 'application/json'
         },
         fields: 'id'
@@ -322,9 +226,37 @@
     return true;
   }
 
+  async function resetBackup() {
+    if (!state.isAuthenticated) {
+      throw new Error('Usuário não autenticado no Google Drive');
+    }
+
+    const ready = await session.ensureSession({ promptUser: true });
+    if (!ready) {
+      throw new Error('Não foi possível confirmar a sessão com o Google Drive');
+    }
+
+    if (state.fileId) {
+      try {
+        await global.gapi.client.drive.files.delete({
+          fileId: state.fileId
+        });
+      } catch (error) {
+        if (error.status !== 404) {
+          throw error;
+        }
+      }
+      clearFileId();
+    }
+
+    await pushData();
+    return true;
+  }
+
   global.GoogleDriveFiles = {
     findOrCreateFile,
     pushData,
-    pullData
+    pullData,
+    resetBackup
   };
 })(window);

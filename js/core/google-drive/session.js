@@ -42,13 +42,23 @@
     await loader.ensureLibraries();
 
     if (!state.isAuthenticated) {
-      if (!promptUser) {
-        return false;
+      if (promptUser) {
+        await requestAccessToken(true);
+        await fetchUserInfo();
+        return true;
       }
 
-      await requestAccessToken(true);
-      await fetchUserInfo();
-      return true;
+      if (state.wasConnected) {
+        try {
+          await requestAccessToken(false);
+          await fetchUserInfo();
+          return true;
+        } catch (error) {
+          console.warn('Reconexão silenciosa falhou, solicitando consentimento quando necessário', error);
+        }
+      }
+
+      return false;
     }
 
     if (state.tokenExpiresAt && Date.now() >= (state.tokenExpiresAt - TOKEN_REFRESH_BUFFER_MS)) {

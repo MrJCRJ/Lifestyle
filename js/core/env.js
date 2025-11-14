@@ -24,11 +24,7 @@ const ENV = {
 
   DRIVE_FILE_NAME:
     window.ENV?.VITE_DRIVE_FILE_NAME ||
-    'lifestyle-app-data.json',
-
-  DRIVE_FOLDER_NAME:
-    window.ENV?.VITE_DRIVE_FOLDER_NAME ||
-    'Lifestyle Backups'
+    'lifestyle-app-data.json'
 };
 
 /**
@@ -66,8 +62,7 @@ function getGoogleDriveConfig() {
       'https://www.googleapis.com/auth/drive.file',
       'https://www.googleapis.com/auth/drive.appdata'
     ].join(' '),
-    FILE_NAME: ENV.DRIVE_FILE_NAME,
-    FOLDER_NAME: ENV.DRIVE_FOLDER_NAME
+    FILE_NAME: ENV.DRIVE_FILE_NAME
   };
 }
 
@@ -95,8 +90,7 @@ if (isDevelopment()) {
   console.log('📋 Variáveis de ambiente:', {
     GOOGLE_CLIENT_ID: ENV.GOOGLE_CLIENT_ID ? '✅ Configurado' : '❌ Não configurado',
     GOOGLE_API_KEY: ENV.GOOGLE_API_KEY ? '✅ Configurado' : 'ℹ️ Opcional',
-    DRIVE_FILE_NAME: ENV.DRIVE_FILE_NAME,
-    DRIVE_FOLDER_NAME: ENV.DRIVE_FOLDER_NAME
+    DRIVE_FILE_NAME: ENV.DRIVE_FILE_NAME
   });
   validateEnv();
 }

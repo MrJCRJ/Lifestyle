@@ -23,6 +23,25 @@
     ui.showLoading(message);
   }
 
+  async function attemptAutoReconnect() {
+    if (!stateStore.state.wasConnected) {
+      return;
+    }
+
+    try {
+      showLoading('Reconectando ao Google Drive...');
+      const ready = await session.ensureSession({ promptUser: false });
+      if (ready) {
+        await files.pullData();
+        console.info('[GoogleDrive] Dados recuperados automaticamente do Drive');
+      }
+    } catch (error) {
+      console.warn('Falha ao restaurar sessão do Google Drive automaticamente', error);
+    } finally {
+      hideLoading();
+    }
+  }
+
   function hideLoading() {
     ui.hideLoading();
   }
@@ -109,6 +128,28 @@
     }
   }
 
+  async function resetBackup() {
+    if (!stateStore.state.isAuthenticated) {
+      notify('❌ Conecte-se ao Google Drive antes de recriar o backup', 'error');
+      return;
+    }
+
+    if (!confirm('Deseja recriar o arquivo de backup no Google Drive? Isso substituirá o backup atual.')) {
+      return;
+    }
+
+    try {
+      showLoading('Recriando arquivo de backup...');
+      await files.resetBackup();
+      notify('✅ Backup recriado com sucesso', 'success');
+    } catch (error) {
+      console.error('Erro ao recriar backup do Google Drive:', error);
+      notify('❌ Não foi possível recriar o backup', 'error');
+    } finally {
+      hideLoading();
+    }
+  }
+
   function handleComponentsLoaded() {
     ui.render();
   }
@@ -122,9 +163,11 @@
 
     const config = configProvider.get();
     if (config.CLIENT_ID && !config.CLIENT_ID.includes('your_client_id_here')) {
-      loader.ensureLibraries().catch(error => {
-        console.error('Erro ao carregar Google Drive API:', error);
-      });
+      loader.ensureLibraries()
+        .then(() => attemptAutoReconnect())
+        .catch(error => {
+          console.error('Erro ao carregar Google Drive API:', error);
+        });
     } else {
       console.warn('⚠️ Google Drive não configurado. Configure as credenciais no arquivo .env');
       console.info('📖 Consulte docs/GOOGLE_DRIVE_SETUP.md para instruções');
@@ -136,4 +179,5 @@
   global.googleDriveSyncNow = syncNow;
   global.toggleAutoSync = toggleAutoSync;
   global.autoSyncToDrive = autoSyncToDrive;
+  global.googleDriveResetBackup = resetBackup;
 })(window);

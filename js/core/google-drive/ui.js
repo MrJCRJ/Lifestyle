@@ -1,6 +1,5 @@
 (function (global) {
   const { state, setAutoSync } = global.GoogleDriveState;
-  const configProvider = global.GoogleDriveConfig;
 
   function render() {
     const disconnectedState = document.getElementById('drive-disconnected-state');
@@ -8,7 +7,6 @@
     const userEmailEl = document.getElementById('drive-user-email');
     const lastSyncEl = document.getElementById('drive-last-sync');
     const autoSyncCheckbox = document.getElementById('auto-sync-checkbox');
-    const backupLocationEl = document.getElementById('drive-backup-location');
 
     if (!disconnectedState || !connectedState) {
       return;
@@ -29,22 +27,9 @@
       if (autoSyncCheckbox) {
         autoSyncCheckbox.checked = state.autoSync;
       }
-
-      if (backupLocationEl) {
-        backupLocationEl.textContent = getBackupFolderName();
-      }
     } else {
       disconnectedState.style.display = 'block';
       connectedState.style.display = 'none';
-    }
-  }
-
-  function getBackupFolderName() {
-    try {
-      return configProvider?.get()?.FOLDER_NAME || 'Lifestyle Backups';
-    } catch (error) {
-      console.warn('Não foi possível carregar o nome da pasta de backup, usando padrão.', error);
-      return 'Lifestyle Backups';
     }
   }
 
