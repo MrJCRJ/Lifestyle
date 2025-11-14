@@ -12,7 +12,8 @@ function createCategoryCardHTML(type, id, data = null, isFirst = false) {
   const typeConfig = {
     job: { label: 'Trabalho', namePlaceholder: 'Nome do trabalho' },
     study: { label: 'Estudo', namePlaceholder: 'Disciplina/Curso' },
-    project: { label: 'Projeto', namePlaceholder: 'Nome do projeto' }
+    project: { label: 'Projeto', namePlaceholder: 'Nome do projeto' },
+    hobby: { label: 'Hobby & Lazer', namePlaceholder: 'Atividade de lazer' }
   };
 
   const config = typeConfig[type];
@@ -109,6 +110,8 @@ function removeCategorySlot(type, id) {
         addStudySlot();
       } else if (type === 'project') {
         addProjectSlot();
+      } else if (type === 'hobby') {
+        addHobbySlot();
       }
     }
   }
@@ -250,6 +253,10 @@ function collectProjectsData(containerName, itemPrefix) {
   return collectCategoryData(`${containerName}-container`, itemPrefix || 'project');
 }
 
+function collectHobbiesData(containerName, itemPrefix) {
+  return collectCategoryData(`${containerName}-container`, itemPrefix || 'hobby');
+}
+
 /**
  * Capitaliza primeira letra
  * @param {string} str - String a capitalizar
@@ -283,6 +290,8 @@ function toggleCategoryForm(type, show) {
         addStudySlot();
       } else if (type === 'project') {
         addProjectSlot();
+      } else if (type === 'hobby') {
+        addHobbySlot();
       }
     }
   }

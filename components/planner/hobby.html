@@ -1,0 +1,51 @@
+<!-- Planejamento Diário - Hobby & Lazer -->
+<section id="planner-hobbies-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>🎨 Hobby & Lazer</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-hobbies-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai reservar tempo para hobbies ou lazer?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasHobby"
+            value="yes"
+            onchange="togglePlannerHobbyForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasHobby"
+            value="no"
+            onchange="togglePlannerHobbyForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-hobby-details" style="display: none">
+      <div id="planner-hobby-quick-configs" class="quick-config-section"></div>
+      <div id="planner-hobbies-container"></div>
+      <button onclick="addPlannerHobbySlot()" class="btn btn-outline btn-small">
+        ➕ Adicionar Hobby
+      </button>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerHobbies()" class="btn btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</section>

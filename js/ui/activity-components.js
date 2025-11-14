@@ -107,6 +107,11 @@ function getTypeLabel(type) {
     work: 'Trabalho',
     study: 'Estudo',
     cleaning: 'Limpeza',
+    project: 'Projeto',
+    hobby: 'Hobby & Lazer',
+    exercise: 'Exercício',
+    meal: 'Refeição',
+    hydration: 'Hidratação',
     free: 'Livre'
   };
   return labels[type] || type;

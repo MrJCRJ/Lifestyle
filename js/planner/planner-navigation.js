@@ -15,6 +15,7 @@ function planSpecificDay(dateKey) {
   if (typeof resetPlannerJobCounter === 'function') resetPlannerJobCounter();
   if (typeof resetPlannerStudyCounter === 'function') resetPlannerStudyCounter();
   if (typeof resetPlannerProjectCounter === 'function') resetPlannerProjectCounter();
+  if (typeof resetPlannerHobbyCounter === 'function') resetPlannerHobbyCounter();
 
   // Atualizar displays em todas as telas
   const elements = {
@@ -22,6 +23,7 @@ function planSpecificDay(dateKey) {
     work: document.getElementById('planner-work-day-name'),
     study: document.getElementById('planner-study-day-name'),
     cleaning: document.getElementById('planner-cleaning-day-name'),
+    hobbies: document.getElementById('planner-hobbies-day-name'),
     projects: document.getElementById('planner-projects-day-name'),
     meals: document.getElementById('planner-meals-day-name'),
     hydration: document.getElementById('planner-hydration-day-name'),
@@ -81,6 +83,11 @@ function showPlannerScreen(screenId) {
             if (notes) notes.value = config.notes || '';
           }
         },
+        'planner-hobbies': {
+          category: 'hobbies', container: 'planner-hobby-quick-configs', callback: function (config) {
+            addPlannerHobbySlot(config);
+          }
+        },
         'planner-meals': {
           category: 'meals', container: 'planner-meals-quick-configs', callback: function (config) {
             const mealsCountInput = document.getElementById('plannerMealsCount');
@@ -138,6 +145,7 @@ function editPlannerCategory(category) {
     'work': 'planner-work',
     'study': 'planner-study',
     'cleaning': 'planner-cleaning',
+    'hobbies': 'planner-hobbies',
     'projects': 'planner-projects',
     'meals': 'planner-meals',
     'hydration': 'planner-hydration',
@@ -165,6 +173,7 @@ function openEditPlanner(dateKey) {
   if (typeof resetPlannerJobCounter === 'function') resetPlannerJobCounter();
   if (typeof resetPlannerStudyCounter === 'function') resetPlannerStudyCounter();
   if (typeof resetPlannerProjectCounter === 'function') resetPlannerProjectCounter();
+  if (typeof resetPlannerHobbyCounter === 'function') resetPlannerHobbyCounter();
 
   // Atualizar displays em todas as telas
   const elements = {
@@ -172,6 +181,7 @@ function openEditPlanner(dateKey) {
     work: document.getElementById('planner-work-day-name'),
     study: document.getElementById('planner-study-day-name'),
     cleaning: document.getElementById('planner-cleaning-day-name'),
+    hobbies: document.getElementById('planner-hobbies-day-name'),
     projects: document.getElementById('planner-projects-day-name'),
     meals: document.getElementById('planner-meals-day-name'),
     hydration: document.getElementById('planner-hydration-day-name'),

@@ -322,7 +322,7 @@ describe('Quick Config - renderQuickConfigs', () => {
     renderQuickConfigs('jobs', 'test-container', mockAddSlot);
 
     expect(container.innerHTML).toContain('Desenvolvimento');
-    expect(container.innerHTML).toContain('09:00-17:00');
+    expect(container.innerHTML).toContain('09:00→17:00');
     expect(container.innerHTML).toContain('⚡ Usar');
   });
 
@@ -339,8 +339,8 @@ describe('Quick Config - renderQuickConfigs', () => {
 
     renderQuickConfigs('sleep', 'test-container', jest.fn());
 
-    expect(container.innerHTML).toContain('Dormir: 23:00');
-    expect(container.innerHTML).toContain('Acordar: 07:00');
+    expect(container.innerHTML).toContain('😴 23:00');
+    expect(container.innerHTML).toContain('⏰ 07:00');
   });
 
   test('deve renderizar cards de configurações para limpeza', () => {
@@ -359,7 +359,8 @@ describe('Quick Config - renderQuickConfigs', () => {
 
     renderQuickConfigs('cleaning', 'test-container', jest.fn());
 
-    expect(container.innerHTML).toContain('10:00 - 12:00');
+    expect(container.innerHTML).toContain('🕐 10:00');
+    expect(container.innerHTML).toContain('→ <strong>12:00');
   });
 
   test('deve renderizar cards de configurações para exercício', () => {
@@ -379,7 +380,7 @@ describe('Quick Config - renderQuickConfigs', () => {
     renderQuickConfigs('exercise', 'test-container', jest.fn());
 
     expect(container.innerHTML).toContain('Musculação');
-    expect(container.innerHTML).toContain('06:00 - 07:30');
+    expect(container.innerHTML).toContain('06:00 → 07:30');
   });
 
   test('deve renderizar cards de configurações para refeições', () => {
@@ -411,7 +412,7 @@ describe('Quick Config - renderQuickConfigs', () => {
 
     renderQuickConfigs('hydration', 'test-container', jest.fn());
 
-    expect(container.innerHTML).toContain('2450ml/dia');
+    expect(container.innerHTML).toContain('2450ml');
   });
 
   test('não deve crashar se container não existir', () => {

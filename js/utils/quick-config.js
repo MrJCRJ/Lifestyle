@@ -18,7 +18,7 @@ function getPreviousConfigs(category, limit = 2) {
   const sortedDates = Object.keys(schedules).sort((a, b) => b.localeCompare(a));
 
   // Categorias que são arrays vs objetos únicos
-  const arrayCategories = ['jobs', 'studies', 'projects'];
+  const arrayCategories = ['jobs', 'studies', 'projects', 'hobbies'];
   const isArrayCategory = arrayCategories.includes(category);
 
   for (const dateKey of sortedDates) {
@@ -167,6 +167,7 @@ function renderQuickConfigs(category, containerId, applyCallback) {
     jobs: { label: 'Trabalho', icon: '💼' },
     studies: { label: 'Estudo', icon: '📚' },
     projects: { label: 'Projeto', icon: '🎯' },
+    hobbies: { label: 'Hobby & Lazer', icon: '🎨' },
     sleep: { label: 'Sono', icon: '😴' },
     cleaning: { label: 'Limpeza', icon: '🧹' },
     exercise: { label: 'Exercício', icon: '💪' },

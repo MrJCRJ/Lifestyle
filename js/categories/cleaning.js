@@ -18,5 +18,5 @@ function saveCleaning() {
     saveToStorage();
 
     // Ir para projetos
-    showScreen('projects');
+    showScreen('hobbies');
 }

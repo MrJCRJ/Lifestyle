@@ -103,6 +103,22 @@ function addProjectActivities(schedule, projects) {
   }
 }
 
+function addHobbyActivities(schedule, hobbies) {
+  if (hobbies && Array.isArray(hobbies)) {
+    hobbies.forEach((hobby, hobbyIndex) => {
+      hobby.times.forEach((time, timeIndex) => {
+        schedule.push({
+          id: `hobby-${hobbyIndex}-${timeIndex}`,
+          type: 'hobby',
+          name: `🎨 ${hobby.name}`,
+          startTime: time.start,
+          endTime: time.end
+        });
+      });
+    });
+  }
+}
+
 /**
  * Adiciona atividade de limpeza ao cronograma
  * @param {Array} schedule - Array de atividades
@@ -192,6 +208,7 @@ function buildScheduleFromPlanData(planData, waterGoal = null) {
   addWorkActivities(schedule, planData.jobs);
   addStudyActivities(schedule, planData.studies);
   addCleaningActivity(schedule, planData.cleaning);
+  addHobbyActivities(schedule, planData.hobbies);
   addProjectActivities(schedule, planData.projects);
   addExerciseActivity(schedule, planData.exercise);
 

@@ -16,6 +16,7 @@ describe('Planner Wizard - openEditPlanner', () => {
       <span id="planner-work-day-name"></span>
       <span id="planner-study-day-name"></span>
       <span id="planner-cleaning-day-name"></span>
+  <span id="planner-hobbies-day-name"></span>
       <span id="planner-meals-day-name"></span>
       <span id="planner-hydration-day-name"></span>
       <span id="planner-exercise-day-name"></span>

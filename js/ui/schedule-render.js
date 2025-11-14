@@ -12,7 +12,8 @@ function resolveScheduleDayInfo(schedule) {
     }
 
     const scheduleDate = schedule.date ? parseDateKey(schedule.date) : null;
-    const fallbackDate = scheduleDate instanceof Date && !isNaN(scheduleDate) ? scheduleDate : new Date();
+    const hasValidDate = scheduleDate && typeof scheduleDate.getTime === 'function' && !isNaN(scheduleDate.getTime());
+    const fallbackDate = hasValidDate ? scheduleDate : new Date();
 
     return {
         dayName: getDayName(fallbackDate),

@@ -5,30 +5,52 @@
  */
 function clearPlannerForms() {
   // Limpar sono
-  document.getElementById('plannerSleepTime').value = '';
-  document.getElementById('plannerWakeTime').value = '';
+  const sleepInput = document.getElementById('plannerSleepTime');
+  const wakeInput = document.getElementById('plannerWakeTime');
+  if (sleepInput) sleepInput.value = '';
+  if (wakeInput) wakeInput.value = '';
 
   // Limpar trabalho
   document.querySelectorAll('input[name="plannerHasWork"]').forEach(radio => radio.checked = false);
-  document.getElementById('planner-work-details').style.display = 'none';
-  document.getElementById('planner-jobs-container').innerHTML = '';
+  const workDetails = document.getElementById('planner-work-details');
+  if (workDetails) workDetails.style.display = 'none';
+  const jobsContainer = document.getElementById('planner-jobs-container');
+  if (jobsContainer) jobsContainer.innerHTML = '';
 
   // Limpar estudo
   document.querySelectorAll('input[name="plannerHasStudy"]').forEach(radio => radio.checked = false);
-  document.getElementById('planner-study-details').style.display = 'none';
-  document.getElementById('planner-studies-container').innerHTML = '';
+  const studyDetails = document.getElementById('planner-study-details');
+  if (studyDetails) studyDetails.style.display = 'none';
+  const studiesContainer = document.getElementById('planner-studies-container');
+  if (studiesContainer) studiesContainer.innerHTML = '';
 
   // Limpar limpeza
   document.querySelectorAll('input[name="plannerHasCleaning"]').forEach(radio => radio.checked = false);
-  document.getElementById('planner-cleaning-details').style.display = 'none';
-  document.getElementById('plannerCleaningStartTime').value = '';
-  document.getElementById('plannerCleaningEndTime').value = '';
-  document.getElementById('plannerCleaningNotes').value = '';
+  const cleaningDetails = document.getElementById('planner-cleaning-details');
+  if (cleaningDetails) cleaningDetails.style.display = 'none';
+  const cleaningStart = document.getElementById('plannerCleaningStartTime');
+  const cleaningEnd = document.getElementById('plannerCleaningEndTime');
+  const cleaningNotes = document.getElementById('plannerCleaningNotes');
+  if (cleaningStart) cleaningStart.value = '';
+  if (cleaningEnd) cleaningEnd.value = '';
+  if (cleaningNotes) cleaningNotes.value = '';
+
+  // Limpar hobbies
+  document.querySelectorAll('input[name="plannerHasHobby"]').forEach(radio => radio.checked = false);
+  const hobbyDetails = document.getElementById('planner-hobby-details');
+  if (hobbyDetails) hobbyDetails.style.display = 'none';
+  const hobbyContainer = document.getElementById('planner-hobbies-container');
+  if (hobbyContainer) hobbyContainer.innerHTML = '';
+  if (typeof resetPlannerHobbyCounter === 'function') {
+    resetPlannerHobbyCounter();
+  }
 
   // Limpar projetos
   document.querySelectorAll('input[name="plannerHasProject"]').forEach(radio => radio.checked = false);
-  document.getElementById('planner-project-details').style.display = 'none';
-  document.getElementById('planner-projects-container').innerHTML = '';
+  const projectDetails = document.getElementById('planner-project-details');
+  if (projectDetails) projectDetails.style.display = 'none';
+  const projectContainer = document.getElementById('planner-projects-container');
+  if (projectContainer) projectContainer.innerHTML = '';
 }
 
 /**
@@ -132,6 +154,33 @@ function loadPlannerCleaningData(planData) {
   if (notes) notes.value = planData.cleaning.notes || '';
 }
 
+function loadPlannerHobbyData(planData) {
+  const plannerHobbiesContainer = document.getElementById('planner-hobbies-container');
+  if (!plannerHobbiesContainer) return;
+
+  if (planData.hobbies && planData.hobbies.length > 0) {
+    const yesRadio = document.querySelector('input[name="plannerHasHobby"][value="yes"]');
+    if (yesRadio) yesRadio.checked = true;
+
+    const detailsDiv = document.getElementById('planner-hobby-details');
+    if (detailsDiv) detailsDiv.style.display = 'block';
+
+    if (typeof renderQuickConfigs === 'function') {
+      renderQuickConfigs('hobbies', 'planner-hobby-quick-configs', addPlannerHobbySlot);
+    }
+
+    plannerHobbiesContainer.innerHTML = '';
+    plannerHobbyCounter = 0;
+    planData.hobbies.forEach(hobby => {
+      addPlannerHobbySlot(hobby);
+    });
+  } else {
+    const noRadio = document.querySelector('input[name="plannerHasHobby"][value="no"]');
+    if (noRadio) noRadio.checked = true;
+    togglePlannerHobbyForm(false);
+  }
+}
+
 /**
  * Carregar dados de projetos no planejador
  */
@@ -199,6 +248,7 @@ function loadPlanDataToWizard(planData) {
   loadPlannerWorkData(planData);
   loadPlannerStudyData(planData);
   loadPlannerCleaningData(planData);
+  loadPlannerHobbyData(planData);
   loadPlannerProjectData(planData);
   loadPlannerMealsFormData(planData);
 }

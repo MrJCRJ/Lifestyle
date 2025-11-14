@@ -13,6 +13,7 @@ function updateEditPlannerStatus() {
   updateCategoryStatus('work', planData);
   updateCategoryStatus('study', planData);
   updateCategoryStatus('exercise', planData);
+  updateCategoryStatus('hobbies', planData);
   updateCategoryStatus('projects', planData);
   updateCategoryStatus('cleaning', planData);
 }
@@ -117,6 +118,16 @@ function getCategoryStatusText(category, planData) {
         return {
           configured: true,
           text: `${planData.exercise.start} - ${planData.exercise.end}`
+        };
+      }
+      return { configured: false };
+
+    case 'hobbies':
+      if (planData.hobbies && planData.hobbies.length > 0) {
+        const count = planData.hobbies.length;
+        return {
+          configured: true,
+          text: `${count} hobby${count > 1 ? 's' : ''}`
         };
       }
       return { configured: false };

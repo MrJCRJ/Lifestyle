@@ -27,6 +27,7 @@ describe('E2E: Fluxo Completo de Planejamento Independente', () => {
       <section id="planner-work-screen" class="screen planner-screen"></section>
       <section id="planner-study-screen" class="screen planner-screen"></section>
       <section id="planner-cleaning-screen" class="screen planner-screen"></section>
+  <section id="planner-hobbies-screen" class="screen planner-screen"></section>
       <section id="planner-meals-screen" class="screen planner-screen"></section>
       <section id="planner-hydration-screen" class="screen planner-screen"></section>
       <section id="planner-exercise-screen" class="screen planner-screen"></section>
@@ -35,6 +36,7 @@ describe('E2E: Fluxo Completo de Planejamento Independente', () => {
       <span id="planner-work-day-name"></span>
       <span id="planner-study-day-name"></span>
       <span id="planner-cleaning-day-name"></span>
+  <span id="planner-hobbies-day-name"></span>
       <span id="planner-meals-day-name"></span>
       <span id="planner-hydration-day-name"></span>
       <span id="planner-exercise-day-name"></span>
@@ -58,6 +60,11 @@ describe('E2E: Fluxo Completo de Planejamento Independente', () => {
       <input id="plannerCleaningStartTime" type="time" />
       <input id="plannerCleaningEndTime" type="time" />
       <input id="plannerCleaningNotes" type="text" />
+
+  <input type="radio" name="plannerHasHobby" value="yes" />
+  <input type="radio" name="plannerHasHobby" value="no" />
+  <div id="planner-hobby-details" style="display: none;"></div>
+  <div id="planner-hobbies-container"></div>
       
       <input type="radio" name="plannerHasMeals" value="yes" />
       <input type="radio" name="plannerHasMeals" value="no" />
@@ -125,9 +132,11 @@ describe('E2E: Fluxo Completo de Planejamento Independente', () => {
     loadScript('js/schedule/schedule-generator.js');
     loadScript('js/planner/planner-work-handlers.js');
     loadScript('js/planner/planner-study-handlers.js');
+    loadScript('js/planner/planner-hobby-handlers.js');
     loadScript('js/planner/planner-navigation.js');
     loadScript('js/planner/planner-wizard.js');
     loadScript('js/planner/planner-form-loader.js');
+    loadScript('js/categories/hobby.js');
     loadScript('js/categories/meals.js');
     loadScript('js/categories/hydration.js');
     loadScript('js/categories/exercise.js');
@@ -200,24 +209,41 @@ describe('E2E: Fluxo Completo de Planejamento Independente', () => {
     expect(sandbox.appState.tempPlanData.cleaning.start).toBe('08:00');
     console.log('✓ Limpeza salva: 08:00-08:30 (Quarto)\n');
 
-    // 6. Salvar REFEIÇÕES
-    console.log('🍽️ 6. Configurando refeições...');
+    // 6. Salvar HOBBIES
+    console.log('🎨 6. Configurando hobbies...');
+    document.querySelector('input[name="plannerHasHobby"][value="yes"]').checked = true;
+    sandbox.togglePlannerHobbyForm(true);
+
+    const hobbyNameInput = document.getElementById('planner-hobby-name-1');
+    if (hobbyNameInput) hobbyNameInput.value = 'Pintura digital';
+    const hobbyStartInput = document.getElementById('planner-hobby-start-1-0');
+    const hobbyEndInput = document.getElementById('planner-hobby-end-1-0');
+    if (hobbyStartInput) hobbyStartInput.value = '18:00';
+    if (hobbyEndInput) hobbyEndInput.value = '19:00';
+
+    sandbox.savePlannerHobbies();
+    expect(sandbox.appState.tempPlanData.hobbies).toBeDefined();
+    expect(sandbox.appState.tempPlanData.hobbies.length).toBeGreaterThan(0);
+    console.log('✓ Hobby salvo: Pintura digital 18:00-19:00\n');
+
+    // 7. Salvar REFEIÇÕES
+    console.log('🍽️ 7. Configurando refeições...');
     document.querySelector('input[name="plannerHasMeals"][value="yes"]').checked = true;
     document.getElementById('plannerMealsCount').value = '3';
     sandbox.savePlannerMeals();
     expect(sandbox.appState.tempPlanData.mealsCount).toBe(3);
     console.log('✓ Refeições salvas: 3 refeições\n');
 
-    // 7. Salvar HIDRATAÇÃO
-    console.log('💧 7. Configurando hidratação...');
+    // 8. Salvar HIDRATAÇÃO
+    console.log('💧 8. Configurando hidratação...');
     document.getElementById('plannerUserWeight').value = '70';
     document.getElementById('plannerUserHeight').value = '175';
     sandbox.savePlannerHydration();
     expect(sandbox.appState.userData.userProfile.waterNeeds).toBeDefined();
     console.log('✓ Hidratação salva\n');
 
-    // 8. Salvar EXERCÍCIO
-    console.log('💪 8. Configurando exercício...');
+    // 9. Salvar EXERCÍCIO
+    console.log('💪 9. Configurando exercício...');
     document.querySelector('input[name="plannerHasExercise"][value="yes"]').checked = true;
     document.getElementById('plannerExerciseStartTime').value = '21:30';
     document.getElementById('plannerExerciseEndTime').value = '22:30';
@@ -227,8 +253,8 @@ describe('E2E: Fluxo Completo de Planejamento Independente', () => {
     expect(sandbox.appState.tempPlanData.exercise.type).toBe('Corrida');
     console.log('✓ Exercício salvo: Corrida 21:30-22:30\n');
 
-    // 9. FINALIZAR e verificar cronograma gerado
-    console.log('✅ 9. Finalizando planejamento...');
+    // 10. FINALIZAR e verificar cronograma gerado
+    console.log('✅ 10. Finalizando planejamento...');
     sandbox.finalizePlannerSave();
 
     const savedSchedule = sandbox.appState.userData.dailySchedules['2025-11-15'];
@@ -248,6 +274,7 @@ describe('E2E: Fluxo Completo de Planejamento Independente', () => {
     expect(activityTypes).toContain('work');
     expect(activityTypes).toContain('study');
     expect(activityTypes).toContain('cleaning');
+    expect(activityTypes).toContain('hobby');
     expect(activityTypes).toContain('meal');
     expect(activityTypes).toContain('exercise');
     expect(activityTypes).toContain('hydration');

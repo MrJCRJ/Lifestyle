@@ -60,6 +60,17 @@ function generateTodaySchedule() {
         }
     }
 
+    let hobbies = [];
+    const hasHobby = document.querySelector('input[name="hasHobby"]:checked');
+    if (hasHobby && hasHobby.value === 'yes') {
+        try {
+            hobbies = collectHobbiesData('hobbies', 'hobby');
+        } catch (error) {
+            alert(error.message);
+            return;
+        }
+    }
+
     let meals = [];
     const hasMeals = document.querySelector('input[name="hasMeals"]:checked');
     if (hasMeals && hasMeals.value === 'yes') {
@@ -97,6 +108,7 @@ function generateTodaySchedule() {
         jobs: jobs,
         studies: studies,
         cleaning: cleaning,
+        hobbies: hobbies,
         projects: projects,
         meals: meals,
         exercise: exercise
