@@ -141,14 +141,24 @@ function addCleaningActivity(schedule, cleaning) {
  * Adiciona atividades de refeições ao cronograma
  * @param {Array} schedule - Array de atividades
  * @param {number} mealsCount - Quantidade de refeições
+ * @param {Array} mealsConfig - Configurações das refeições (opcional, do planData)
  */
-function addMealActivities(schedule, mealsCount) {
+function addMealActivities(schedule, mealsCount, mealsConfig = null) {
   if (mealsCount && mealsCount > 0) {
+    // Usar configurações do planData se disponíveis, senão usar do perfil
+    const configs = mealsConfig || appState.userData.userProfile?.mealsConfig || [];
+
     for (let i = 0; i < mealsCount; i++) {
+      const mealConfig = configs[i] || {};
+      const customName = mealConfig.name?.trim();
+      const description = mealConfig.description?.trim();
+
       schedule.push({
         id: `meal-${i}`,
         type: 'meal',
-        name: `🍽️ Refeição ${i + 1}`,
+        name: customName || `🍽️ Refeição ${i + 1}`,
+        customName: customName || '',
+        description: description || '',
         // Sem horário fixo - usuário marca quando fizer
         startTime: null,
         endTime: null,
@@ -220,7 +230,7 @@ function buildScheduleFromPlanData(planData, waterGoal = null) {
   });
 
   // Adicionar refeições no final (não têm horário fixo, usuário marca quando fizer)
-  addMealActivities(schedule, planData.mealsCount);
+  addMealActivities(schedule, planData.mealsCount, planData.mealsConfig);
 
   // Adicionar hidratação no final (não tem horário fixo)
   addHydrationActivity(schedule, waterGoal);

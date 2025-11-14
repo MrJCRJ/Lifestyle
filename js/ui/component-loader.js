@@ -188,6 +188,9 @@ async function initializeComponents() {
         // 4. Modal de configurações (pode ser acessado a qualquer momento)
         await ComponentLoader.appendComponent('components/settings-modal.html', 'body');
 
+        // 5. Modal de objetivos (pode ser acessado a qualquer momento)
+        await ComponentLoader.appendComponent('components/goals-modal.html', 'body');
+
         const loadTime = (performance.now() - startTime).toFixed(2);
         console.log(`[ComponentLoader] ✅ Componentes essenciais carregados em ${loadTime}ms`);
 

@@ -25,13 +25,13 @@ function resolveScheduleDayInfo(schedule) {
 function renderEmptyDayCard(schedule) {
     const { dayName, formattedDate } = resolveScheduleDayInfo(schedule);
     return `
-        <div class="day-schedule empty-schedule">
+        <div class="day-schedule empty-schedule clickable-card" onclick="openEditPlanner('${schedule.date}')">
             <div class="schedule-header">
                 <h3>${dayName} - ${formattedDate}</h3>
             </div>
             <div class="empty-schedule-content">
                 <p>📝 Nenhum planejamento para este dia</p>
-                <button onclick="openEditPlanner('${schedule.date}')" class="btn btn-primary">Planejar</button>
+                <p class="card-hint">Clique para planejar</p>
             </div>
         </div>
     `;
@@ -43,10 +43,6 @@ function renderScheduleHeader(schedule) {
     return `
         <div class="schedule-header">
             <h3>${dayName} - ${formattedDate}</h3>
-            <div class="schedule-actions">
-                <button onclick="openEditPlanner('${schedule.date}')" class="btn btn-secondary btn-small">Editar</button>
-                ${schedule.isPlanned ? `<button onclick="removeScheduledDay('${schedule.date}')" class="btn btn-danger btn-small">Remover</button>` : ''}
-            </div>
         </div>
     `;
 }
@@ -188,7 +184,7 @@ function renderNutritionCard(schedule, hydrationActivity, mealActivities) {
             </div>
             <div class="hydration-info">
                 <span class="water-amount">${waterData.consumed}ml / ${waterData.goal}ml</span>
-                <div class="water-buttons-compact">
+                <div class="water-buttons-compact" onclick="event.stopPropagation()">
                     <button onclick="addWaterIntake('${schedule.date}', ${hydrationIndex}, 250)" class="btn-icon btn-water-small" title="+ 250ml">💧</button>
                     <button onclick="addWaterIntake('${schedule.date}', ${hydrationIndex}, 500)" class="btn-icon btn-water-small" title="+ 500ml">🥤</button>
                     <button onclick="resetWaterIntake('${schedule.date}', ${hydrationIndex})" class="btn-icon btn-clear-small" title="Resetar">↻</button>
@@ -199,45 +195,60 @@ function renderNutritionCard(schedule, hydrationActivity, mealActivities) {
 
     // Renderizar conteúdo de refeições
     const mealsContent = mealActivities.length > 0 ? `
-        <div class="meals-summary">
-            <div class="meals-header">
-                <span class="meals-icon">🍽️</span>
-                <span class="meals-title">Refeições do Dia</span>
-                <span class="meals-percentage">${completedMeals}/${totalMeals}</span>
-            </div>
-            <div class="meals-progress">
-                <div class="meals-progress-bar">
-                    <div class="meals-progress-fill" style="width: ${Math.round((completedMeals / totalMeals) * 100)}%"></div>
+        <div class="meals-summary-compact">
+            <div class="meals-header-compact">
+                <div class="meals-title-group">
+                    <span class="meals-icon">🍽️</span>
+                    <span class="meals-title">Refeições</span>
+                </div>
+                <div class="meals-stats">
+                    <span class="meals-percentage">${completedMeals}/${totalMeals}</span>
+                    <div class="meals-progress-mini">
+                        <div class="meals-progress-fill-mini" style="width: ${Math.round((completedMeals / totalMeals) * 100)}%"></div>
+                    </div>
                 </div>
             </div>
-            <div class="meals-list">
-                ${mealActivities.map(meal => {
+            <div class="meals-list-compact">
+                ${mealActivities.map((meal, idx) => {
         const mealIndex = schedule.activities.indexOf(meal);
         const isCompleted = meal.simpleTracking?.status === 'complete';
         const completedTime = meal.simpleTracking?.completedAt || '';
 
+        // Encontrar a próxima refeição pendente
+        const firstPendingIndex = mealActivities.findIndex(m => !m.simpleTracking?.status);
+        const isNextPending = idx === firstPendingIndex;
+
+        // Mostrar APENAS a próxima pendente (esconder completadas E futuras)
+        if (!isNextPending) {
+            return ''; // Esconder refeições completadas e futuras
+        }
+
+        const mealName = meal.customName || meal.name;
+        const mealDescription = meal.description || '';
+
         return `
-                        <div class="meal-item ${isCompleted ? 'completed' : ''}">
-                            <div class="meal-info">
-                                <span class="meal-name">${meal.name}</span>
-                                ${isCompleted && completedTime ? `<span class="meal-time">✓ ${completedTime}</span>` : ''}
+                        <div class="meal-item-compact next-pending" onclick="event.stopPropagation()">
+                            <div class="meal-check">
+                                <button onclick="markMealComplete('${schedule.date}', ${mealIndex})" class="meal-checkbox" title="Marcar como feita">
+                                    <span class="checkbox-icon">☐</span>
+                                </button>
                             </div>
-                            <div class="meal-actions">
-                                ${!isCompleted ? `
-                                    <button onclick="markMealComplete('${schedule.date}', ${mealIndex})" class="btn-icon btn-success btn-small" title="Marcar como feita">✓</button>
-                                ` : `
-                                    <button onclick="clearEventStatus('${schedule.date}', ${mealIndex})" class="btn-icon btn-clear btn-small" title="Desmarcar">↻</button>
-                                `}
+                            <div class="meal-content">
+                                <div class="meal-main-info">
+                                    <span class="meal-name-compact">${mealName}</span>
+                                </div>
+                                ${mealDescription ? `<div class="meal-description">${mealDescription}</div>` : ''}
                             </div>
                         </div>
                     `;
     }).join('')}
+                ${completedMeals === totalMeals ? '<div class="all-meals-done">✅ Todas as refeições concluídas!</div>' : ''}
             </div>
         </div>
     ` : '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Nenhuma refeição planejada</p>';
 
     return `
-        <div class="nutrition-hydration-card">
+        <div class="nutrition-hydration-card" onclick="event.stopPropagation()">
             <div class="nutrition-card-inner">
                 <div class="nutrition-tabs">
                     <button class="nutrition-tab ${isMealsActive ? 'active' : ''}" onclick="switchNutritionTab(event, 'meals')">
@@ -294,10 +305,11 @@ function renderScheduleDayCard(schedule, isToday) {
         .join('');
 
     return `
-        <div class="day-schedule ${schedule.isPlanned ? 'planned-schedule' : ''}">
+        <div class="day-schedule ${schedule.isPlanned ? 'planned-schedule' : ''} clickable-card" onclick="openEditPlanner('${schedule.date}')">
             ${headerHtml}
+            <p class="card-hint">Clique no card para editar</p>
             ${nutritionCardHtml}
-            <div class="schedule-activities">
+            <div class="schedule-activities" onclick="event.stopPropagation()">
                 ${activitiesHtml}
             </div>
         </div>

@@ -43,7 +43,7 @@ function renderHydrationActions(schedule, activity, index) {
   const percentage = Math.min(100, Math.round((waterData.consumed / waterData.goal) * 100));
 
   return `
-        <div class="hydration-actions">
+        <div class="hydration-actions" onclick="event.stopPropagation()">
             <div class="water-progress">
                 <div class="water-progress-bar">
                     <div class="water-progress-fill" style="width: ${percentage}%"></div>
@@ -68,7 +68,7 @@ function renderSimpleTrackingActions(schedule, activity, index) {
   if (hasSimpleTracking) {
     // Já marcado: mostrar apenas reset
     return `
-            <div class="activity-actions">
+            <div class="activity-actions" onclick="event.stopPropagation()">
                 <button onclick="clearEventStatus('${schedule.date}', ${index})" class="btn-icon btn-clear" title="Limpar status">↻</button>
             </div>
         `;
@@ -76,7 +76,7 @@ function renderSimpleTrackingActions(schedule, activity, index) {
 
   // Não marcado: mostrar botões de marcação simples
   return `
-        <div class="activity-actions">
+        <div class="activity-actions" onclick="event.stopPropagation()">
             <button onclick="markEventSimpleComplete('${schedule.date}', ${index})" class="btn-icon btn-success" title="Concluído">✓</button>
             <button onclick="markEventSimpleIncomplete('${schedule.date}', ${index})" class="btn-icon btn-danger" title="Não feito">✗</button>
         </div>

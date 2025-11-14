@@ -36,7 +36,7 @@
       <div id="planner-meals-quick-configs" class="quick-config-section"></div>
 
       <p class="subtitle" style="margin-top: 20px">
-        Quantas refeições você faz por dia?
+        Configure suas refeições do dia
       </p>
       <div class="form-group">
         <label for="plannerMealsCount">Número de refeições</label>
@@ -44,15 +44,25 @@
           type="number"
           id="plannerMealsCount"
           min="1"
-          max="8"
+          max="10"
           value="3"
           placeholder="Ex: 3"
+          onchange="updatePlannerMealsList()"
         />
         <small
-          >As refeições não têm horário fixo. Você vai marcá-las conforme fizer
-          ao longo do dia.</small
+          >Defina quantas refeições você faz por dia e personalize cada
+          uma</small
         >
       </div>
+
+      <div id="planner-meals-list-container" class="meals-config-list">
+        <!-- Refeições serão adicionadas dinamicamente aqui -->
+      </div>
+
+      <small class="form-note">
+        💡 As refeições não têm horário fixo. Você vai marcá-las conforme fizer
+        ao longo do dia.
+      </small>
     </div>
 
     <div class="button-group">

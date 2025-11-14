@@ -136,6 +136,67 @@
   border-left-color: #a78bfa;
 }
 
+/* Cards clicáveis */
+.day-schedule.clickable-card {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.day-schedule.clickable-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.05),
+    rgba(79, 70, 229, 0.02)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.day-schedule.clickable-card:hover::before {
+  opacity: 1;
+}
+
+.day-schedule.clickable-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-left-color: var(--primary-light);
+}
+
+.day-schedule.clickable-card:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.card-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  text-align: center;
+  padding: 8px 0;
+  margin: 0 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.day-schedule.clickable-card:hover .card-hint {
+  color: var(--primary-light);
+  opacity: 1;
+}
+
+.empty-schedule-content .card-hint {
+  border-top: none;
+  padding-top: 0;
+  margin-top: -10px;
+}
+
 .day-schedule.empty-schedule {
   border-left: 4px solid var(--border-color);
   text-align: center;
@@ -153,7 +214,7 @@
 
 .schedule-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 0;
   padding: var(--spacing-lg);
@@ -163,6 +224,7 @@
 .schedule-header h3 {
   margin-bottom: 0;
   font-size: 1.1rem;
+  text-align: center;
 }
 
 .schedule-actions {

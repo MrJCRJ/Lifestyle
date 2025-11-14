@@ -1,0 +1,79 @@
+/* Modal de Edição de Refeição */
+
+.edit-meal-modal-content {
+  max-width: 500px;
+  width: 95%;
+}
+
+.edit-meal-modal-content .modal-body {
+  padding: 20px;
+}
+
+.edit-meal-modal-content .form-group {
+  margin-bottom: 20px;
+}
+
+.edit-meal-modal-content label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.label-icon {
+  font-size: 1.1rem;
+}
+
+.edit-meal-modal-content input[type="text"],
+.edit-meal-modal-content textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.edit-meal-modal-content input[type="text"]:focus,
+.edit-meal-modal-content textarea:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.1);
+}
+
+.edit-meal-modal-content textarea {
+  resize: vertical;
+  min-height: 70px;
+  line-height: 1.5;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .edit-meal-modal-content {
+    width: 98%;
+    max-height: 90vh;
+  }
+
+  .edit-meal-modal-content .modal-body {
+    padding: 15px;
+  }
+
+  .edit-meal-modal-content .form-group {
+    margin-bottom: 15px;
+  }
+}
