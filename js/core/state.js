@@ -101,13 +101,19 @@ function saveToStorage() {
     const saveData = {
         ...appState.userData,
         activeFilter: appState.activeFilter,
-        lastSaved: new Date().toISOString()
+        lastSaved: new Date().toISOString(),
+        lastModified: new Date().toISOString()
     };
     localStorage.setItem('lifestyleData', JSON.stringify(saveData));
     console.log('💾 Dados salvos no localStorage', {
         tempPlanData: appState.tempPlanData,
         dailySchedules: Object.keys(appState.userData.dailySchedules || {})
     });
+
+    // Sincronizar com Google Drive automaticamente (se disponível)
+    if (typeof autoSyncToDrive === 'function') {
+        autoSyncToDrive();
+    }
 }
 
 // Carregar do localStorage

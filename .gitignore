@@ -19,6 +19,9 @@ logs/
 .env.local
 .env.*.local
 
+# Generated files
+js/generated/env-config.js
+
 # OS files
 .DS_Store
 Thumbs.db
