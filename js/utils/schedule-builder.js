@@ -143,12 +143,29 @@ function addCleaningActivity(schedule, cleaning) {
  * @param {Object} hygiene - Dados da higiene
  */
 function addHygieneActivity(schedule, hygiene) {
-  if (hygiene && hygiene.times && hygiene.times.length > 0) {
+  if (!hygiene) return;
+
+  // Suportar dois formatos: direto (start, end) ou array times
+  if (hygiene.start && hygiene.end) {
+    const activityNames = hygiene.activityNames && hygiene.activityNames.length > 0
+      ? hygiene.activityNames.join(', ')
+      : 'Higiene Pessoal';
+
+    schedule.push({
+      id: 'hygiene-0',
+      type: 'hygiene',
+      name: `🧼 ${activityNames}`,
+      startTime: hygiene.start,
+      endTime: hygiene.end,
+      notes: hygiene.notes || '',
+      activities: hygiene.activities || []
+    });
+  } else if (hygiene.times && hygiene.times.length > 0) {
     hygiene.times.forEach((time, index) => {
-      const activityNames = time.activityNames && time.activityNames.length > 0 
-        ? time.activityNames.join(', ') 
+      const activityNames = time.activityNames && time.activityNames.length > 0
+        ? time.activityNames.join(', ')
         : 'Higiene Pessoal';
-      
+
       schedule.push({
         id: `hygiene-${index}`,
         type: 'hygiene',

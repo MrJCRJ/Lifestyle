@@ -2,7 +2,7 @@
  * Carregar dados de higiene no planner
  */
 function loadPlannerHygieneData(planData) {
-  if (!planData.hygiene || !planData.hygiene.hasHygiene) {
+  if (!planData.hygiene) {
     const noRadio = document.querySelector('input[name="plannerHasHygiene"][value="no"]');
     if (noRadio) noRadio.checked = true;
     if (typeof togglePlannerHygieneForm === 'function') togglePlannerHygieneForm(false);
@@ -13,14 +13,14 @@ function loadPlannerHygieneData(planData) {
   if (yesRadio) yesRadio.checked = true;
   if (typeof togglePlannerHygieneForm === 'function') togglePlannerHygieneForm(true);
 
-  const time = planData.hygiene.times[0];
+  const hygieneData = planData.hygiene;
   const startTime = document.getElementById('plannerHygieneStartTime');
   const endTime = document.getElementById('plannerHygieneEndTime');
   const notes = document.getElementById('plannerHygieneNotes');
 
-  if (startTime) startTime.value = time.start || '';
-  if (endTime) endTime.value = time.end || '';
-  if (notes) notes.value = time.notes || '';
+  if (startTime) startTime.value = hygieneData.start || '';
+  if (endTime) endTime.value = hygieneData.end || '';
+  if (notes) notes.value = hygieneData.notes || '';
 
   // Recarregar atividades (as checkboxes serão marcadas baseado no histórico)
   if (typeof initializePlannerHygieneSuggestions === 'function') {

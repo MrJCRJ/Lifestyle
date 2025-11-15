@@ -16,6 +16,7 @@ function updateEditPlannerStatus() {
   updateCategoryStatus('hobbies', planData);
   updateCategoryStatus('projects', planData);
   updateCategoryStatus('cleaning', planData);
+  updateCategoryStatus('hygiene', planData);
 }
 
 /**
@@ -147,6 +148,22 @@ function getCategoryStatusText(category, planData) {
         return {
           configured: true,
           text: `${planData.cleaning.start} - ${planData.cleaning.end}`
+        };
+      }
+      return { configured: false };
+
+    case 'hygiene':
+      if (planData.hygiene) {
+        const activities = planData.hygiene.activityNames || [];
+        if (activities.length > 0) {
+          return {
+            configured: true,
+            text: `${activities.length} atividade${activities.length > 1 ? 's' : ''}`
+          };
+        }
+        return {
+          configured: true,
+          text: `${planData.hygiene.start} - ${planData.hygiene.end}`
         };
       }
       return { configured: false };

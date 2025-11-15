@@ -1220,6 +1220,7 @@ css/exercise/
 **Problema atual:** Limpeza é tratada de forma genérica, sem rastreamento de cômodos específicos ou frequência de limpeza.
 
 **Solução:** Implementar **Sistema Inteligente de Limpeza por Cômodos** com:
+
 - Cadastro de cômodos da casa
 - Tracking de última limpeza por cômodo
 - Sugestões baseadas em frequência recomendada
@@ -1305,7 +1306,7 @@ css/exercise/
       mostCleanedRoom: "room_002", // cozinha
       leastCleanedRoom: "room_003", // quarto
       currentStreak: 5, // dias consecutivos com limpeza
-      
+
       // Por cômodo
       roomStats: {
         "room_001": {
@@ -1569,27 +1570,27 @@ graph TD
     D --> E[Escolher frequência]
     E --> F[Definir prioridade]
     F --> G[Cômodos Salvos]
-    
+
     G --> H{Planejar Limpeza}
     H --> I[Sistema analisa histórico]
     I --> J[Calcula dias desde última limpeza]
     J --> K{Passou da frequência?}
-    
+
     K -->|Sim| L[Marca como ATENÇÃO ⚠️]
     K -->|Não| M[Marca como EM DIA ✅]
-    
+
     L --> N[Ordena por urgência]
     M --> N
     N --> O[Exibe sugestões]
-    
+
     O --> P[Usuário seleciona cômodos]
     P --> Q[Calcula tempo estimado]
     Q --> R[Ajusta horário de término]
-    
+
     R --> S[Salva limpeza planejada]
     S --> T[Atualiza histórico]
     T --> U[Recalcula estatísticas]
-    
+
     U --> V[Dashboard atualizado]
     V --> W{Ver próxima limpeza}
     W --> H
@@ -1602,44 +1603,44 @@ graph TD
 function calculateRoomStatus(room, history) {
   const lastCleaned = getLastCleanedDate(room.id, history);
   const daysSince = calculateDaysSince(lastCleaned);
-  
+
   // Status baseado na frequência recomendada
-  let status = 'ok';
+  let status = "ok";
   let urgency = 0;
-  
+
   if (daysSince >= room.recommendedFrequency * 2) {
-    status = 'urgent'; // Passou muito tempo
+    status = "urgent"; // Passou muito tempo
     urgency = 3;
   } else if (daysSince >= room.recommendedFrequency) {
-    status = 'attention'; // Na hora de limpar
+    status = "attention"; // Na hora de limpar
     urgency = 2;
   } else if (daysSince >= room.recommendedFrequency * 0.7) {
-    status = 'soon'; // Em breve
+    status = "soon"; // Em breve
     urgency = 1;
   }
-  
+
   // Aumentar urgência se for prioridade alta
-  if (room.priority === 'high') {
+  if (room.priority === "high") {
     urgency += 1;
   }
-  
+
   return {
     status,
     urgency,
     daysSince,
     suggested: daysSince >= room.recommendedFrequency,
-    daysUntilNext: Math.max(0, room.recommendedFrequency - daysSince)
+    daysUntilNext: Math.max(0, room.recommendedFrequency - daysSince),
   };
 }
 
 // Gerar sugestões para o dia
 function generateCleaningSuggestions(rooms, history) {
-  const suggestions = rooms.map(room => ({
+  const suggestions = rooms.map((room) => ({
     ...room,
     ...calculateRoomStatus(room, history),
-    estimatedTime: calculateEstimatedTime(room)
+    estimatedTime: calculateEstimatedTime(room),
   }));
-  
+
   // Ordenar por urgência e prioridade
   suggestions.sort((a, b) => {
     if (a.urgency !== b.urgency) return b.urgency - a.urgency;
@@ -1649,50 +1650,60 @@ function generateCleaningSuggestions(rooms, history) {
     }
     return b.daysSince - a.daysSince;
   });
-  
+
   return {
-    attention: suggestions.filter(s => s.status === 'urgent' || s.status === 'attention'),
-    ok: suggestions.filter(s => s.status === 'ok' || s.status === 'soon'),
-    all: suggestions
+    attention: suggestions.filter(
+      (s) => s.status === "urgent" || s.status === "attention"
+    ),
+    ok: suggestions.filter((s) => s.status === "ok" || s.status === "soon"),
+    all: suggestions,
   };
 }
 
 // Calcular estatísticas mensais
 function calculateCleaningStats(rooms, history, currentMonth) {
   const cleaningsThisMonth = getCleaningsForMonth(history, currentMonth);
-  
+
   const stats = {
     totalCleanings: cleaningsThisMonth.length,
     averageTime: calculateAverageTime(cleaningsThisMonth),
     currentStreak: calculateStreak(history),
-    roomStats: {}
+    roomStats: {},
   };
-  
-  rooms.forEach(room => {
-    const roomCleanings = cleaningsThisMonth.filter(c => c.rooms.includes(room.id));
+
+  rooms.forEach((room) => {
+    const roomCleanings = cleaningsThisMonth.filter((c) =>
+      c.rooms.includes(room.id)
+    );
     const lastCleaned = getLastCleanedDate(room.id, history);
     const daysSince = calculateDaysSince(lastCleaned);
-    
+
     // Calcular frequência real
-    const realFrequency = roomCleanings.length > 1 
-      ? calculateAverageFrequency(room.id, history)
-      : null;
-    
+    const realFrequency =
+      roomCleanings.length > 1
+        ? calculateAverageFrequency(room.id, history)
+        : null;
+
     // Calcular aderência (% de seguir a frequência recomendada)
-    const adherence = realFrequency 
-      ? Math.min(100, Math.round((room.recommendedFrequency / realFrequency) * 100))
-      : daysSince <= room.recommendedFrequency ? 100 : 0;
-    
+    const adherence = realFrequency
+      ? Math.min(
+          100,
+          Math.round((room.recommendedFrequency / realFrequency) * 100)
+        )
+      : daysSince <= room.recommendedFrequency
+      ? 100
+      : 0;
+
     stats.roomStats[room.id] = {
       lastCleaned,
       daysSinceLastCleaning: daysSince,
       timesCleanedThisMonth: roomCleanings.length,
       averageFrequency: realFrequency,
       adherence,
-      status: calculateRoomStatus(room, history).status
+      status: calculateRoomStatus(room, history).status,
     };
   });
-  
+
   return stats;
 }
 ```
@@ -1724,6 +1735,7 @@ css/cleaning/
 ### 4.9 Benefícios
 
 **Para o Usuário:**
+
 - ✅ **Nunca esquecer** de limpar cômodos importantes
 - ✅ **Sugestões inteligentes** baseadas no histórico real
 - ✅ **Priorização automática** dos cômodos que precisam atenção
@@ -1732,6 +1744,7 @@ css/cleaning/
 - ✅ **Visão clara** de toda a casa
 
 **Para o Sistema:**
+
 - ✅ **Aprendizado contínuo** da frequência real do usuário
 - ✅ **Adaptação** às prioridades individuais
 - ✅ **Estatísticas** para insights de comportamento
@@ -1740,6 +1753,7 @@ css/cleaning/
 ### 4.10 Casos de Uso
 
 #### Caso 1: Primeira Configuração
+
 1. Usuário acessa configurações de limpeza
 2. Clica em "Configurar Cômodos"
 3. Adiciona: Sala, Cozinha, Quarto, Banheiro
@@ -1747,6 +1761,7 @@ css/cleaning/
 5. Sistema está pronto para sugerir
 
 #### Caso 2: Planejamento Inteligente
+
 1. Usuário vai planejar limpeza para sexta
 2. Sistema mostra: Quarto (7 dias sem limpar) ⚠️
 3. Sistema sugere: Banheiro (3 dias, prioridade alta) ⚠️
@@ -1756,6 +1771,7 @@ css/cleaning/
 7. Salva e atualiza histórico
 
 #### Caso 3: Dashboard e Insights
+
 1. Usuário abre dashboard de limpeza
 2. Vê que Cozinha tem 100% aderência (sempre em dia)
 3. Vê que Quarto tem 78% aderência (às vezes atrasa)
@@ -1763,6 +1779,7 @@ css/cleaning/
 5. Usuário sente-se motivado a manter sequência
 
 #### Caso 4: Alerta Urgente
+
 1. Banheiro não é limpo há 5 dias (recomendado: 2 dias)
 2. Sistema marca como URGENTE ⚠️
 3. Coloca no topo das sugestões
@@ -1772,18 +1789,21 @@ css/cleaning/
 ### 4.11 Prioridade de Implementação
 
 **Fase 1 (Base):** 2 semanas
+
 - [ ] Criar estrutura de dados de cômodos
 - [ ] Interface de configuração de cômodos
 - [ ] CRUD de cômodos (criar, editar, deletar)
 - [ ] Armazenamento em localStorage
 
 **Fase 2 (Tracking):** 1 semana
+
 - [ ] Sistema de histórico de limpezas
 - [ ] Salvar cômodos limpos em cada limpeza
 - [ ] Calcular dias desde última limpeza
 - [ ] Determinar status (ok, attention, urgent)
 
 **Fase 3 (Sugestões):** 1-2 semanas
+
 - [ ] Algoritmo de sugestões inteligentes
 - [ ] Ordenação por urgência e prioridade
 - [ ] Estimativa de tempo por cômodo
@@ -1791,6 +1811,7 @@ css/cleaning/
 - [ ] Seleção múltipla de cômodos
 
 **Fase 4 (Estatísticas):** 1 semana
+
 - [ ] Cálculo de estatísticas mensais
 - [ ] Aderência por cômodo
 - [ ] Frequência real vs recomendada
@@ -1798,6 +1819,7 @@ css/cleaning/
 - [ ] Gráficos de progresso
 
 **Fase 5 (Gamificação):** 1 semana
+
 - [ ] Sistema de conquistas
 - [ ] Sequências (streaks)
 - [ ] Badges e recompensas
@@ -1814,6 +1836,7 @@ css/cleaning/
 **Problema atual:** Atividades no cronograma aparecem de forma compacta, sem detalhes ou interatividade individual.
 
 **Solução:** Implementar **Modo Foco** - ao clicar em qualquer atividade, abre uma visualização detalhada e focada com:
+
 - Informações completas da atividade
 - Temporizador/contador em destaque
 - Ações específicas por tipo de atividade
@@ -1829,7 +1852,7 @@ css/cleaning/
     activityId: null,
     scheduleDate: null,
     activityIndex: null,
-    
+
     // Dados da atividade em foco
     activityData: {
       id: "work-0",
@@ -1838,33 +1861,33 @@ css/cleaning/
       startTime: "09:00",
       endTime: "12:00",
       description: "Reunião de sprint e desenvolvimento",
-      
+
       // Dados específicos por tipo
       typeSpecificData: {
         // Para trabalho/estudo
         project: "Sistema de Saúde v2.0",
         tasks: ["Implementar modo foco", "Testar funcionalidades"],
-        
+
         // Para refeição
         recipeId: "recipe_001",
         recipeName: "Minha Vitamina Matinal",
-        
+
         // Para exercício
         exerciseIds: ["ex_001", "ex_002"],
         sets: [...],
-        
+
         // Para hidratação
         waterGoal: 2450,
         consumed: 1800
       },
-      
+
       // Tracking
       simpleTracking: {
         status: null, // 'complete', 'incomplete', null
         completedAt: null,
         notes: ""
       },
-      
+
       // Timer info
       isActive: true,
       timeRemaining: "1h 23min",
@@ -2075,30 +2098,30 @@ graph TD
     A[Cronograma Exibido] --> B{Usuário clica em atividade}
     B --> C[Detecta tipo da atividade]
     C --> D{Qual tipo?}
-    
+
     D -->|Trabalho/Estudo| E[Modo Foco - Timer]
     D -->|Refeição| F[Modo Foco - Receita]
     D -->|Exercício| G[Modo Foco - Treino]
     D -->|Hidratação| H[Modo Foco - Água]
     D -->|Outros| I[Modo Foco - Genérico]
-    
+
     E --> J[Carrega dados da atividade]
     F --> K[Carrega receita vinculada]
     G --> L[Carrega exercícios e séries]
     H --> M[Carrega tracking de água]
     I --> J
-    
+
     J --> N[Exibe interface focada]
     K --> N
     L --> N
     M --> N
-    
+
     N --> O{Usuário interage}
     O -->|Marca concluída| P[Atualiza status]
     O -->|Edita| Q[Abre editor]
     O -->|Adiciona nota| R[Salva nota]
     O -->|Fecha| S[Volta ao cronograma]
-    
+
     P --> S
     Q --> S
     R --> S
@@ -2145,25 +2168,25 @@ const FocusMode = {
     activityId: null,
     scheduleDate: null,
     activityIndex: null,
-    activityData: null
+    activityData: null,
   },
 
   // Abrir modo foco
   open(scheduleDate, activityIndex) {
     const schedule = appState.userData.dailySchedules[scheduleDate];
     const activity = schedule.activities[activityIndex];
-    
+
     this.state = {
       active: true,
       activityId: activity.id,
       scheduleDate: scheduleDate,
       activityIndex: activityIndex,
-      activityData: activity
+      activityData: activity,
     };
-    
+
     // Renderizar interface apropriada
     this.render();
-    
+
     // Iniciar timer se necessário
     if (this.isActive()) {
       this.startTimer();
@@ -2175,7 +2198,7 @@ const FocusMode = {
     this.stopTimer();
     this.state.active = false;
     this.hideOverlay();
-    
+
     // Recarregar cronograma para mostrar atualizações
     showScheduleView();
   },
@@ -2184,9 +2207,9 @@ const FocusMode = {
   render() {
     const type = this.state.activityData.type;
     const renderer = FocusRenderers[type] || FocusRenderers.generic;
-    
+
     const html = renderer(this.state.activityData, this.state);
-    document.getElementById('focus-mode-overlay').innerHTML = html;
+    document.getElementById("focus-mode-overlay").innerHTML = html;
     this.showOverlay();
   },
 
@@ -2195,109 +2218,114 @@ const FocusMode = {
     const activity = this.state.activityData;
     const now = new Date();
     const todayKey = formatDateKey(now);
-    
+
     // Apenas ativo se for hoje e dentro do horário
-    return this.state.scheduleDate === todayKey &&
-           isEventActive(activity.startTime, activity.endTime);
+    return (
+      this.state.scheduleDate === todayKey &&
+      isEventActive(activity.startTime, activity.endTime)
+    );
   },
 
   // Timer
   timerInterval: null,
-  
+
   startTimer() {
     this.updateTimer();
     this.timerInterval = setInterval(() => this.updateTimer(), 1000);
   },
-  
+
   stopTimer() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
     }
   },
-  
+
   updateTimer() {
     const activity = this.state.activityData;
     const remaining = getTimeRemaining(activity.endTime);
-    
+
     // Atualizar UI
-    const timerEl = document.getElementById('focus-timer');
+    const timerEl = document.getElementById("focus-timer");
     if (timerEl) {
       timerEl.textContent = remaining.text;
     }
-    
+
     // Atualizar barra de progresso
     const progress = this.calculateProgress();
-    const progressBar = document.getElementById('focus-progress-bar');
+    const progressBar = document.getElementById("focus-progress-bar");
     if (progressBar) {
       progressBar.style.width = `${progress}%`;
     }
-    
+
     // Notificação quando terminar
     if (remaining.minutes === 0 && remaining.seconds === 0) {
       this.onTimerComplete();
     }
   },
-  
+
   calculateProgress() {
     const activity = this.state.activityData;
     const start = parseTimeToMinutes(activity.startTime);
     const end = parseTimeToMinutes(activity.endTime);
     const now = parseTimeToMinutes(getCurrentTime());
-    
+
     return Math.round(((now - start) / (end - start)) * 100);
   },
-  
+
   onTimerComplete() {
     this.stopTimer();
-    
+
     // Notificação
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Atividade Concluída!', {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("Atividade Concluída!", {
         body: `${this.state.activityData.name} terminou`,
-        icon: '/icon-192.png'
+        icon: "/icon-192.png",
       });
     }
-    
+
     // Som (opcional)
     this.playCompletionSound();
   },
-  
+
   // Ações
   markComplete() {
     markEventSimpleComplete(this.state.scheduleDate, this.state.activityIndex);
     this.close();
   },
-  
+
   markIncomplete() {
-    markEventSimpleIncomplete(this.state.scheduleDate, this.state.activityIndex);
+    markEventSimpleIncomplete(
+      this.state.scheduleDate,
+      this.state.activityIndex
+    );
     this.close();
   },
-  
+
   addNote(note) {
     const schedule = appState.userData.dailySchedules[this.state.scheduleDate];
     const activity = schedule.activities[this.state.activityIndex];
-    
+
     if (!activity.simpleTracking) {
       activity.simpleTracking = {};
     }
     activity.simpleTracking.notes = note;
-    
+
     saveToStorage();
   },
-  
+
   // Overlay
   showOverlay() {
-    const overlay = document.getElementById('focus-mode-overlay');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    const overlay = document.getElementById("focus-mode-overlay");
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
   },
-  
+
   hideOverlay() {
-    const overlay = document.getElementById('focus-mode-overlay');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
+    const overlay = document.getElementById("focus-mode-overlay");
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  },
 };
 
 // Expor globalmente
@@ -2311,12 +2339,12 @@ window.FocusMode = FocusMode;
 
 function renderActivity(schedule, activity, index, isToday) {
   // ... código existente ...
-  
+
   // Adicionar atributo onclick para abrir modo foco
   const focusHandler = `onclick="FocusMode.open('${schedule.date}', ${index}); event.stopPropagation();"`;
-  
+
   return `
-    <div class="activity ${isActive ? 'active-event' : ''} ${statusClass}" 
+    <div class="activity ${isActive ? "active-event" : ""} ${statusClass}" 
          ${focusHandler}
          style="cursor: pointer;">
       <div class="activity-main">
@@ -2333,6 +2361,7 @@ function renderActivity(schedule, activity, index, isToday) {
 ### 4.6 Benefícios do Modo Foco
 
 #### Para o Usuário:
+
 - ✅ **Visão detalhada** de cada atividade
 - ✅ **Timer em destaque** para atividades ativas
 - ✅ **Acesso rápido** a receitas, exercícios, etc
@@ -2341,6 +2370,7 @@ function renderActivity(schedule, activity, index, isToday) {
 - ✅ **Menos distração** - foco em uma atividade por vez
 
 #### Para o Sistema:
+
 - ✅ **Base para novas features** (receitas, exercícios)
 - ✅ **Integração natural** com tracking detalhado
 - ✅ **Extensível** - fácil adicionar novos tipos
@@ -2349,6 +2379,7 @@ function renderActivity(schedule, activity, index, isToday) {
 ### 4.7 Casos de Uso
 
 #### Caso 1: Trabalho em Andamento
+
 1. Usuário vê trabalho ativo no cronograma
 2. Clica na atividade
 3. Modo Foco abre com timer grande
@@ -2357,6 +2388,7 @@ function renderActivity(schedule, activity, index, isToday) {
 6. Fecha e continua trabalhando
 
 #### Caso 2: Hora da Refeição
+
 1. Notificação: "Hora do café da manhã!"
 2. Usuário abre cronograma
 3. Clica na refeição
@@ -2366,6 +2398,7 @@ function renderActivity(schedule, activity, index, isToday) {
 7. Opcional: Adiciona nota sobre sabor
 
 #### Caso 3: Treino em Progresso
+
 1. Usuário está treinando
 2. Clica em "Exercício" no cronograma
 3. Modo Foco abre
@@ -2374,6 +2407,7 @@ function renderActivity(schedule, activity, index, isToday) {
 6. Finaliza treino quando termina
 
 #### Caso 4: Lembrete de Hidratação
+
 1. Sistema lembra: "Hora de beber água!"
 2. Usuário clica em Hidratação
 3. Modo Foco mostra progresso: 73.5%
@@ -2384,28 +2418,33 @@ function renderActivity(schedule, activity, index, isToday) {
 ### 4.8 Prioridade de Implementação
 
 **Fase 0 (Base):** Antes das outras features
+
 - [ ] Implementar estrutura básica do modo foco
 - [ ] Timer e progresso visual
 - [ ] Overlay/modal responsivo
 - [ ] Integração com cronograma (click handlers)
 
 **Fase 1 (Genérico):** Funciona com tudo
+
 - [ ] Modo foco genérico (trabalho, estudo, etc)
 - [ ] Marcação de conclusão
 - [ ] Adicionar notas
 - [ ] Notificações
 
 **Fase 2 (Especializado):** Quando implementar receitas
+
 - [ ] Modo foco para refeições
 - [ ] Exibir receita completa
 - [ ] Integração com sistema de calorias
 
 **Fase 3 (Exercícios):** Quando implementar workout tracking
+
 - [ ] Modo foco para exercícios
 - [ ] Registro de séries em tempo real
 - [ ] Progresso do treino
 
 **Fase 4 (Hidratação):** Melhorar tracking
+
 - [ ] Modo foco para hidratação
 - [ ] Registro rápido de consumo
 - [ ] Histórico do dia
@@ -2600,6 +2639,7 @@ Lifestyle/
 - [ ] Testes básicos
 
 **Por que primeiro?**
+
 - ✅ Base para exibir receitas detalhadas (Fase 2+3)
 - ✅ Base para registrar séries de exercícios (Fase 5+6)
 - ✅ Base para tracking rápido de hidratação (Fase 1)
@@ -2713,6 +2753,7 @@ Lifestyle/
   - Registro rápido (< 10 segundos)
 
 - [ ] **Modo Foco para Refeições:**
+
   - Renderizador específico (`meal-focus.js`)
   - Exibir receita completa (ingredientes, preparo)
   - Mostrar informações nutricionais (se disponível)
@@ -2818,6 +2859,7 @@ Lifestyle/
 **Tempo Total Estimado: 16-22 semanas** _(antes: 11-15 semanas)_
 
 **Breakdown:**
+
 - Fase 0 (Modo Foco): 1-2 semanas
 - Fase 1 (Config & Peso): 1-2 semanas
 - **Fase 1.5 (Limpeza Base): 2 semanas** 🆕
@@ -2835,6 +2877,7 @@ Lifestyle/
 **Sistema de Limpeza:** 5-6 semanas adicionais no total
 
 **Nota:** Sistema de limpeza inteligente adiciona ~5-6 semanas mas traz benefícios imediatos:
+
 - ✅ Tracking automático de todos os cômodos
 - ✅ Sugestões inteligentes reduzem carga mental
 - ✅ Gamificação aumenta motivação para manter casa limpa

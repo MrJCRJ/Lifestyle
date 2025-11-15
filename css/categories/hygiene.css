@@ -42,7 +42,11 @@
 
 .hygiene-activity-item.urgent {
   border-color: #ef4444;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.1) 0%,
+    rgba(220, 38, 38, 0.05) 100%
+  );
 }
 
 .hygiene-activity-item label {
@@ -96,7 +100,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -117,7 +122,11 @@
 .hygiene-estimate {
   margin: 0;
   padding: 0.75rem;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.1) 0%,
+    rgba(124, 58, 237, 0.05) 100%
+  );
   border-radius: 8px;
   text-align: center;
   font-size: 0.95rem;

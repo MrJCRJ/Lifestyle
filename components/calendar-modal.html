@@ -3,7 +3,9 @@
   <div class="modal-content calendar-modal-content">
     <div class="modal-header">
       <h2>📅 Selecionar Data</h2>
-      <button class="modal-close" onclick="closeCalendarModal()">&times;</button>
+      <button class="modal-close" onclick="closeCalendarModal()">
+        &times;
+      </button>
     </div>
 
     <div class="modal-body">
@@ -20,13 +22,16 @@
 
       <!-- Botão para hoje -->
       <div class="calendar-quick-actions">
-        <button class="btn btn-outline btn-sm" onclick="goToTodayFromCalendar()">
+        <button
+          class="btn btn-outline btn-sm"
+          onclick="goToTodayFromCalendar()"
+        >
           📅 Hoje
         </button>
       </div>
 
       <!-- Grid do calendário -->
-      <div class="calendar-grid">
+      <div class="calendar-grid" id="calendar-days-grid">
         <!-- Cabeçalho dos dias da semana -->
         <div class="calendar-day-header">Dom</div>
         <div class="calendar-day-header">Seg</div>
@@ -37,7 +42,6 @@
         <div class="calendar-day-header">Sáb</div>
 
         <!-- Os dias serão inseridos aqui via JavaScript -->
-        <div id="calendar-days-grid"></div>
       </div>
 
       <!-- Legenda -->
@@ -45,9 +49,24 @@
         <div class="legend-item">
           <div class="legend-indicator">
             <svg width="24" height="24" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" fill="none" stroke="#ddd" stroke-width="2"/>
-              <circle cx="12" cy="12" r="10" fill="none" stroke="#10b981" stroke-width="2"
-                      stroke-dasharray="62.83" stroke-dashoffset="0"/>
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="#ddd"
+                stroke-width="2"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="#10b981"
+                stroke-width="2"
+                stroke-dasharray="62.83"
+                stroke-dashoffset="0"
+              />
             </svg>
           </div>
           <span>100% planejado</span>
@@ -55,9 +74,24 @@
         <div class="legend-item">
           <div class="legend-indicator">
             <svg width="24" height="24" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" fill="none" stroke="#ddd" stroke-width="2"/>
-              <circle cx="12" cy="12" r="10" fill="none" stroke="#f59e0b" stroke-width="2"
-                      stroke-dasharray="62.83" stroke-dashoffset="31.42"/>
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="#ddd"
+                stroke-width="2"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="#f59e0b"
+                stroke-width="2"
+                stroke-dasharray="62.83"
+                stroke-dashoffset="31.42"
+              />
             </svg>
           </div>
           <span>50% planejado</span>
@@ -65,7 +99,14 @@
         <div class="legend-item">
           <div class="legend-indicator">
             <svg width="24" height="24" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" fill="none" stroke="#ddd" stroke-width="2"/>
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="#ddd"
+                stroke-width="2"
+              />
             </svg>
           </div>
           <span>Não planejado</span>

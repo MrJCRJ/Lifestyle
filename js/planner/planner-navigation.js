@@ -146,6 +146,7 @@ function editPlannerCategory(category) {
     'work': 'planner-work',
     'study': 'planner-study',
     'cleaning': 'planner-cleaning',
+    'hygiene': 'planner-hygiene',
     'hobbies': 'planner-hobbies',
     'projects': 'planner-projects',
     'meals': 'planner-meals',
