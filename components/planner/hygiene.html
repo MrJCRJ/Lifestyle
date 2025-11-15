@@ -1,0 +1,67 @@
+<!-- Planejamento Diário - Higiene -->
+<section id="planner-hygiene-screen" class="screen planner-screen">
+  <div class="form-content">
+    <h2>🧼 Higiene Pessoal</h2>
+    <p class="subtitle">
+      Planejando:
+      <strong><span id="planner-hygiene-day-name">Amanhã</span></strong>
+    </p>
+
+    <div class="form-group">
+      <label>Vai fazer higiene pessoal?</label>
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="plannerHasHygiene"
+            value="yes"
+            onchange="togglePlannerHygieneForm(true)"
+          />
+          Sim
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="plannerHasHygiene"
+            value="no"
+            onchange="togglePlannerHygieneForm(false)"
+          />
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div id="planner-hygiene-details" style="display: none">
+      <!-- Sistema Inteligente de Sugestões -->
+      <div id="planner-hygiene-activities"></div>
+
+      <div class="form-group">
+        <label for="plannerHygieneStartTime">Horário de início</label>
+        <input type="time" id="plannerHygieneStartTime" onchange="updatePlannerHygieneEstimate()" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerHygieneEndTime">Horário de término</label>
+        <input type="time" id="plannerHygieneEndTime" />
+      </div>
+
+      <div class="form-group">
+        <label for="plannerHygieneNotes">Observações (opcional)</label>
+        <textarea
+          id="plannerHygieneNotes"
+          placeholder="Ex: Lavar o cabelo com condicionador especial, usar máscara facial..."
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button onclick="cancelPlanner()" class="btn btn-outline">
+        Cancelar
+      </button>
+      <button onclick="savePlannerHygiene()" class="btn btn-primary">
+        Próximo: Exercícios →
+      </button>
+    </div>
+  </div>
+</section>

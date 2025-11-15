@@ -248,6 +248,7 @@ function loadPlanDataToWizard(planData) {
   loadPlannerWorkData(planData);
   loadPlannerStudyData(planData);
   loadPlannerCleaningData(planData);
+  if (typeof loadPlannerHygieneData === 'function') loadPlannerHygieneData(planData);
   loadPlannerHobbyData(planData);
   loadPlannerProjectData(planData);
   loadPlannerMealsFormData(planData);

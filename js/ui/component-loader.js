@@ -150,6 +150,7 @@ const ComponentLoader = {
             'components/planner/work.html',
             'components/planner/study.html',
             'components/planner/cleaning.html',
+            'components/planner/hygiene.html',
             'components/planner/hobby.html',
             'components/planner/projects.html',
             'components/planner/meals.html',
@@ -187,6 +188,9 @@ async function initializeComponents() {
 
         // 4. Modal de configurações (pode ser acessado a qualquer momento)
         await ComponentLoader.appendComponent('components/settings-modal.html', 'body');
+
+        // 5. Modal de calendário (pode ser acessado a qualquer momento)
+        await ComponentLoader.appendComponent('components/calendar-modal.html', 'body');
 
         const loadTime = (performance.now() - startTime).toFixed(2);
         console.log(`[ComponentLoader] ✅ Componentes essenciais carregados em ${loadTime}ms`);

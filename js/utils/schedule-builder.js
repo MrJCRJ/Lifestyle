@@ -138,6 +138,31 @@ function addCleaningActivity(schedule, cleaning) {
 }
 
 /**
+ * Adiciona atividade de higiene ao cronograma
+ * @param {Array} schedule - Array de atividades
+ * @param {Object} hygiene - Dados da higiene
+ */
+function addHygieneActivity(schedule, hygiene) {
+  if (hygiene && hygiene.times && hygiene.times.length > 0) {
+    hygiene.times.forEach((time, index) => {
+      const activityNames = time.activityNames && time.activityNames.length > 0 
+        ? time.activityNames.join(', ') 
+        : 'Higiene Pessoal';
+      
+      schedule.push({
+        id: `hygiene-${index}`,
+        type: 'hygiene',
+        name: `🧼 ${activityNames}`,
+        startTime: time.start,
+        endTime: time.end,
+        notes: time.notes || '',
+        activities: time.activities || []
+      });
+    });
+  }
+}
+
+/**
  * Adiciona atividades de refeições ao cronograma
  * @param {Array} schedule - Array de atividades
  * @param {number} mealsCount - Quantidade de refeições
@@ -224,6 +249,7 @@ function buildScheduleFromPlanData(planData, hydrationData = null) {
   addWorkActivities(schedule, planData.jobs);
   addStudyActivities(schedule, planData.studies);
   addCleaningActivity(schedule, planData.cleaning);
+  addHygieneActivity(schedule, planData.hygiene);
   addHobbyActivities(schedule, planData.hobbies);
   addProjectActivities(schedule, planData.projects);
   addExerciseActivity(schedule, planData.exercise);

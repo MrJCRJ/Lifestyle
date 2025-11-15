@@ -1,0 +1,153 @@
+/* Categoria Higiene - Estilos Específicos */
+
+.hygiene-suggestions {
+  background: var(--background-alt);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hygiene-suggestions h4 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hygiene-activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.hygiene-activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--background);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.hygiene-activity-item:hover {
+  border-color: var(--primary-color);
+  background: var(--background-alt);
+}
+
+.hygiene-activity-item.urgent {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+}
+
+.hygiene-activity-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  flex: 1;
+  margin: 0;
+}
+
+.hygiene-activity-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.activity-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.activity-name {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.activity-duration {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  background: var(--background-alt);
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.urgent-badge {
+  display: inline-block;
+  background: #ef4444;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.last-done {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--background-alt);
+  padding: 0.125rem 0.5rem;
+  border-radius: 8px;
+}
+
+.hygiene-estimate {
+  margin: 0;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.hygiene-estimate strong {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+/* Ícone de higiene no cronograma */
+.type-hygiene {
+  background: #0891b2;
+  color: #cffafe;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .hygiene-activity-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .hygiene-activity-item label {
+    width: 100%;
+  }
+
+  .activity-duration {
+    align-self: flex-end;
+  }
+}

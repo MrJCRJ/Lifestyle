@@ -29,6 +29,7 @@
   gap: 0;
 }
 
+/* Botões de navegação removidos - agora usa calendário
 .carousel-nav-btn {
   position: absolute;
   top: 50%;
@@ -69,6 +70,20 @@
 
 .carousel-nav-btn.next {
   right: var(--spacing-md);
+}
+*/
+
+/* Estilo do botão calendário */
+.filter-btn.calendar-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+}
+
+.filter-btn.calendar-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .carousel-indicators {

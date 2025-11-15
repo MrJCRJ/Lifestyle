@@ -12,6 +12,13 @@
           📅 Hoje
         </button>
         <button
+          class="filter-btn calendar-btn"
+          onclick="openCalendarModal()"
+          title="Abrir calendário"
+        >
+          📆 Calendário
+        </button>
+        <button
           class="filter-btn"
           onclick="showDashboard()"
           style="
@@ -25,23 +32,9 @@
     </div>
 
     <div class="schedule-carousel-wrapper">
-      <button
-        class="carousel-nav-btn prev"
-        onclick="navigateCarousel(-1)"
-        aria-label="Dia anterior"
-      >
-        ‹
-      </button>
       <div id="schedule-carousel" class="schedule-carousel">
         <div id="schedule-display" class="schedule-carousel-track"></div>
       </div>
-      <button
-        class="carousel-nav-btn next"
-        onclick="navigateCarousel(1)"
-        aria-label="Próximo dia"
-      >
-        ›
-      </button>
     </div>
 
     <div class="carousel-indicators" id="carousel-indicators"></div>
