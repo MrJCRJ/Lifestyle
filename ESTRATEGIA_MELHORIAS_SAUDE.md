@@ -50,14 +50,15 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
 
 ### 1.2 Proposta de Melhoria
 
-#### **Opção A: Sistema Híbrido (RECOMENDADO)**
+#### **Opção A: Sistema Híbrido com Receitas (RECOMENDADO)**
 
 **Justificativa:**
 
 - Melhor experiência do usuário
-- Flexibilidade para alimentos personalizados
+- Flexibilidade para alimentos personalizados e receitas compostas
 - Dados confiáveis via API para alimentos comuns
 - Funciona offline para alimentos cadastrados
+- Permite criar receitas complexas (ex: vitaminas, smoothies, pratos completos)
 
 **Estrutura:**
 
@@ -75,24 +76,160 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
     api: [
       {
         id: "api_001",
-        name: "Arroz Branco (100g)",
-        calories: 130,
+        name: "Arroz Branco",
+        calories: 130, // por 100g
         protein: 2.7,
         carbs: 28,
         fat: 0.3,
+        unit: "g",
+        defaultServing: 100,
         source: "TACO/USDA"
+      },
+      {
+        id: "api_002",
+        name: "Banana com casca",
+        calories: 98, // por 100g
+        protein: 1.3,
+        carbs: 23,
+        fat: 0.2,
+        unit: "g",
+        defaultServing: 118, // 1 banana média
+        alternativeUnit: "unidade",
+        source: "TACO"
+      },
+      {
+        id: "api_003",
+        name: "Aveia em flocos",
+        calories: 394,
+        protein: 13.9,
+        carbs: 66.6,
+        fat: 8.5,
+        unit: "g",
+        defaultServing: 15, // 1 colher de sopa
+        source: "TACO"
+      },
+      {
+        id: "api_004",
+        name: "Iogurte natural integral",
+        calories: 51,
+        protein: 3.5,
+        carbs: 4.0,
+        fat: 2.5,
+        unit: "ml",
+        defaultServing: 200,
+        source: "TACO"
+      },
+      {
+        id: "api_005",
+        name: "Açúcar refinado",
+        calories: 387,
+        protein: 0,
+        carbs: 99.8,
+        fat: 0,
+        unit: "g",
+        defaultServing: 10, // 1 colher de sopa
+        source: "TACO"
       }
     ],
-    // User Custom Foods
+    
+    // User Custom Foods (alimentos simples)
     custom: [
       {
         id: "custom_001",
-        name: "Minha Receita Especial",
-        calories: 450,
-        protein: 30,
-        carbs: 40,
-        fat: 15,
+        name: "Meu Tempero Caseiro",
+        calories: 50,
+        protein: 1,
+        carbs: 8,
+        fat: 2,
+        unit: "g",
+        defaultServing: 10,
         createdAt: "2025-11-15"
+      }
+    ],
+    
+    // User Recipes (receitas compostas) - NOVO!
+    recipes: [
+      {
+        id: "recipe_001",
+        name: "Vitamina de Banana com Aveia",
+        category: "breakfast",
+        icon: "🥤",
+        servings: 1,
+        createdAt: "2025-11-15",
+        updatedAt: "2025-11-15",
+        
+        ingredients: [
+          {
+            foodId: "api_002",
+            foodName: "Banana com casca",
+            quantity: 236, // 2 bananas médias
+            unit: "g",
+            displayQuantity: "2 unidades",
+            calories: 231,
+            protein: 3.1,
+            carbs: 54.3,
+            fat: 0.5
+          },
+          {
+            foodId: "api_003",
+            foodName: "Aveia em flocos",
+            quantity: 75, // 5 colheres de sopa
+            unit: "g",
+            displayQuantity: "5 colheres de sopa",
+            calories: 296,
+            protein: 10.4,
+            carbs: 49.9,
+            fat: 6.4
+          },
+          {
+            foodId: "api_004",
+            foodName: "Iogurte natural integral",
+            quantity: 200,
+            unit: "ml",
+            displayQuantity: "200ml",
+            calories: 102,
+            protein: 7.0,
+            carbs: 8.0,
+            fat: 5.0
+          },
+          {
+            foodId: null, // Água não tem calorias, opcional no banco
+            foodName: "Água",
+            quantity: 300,
+            unit: "ml",
+            displayQuantity: "300ml",
+            calories: 0,
+            protein: 0,
+            carbs: 0,
+            fat: 0
+          },
+          {
+            foodId: "api_005",
+            foodName: "Açúcar refinado",
+            quantity: 20, // 2 colheres de sopa
+            unit: "g",
+            displayQuantity: "2 colheres de sopa",
+            calories: 77,
+            protein: 0,
+            carbs: 20.0,
+            fat: 0
+          }
+        ],
+        
+        // Totais calculados automaticamente
+        totals: {
+          calories: 706,
+          protein: 20.5,
+          carbs: 132.2,
+          fat: 11.9,
+          weight: 831 // peso total em gramas
+        },
+        
+        instructions: "Bater tudo no liquidificador até ficar homogêneo",
+        notes: "Pode adicionar gelo a gosto",
+        tags: ["vitamina", "café da manhã", "banana", "aveia"],
+        isFavorite: true,
+        timesUsed: 12
       }
     ]
   },
@@ -100,21 +237,70 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
   dailyMealTracking: {
     "2025-11-15": {
       breakfast: {
-        foods: [
-          { id: "api_001", name: "Arroz", quantity: 150, calories: 195 },
-          { id: "custom_001", name: "Omelete", quantity: 1, calories: 200 }
+        items: [
+          // Pode adicionar receita inteira
+          {
+            type: "recipe",
+            id: "recipe_001",
+            name: "Vitamina de Banana com Aveia",
+            servings: 1,
+            calories: 706,
+            protein: 20.5,
+            carbs: 132.2,
+            fat: 11.9
+          },
+          // Ou alimentos individuais
+          {
+            type: "food",
+            id: "api_001",
+            name: "Pão integral",
+            quantity: 50,
+            unit: "g",
+            calories: 130,
+            protein: 4.5,
+            carbs: 20,
+            fat: 2.5
+          }
         ],
-        totalCalories: 395,
+        totalCalories: 836,
+        totalProtein: 25.0,
+        totalCarbs: 152.2,
+        totalFat: 14.4,
         time: "08:30"
       },
-      lunch: { foods: [...], totalCalories: 650 },
-      dinner: { foods: [...], totalCalories: 500 },
-      snacks: { foods: [...], totalCalories: 150 },
+      lunch: {
+        items: [
+          {
+            type: "food",
+            id: "api_006",
+            name: "Arroz branco cozido",
+            quantity: 150,
+            unit: "g",
+            calories: 195
+          },
+          {
+            type: "recipe",
+            id: "recipe_002",
+            name: "Frango grelhado temperado",
+            servings: 1,
+            calories: 280
+          }
+        ],
+        totalCalories: 650
+      },
+      dinner: { items: [...], totalCalories: 500 },
+      snacks: { items: [...], totalCalories: 150 },
 
-      dailyTotal: 1695,
+      // Totais do dia
+      dailyTotal: 2136,
       goalCalories: 2000,
-      remaining: 305,
-      percentage: 84.75
+      remaining: -136, // excedeu
+      percentage: 106.8,
+      
+      // Macros do dia
+      dailyProtein: 89,
+      dailyCarbs: 245,
+      dailyFat: 72
     }
   }
 }
@@ -162,30 +348,119 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
 │ ☀️ Café da Manhã - 08:30           │
 │                                     │
 │ 🎯 Meta de hoje: 2000 cal           │
-│ ✅ Consumido: 395 cal (19.75%)      │
-│ 📊 Restante: 1605 cal               │
+│ ✅ Consumido: 836 cal (41.8%)       │
+│ 📊 Restante: 1164 cal               │
 │                                     │
-│ ➕ Adicionar Alimento               │
+│ ➕ Adicionar  [🥘 Receitas]  [🍎 Alimentos]│
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 🔍 Pesquisar ou Criar           ││
+│ │ 🔍 Buscar receitas ou alimentos ││
 │ │ [________________]  [Buscar]    ││
+│ │ 💡 Receitas Favoritas           ││
 │ └─────────────────────────────────┘│
 │                                     │
-│ Alimentos Adicionados:              │
+│ Itens Adicionados:                  │
 │ ┌─────────────────────────────────┐│
-│ │ 🍚 Arroz Branco                 ││
-│ │ 150g • 195 cal                  ││
-│ │ P: 4g • C: 42g • G: 0.5g   [🗑] ││
+│ │ 🥤 Vitamina de Banana com Aveia ││
+│ │ (Receita) • 706 cal             ││
+│ │ P: 20.5g • C: 132g • G: 11.9g   ││
+│ │ [📝 Ver] [📋 Copiar] [🗑 Remover]││
 │ └─────────────────────────────────┘│
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 🍳 Omelete (Personalizado)      ││
-│ │ 1 unidade • 200 cal             ││
-│ │ P: 15g • C: 2g • G: 15g    [🗑] ││
+│ │ 🍞 Pão integral                 ││
+│ │ 50g • 130 cal                   ││
+│ │ P: 4.5g • C: 20g • G: 2.5g [🗑] ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ [Salvar Refeição] [Ver Dashboard]  │
+└─────────────────────────────────────┘
+
+🥘 Criar/Editar Receita
+┌─────────────────────────────────────┐
+│ 🥤 Nova Receita                     │
+│                                     │
+│ Nome: [Vitamina de Banana]          │
+│ Categoria: [Café da Manhã ▼]       │
+│ Ícone: [🥤 ▼]                       │
+│ Porções: [1]                        │
+│                                     │
+│ 📋 Ingredientes:                    │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🍌 Banana com casca             ││
+│ │ Qtd: [2] [unidades ▼]           ││
+│ │ (≈ 236g • 231 cal)         [🗑] ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🌾 Aveia em flocos              ││
+│ │ Qtd: [5] [colheres sopa ▼]      ││
+│ │ (≈ 75g • 296 cal)          [🗑] ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🥛 Iogurte natural integral     ││
+│ │ Qtd: [200] [ml ▼]               ││
+│ │ (200ml • 102 cal)          [🗑] ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 💧 Água                         ││
+│ │ Qtd: [300] [ml ▼]               ││
+│ │ (300ml • 0 cal)            [🗑] ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🍬 Açúcar refinado              ││
+│ │ Qtd: [2] [colheres sopa ▼]      ││
+│ │ (≈ 20g • 77 cal)           [🗑] ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ➕ [Adicionar Ingrediente]          │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 📊 Total por Porção:            ││
+│ │ 🔥 706 calorias                 ││
+│ │ 💪 Proteínas: 20.5g (12%)       ││
+│ │ 🌾 Carboidratos: 132g (75%)     ││
+│ │ 🥑 Gorduras: 11.9g (15%)        ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📝 Modo de Preparo:                 │
+│ [Bater tudo no liquidificador...]   │
+│                                     │
+│ 🏷️ Tags: [vitamina] [café da manhã]│
+│ ⭐ [Marcar como Favorita]           │
+│                                     │
+│ [Cancelar]  [Salvar Receita]       │
+└─────────────────────────────────────┘
+
+📚 Minhas Receitas
+┌─────────────────────────────────────┐
+│ 🥘 Minhas Receitas                  │
+│                                     │
+│ 🔍 Buscar: [________] 🔽 [Todas]    │
+│                                     │
+│ ⭐ Favoritas (3)                    │
+│ ┌─────────────────────────────────┐│
+│ │ 🥤 Vitamina de Banana com Aveia ││
+│ │ 706 cal • Usado 12x             ││
+│ │ [➕ Adicionar] [📝 Editar]       ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🥗 Salada Completa de Almoço    ││
+│ │ 320 cal • Usado 8x              ││
+│ │ [➕ Adicionar] [📝 Editar]       ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📂 Café da Manhã (5)                │
+│ 📂 Almoço (12)                      │
+│ 📂 Jantar (8)                       │
+│ 📂 Lanches (6)                      │
+│                                     │
+│ [➕ Criar Nova Receita]             │
 └─────────────────────────────────────┘
 
 📊 Dashboard de Alimentação
@@ -212,23 +487,73 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
 
 ### 1.4 Fluxo de Trabalho
 
+#### Fluxo 1: Criar e Usar Receita
+
+```mermaid
+graph TD
+    A[Usuário quer adicionar vitamina] --> B{Receita já existe?}
+    B -->|Não| C[Clica em Criar Nova Receita]
+    C --> D[Preenche nome e categoria]
+    D --> E[Adiciona ingredientes um por um]
+    E --> F[Busca ingrediente na API/Local]
+    F --> G{Encontrou?}
+    G -->|Sim| H[Seleciona e define quantidade]
+    G -->|Não| I[Cadastra alimento manualmente]
+    H --> J[Sistema calcula totais automaticamente]
+    I --> J
+    J --> K{Mais ingredientes?}
+    K -->|Sim| E
+    K -->|Não| L[Adiciona instruções opcionais]
+    L --> M[Salva receita]
+    M --> N[Receita disponível para uso]
+    
+    B -->|Sim| O[Busca receita salva]
+    O --> P[Seleciona receita]
+    P --> Q[Define número de porções]
+    Q --> R[Adiciona à refeição]
+    R --> S[Atualiza totais do dia]
+    S --> T[Mostra progresso da meta]
+```
+
+#### Fluxo 2: Adicionar Alimentos Individuais
+
 ```mermaid
 graph TD
     A[Usuário abre Refeição] --> B[Sistema carrega meta diária]
-    B --> C{Quer adicionar alimento?}
-    C -->|Sim| D[Busca na API/Local]
+    B --> C[Clica em Adicionar Alimento]
+    C --> D[Busca na API/Local]
     D --> E{Encontrou?}
-    E -->|Sim| F[Seleciona e define quantidade]
-    E -->|Não| G[Cadastra manualmente]
-    F --> H[Calcula calorias/macros]
+    E -->|Sim| F[Seleciona alimento]
+    F --> G[Define quantidade e unidade]
+    G --> H[Sistema calcula calorias/macros]
+    E -->|Não| I[Cadastra manualmente]
+    I --> H
+    H --> J[Adiciona à refeição]
+    J --> K[Atualiza totais do dia]
+    K --> L[Mostra progresso da meta]
+    L --> M{Continuar adicionando?}
+    M -->|Sim| C
+    M -->|Não| N[Salva no histórico]
+    N --> O[Atualiza Dashboard]
+```
+
+#### Fluxo 3: Editar Receita Existente
+
+```mermaid
+graph TD
+    A[Usuário vê receita em Minhas Receitas] --> B[Clica em Editar]
+    B --> C[Carrega ingredientes atuais]
+    C --> D{O que fazer?}
+    D -->|Adicionar ingrediente| E[Busca novo ingrediente]
+    D -->|Remover ingrediente| F[Remove da lista]
+    D -->|Alterar quantidade| G[Ajusta quantidade]
+    E --> H[Sistema recalcula totais]
+    F --> H
     G --> H
-    H --> I[Adiciona à refeição]
-    I --> J[Atualiza totais do dia]
-    J --> K[Mostra progresso da meta]
-    K --> L{Continuar adicionando?}
-    L -->|Sim| D
-    L -->|Não| M[Salva no histórico]
-    M --> N[Atualiza Dashboard]
+    H --> I{Finalizar edição?}
+    I -->|Não| D
+    I -->|Sim| J[Salva alterações]
+    J --> K[Atualiza histórico de uso]
 ```
 
 ### 1.5 Estrutura de Arquivos
@@ -240,21 +565,268 @@ js/nutrition/
   ├── food-database.js     # Database local (TACO)
   ├── calorie-tracker.js   # Lógica de tracking
   ├── macro-calculator.js  # Cálculo de macros
-  └── nutrition-goals.js   # Metas e objetivos
+  ├── nutrition-goals.js   # Metas e objetivos
+  ├── recipe-manager.js    # NOVO: Gerenciamento de receitas
+  └── unit-converter.js    # NOVO: Conversão de unidades (g, ml, colher, xícara)
 
 data/
-  └── taco-foods.json      # Base TACO offline
+  ├── taco-foods.json      # Base TACO offline
+  └── common-units.json    # NOVO: Conversões comuns (colher sopa = 15ml, etc)
 
 components/nutrition/
   ├── food-search.html     # Busca de alimentos
   ├── food-form.html       # Formulário customizado
   ├── meal-tracker.html    # Tela de refeição
+  ├── recipe-creator.html  # NOVO: Criar/Editar receita
+  ├── recipe-library.html  # NOVO: Biblioteca de receitas
+  ├── ingredient-picker.html # NOVO: Seletor de ingredientes
   └── nutrition-dashboard.html
 
 css/nutrition/
   ├── food-cards.css
   ├── nutrition-dashboard.css
-  └── calorie-tracker.css
+  ├── calorie-tracker.css
+  ├── recipe-creator.css   # NOVO
+  └── recipe-library.css   # NOVO
+```
+
+### 1.6 Recursos Adicionais do Sistema de Receitas
+
+#### Unidades de Medida Suportadas:
+
+```javascript
+const COMMON_UNITS = {
+  // Volume
+  "ml": { type: "volume", base: 1 },
+  "litro": { type: "volume", base: 1000 },
+  "xícara": { type: "volume", base: 240 }, // 240ml
+  "colher sopa": { type: "volume", base: 15 }, // 15ml
+  "colher chá": { type: "volume", base: 5 }, // 5ml
+  
+  // Peso
+  "g": { type: "weight", base: 1 },
+  "kg": { type: "weight", base: 1000 },
+  
+  // Unidades
+  "unidade": { type: "count", base: 1 },
+  "fatia": { type: "count", base: 1 },
+  "porção": { type: "count", base: 1 }
+};
+
+// Conversões específicas por alimento
+const FOOD_CONVERSIONS = {
+  "banana": {
+    "unidade": 118, // 1 banana média = 118g
+    "pequena": 90,
+    "média": 118,
+    "grande": 150
+  },
+  "ovo": {
+    "unidade": 50, // 1 ovo médio = 50g
+    "pequeno": 40,
+    "médio": 50,
+    "grande": 60
+  },
+  "aveia": {
+    "colher sopa": 15, // 1 colher sopa = 15g
+    "xícara": 80 // 1 xícara = 80g
+  }
+};
+```
+
+#### Funcionalidades Inteligentes:
+
+1. **Auto-completar ao digitar ingredientes**
+   ```
+   Usuário digita: "ban"
+   Sistema sugere: Banana, Banana-prata, Banana da terra, etc.
+   ```
+
+2. **Conversão automática de unidades**
+   ```
+   Usuário: "2 bananas"
+   Sistema: "≈ 236g • 231 cal"
+   ```
+
+3. **Sugestões de receitas baseadas em histórico**
+   ```
+   "Você costuma fazer Vitamina às segundas-feiras"
+   "Adicionar automaticamente?"
+   ```
+
+4. **Copiar receita para outro dia**
+   ```
+   [📋 Copiar] → Seleciona data → Receita adicionada
+   ```
+
+5. **Ajustar porções dinamicamente**
+   ```
+   Receita original: 1 porção (706 cal)
+   Usuário quer: 1.5 porções
+   Sistema: Multiplica tudo por 1.5 (1059 cal)
+   ```
+
+6. **Substituir ingredientes**
+   ```
+   "Açúcar" → Sugestões: Mel, Adoçante, Xilitol
+   Sistema recalcula automaticamente
+   ```
+
+---
+
+## 🍽️ 1.7 Casos de Uso Reais - Sistema de Receitas
+
+### Caso 1: Vitamina de Banana com Aveia (Exemplo Completo)
+
+**Cenário:** Usuário quer fazer sua vitamina matinal habitual
+
+**Passos:**
+1. Abre "Café da Manhã" → Clica em "Adicionar" → "Receitas"
+2. Clica em "Criar Nova Receita"
+3. Preenche:
+   - Nome: "Vitamina de Banana com Aveia"
+   - Categoria: Café da Manhã
+   - Ícone: 🥤
+
+4. Adiciona ingredientes:
+   - Busca "banana" → Seleciona "Banana com casca"
+     - Quantidade: 2 unidades (sistema converte para 236g)
+   - Busca "aveia" → Seleciona "Aveia em flocos"
+     - Quantidade: 5 colheres de sopa (sistema converte para 75g)
+   - Busca "iogurte" → Seleciona "Iogurte natural integral"
+     - Quantidade: 200ml
+   - Busca "água" → Seleciona "Água"
+     - Quantidade: 300ml
+   - Busca "açúcar" → Seleciona "Açúcar refinado"
+     - Quantidade: 2 colheres de sopa (sistema converte para 20g)
+
+5. Sistema calcula automaticamente:
+   - **Total: 706 calorias**
+   - Proteínas: 20.5g (12%)
+   - Carboidratos: 132g (75%)
+   - Gorduras: 11.9g (15%)
+
+6. Adiciona instruções: "Bater tudo no liquidificador até ficar homogêneo"
+7. Marca como favorita ⭐
+8. Salva receita
+
+**Próximas vezes:**
+- Abre "Café da Manhã" → "Receitas" → "Favoritas"
+- Seleciona "Vitamina de Banana com Aveia"
+- Clica em "Adicionar" → Pronto! (< 30 segundos)
+
+---
+
+### Caso 2: Ajustar Porções
+
+**Cenário:** Usuário quer fazer a vitamina para 2 pessoas
+
+**Passos:**
+1. Seleciona receita "Vitamina de Banana com Aveia" (1 porção = 706 cal)
+2. Ajusta porções: 1 → 2
+3. Sistema multiplica todos ingredientes:
+   - Bananas: 2 → 4 unidades
+   - Aveia: 5 → 10 colheres de sopa
+   - Iogurte: 200ml → 400ml
+   - Água: 300ml → 600ml
+   - Açúcar: 2 → 4 colheres de sopa
+4. Total recalculado: 1412 calorias (2 porções)
+
+---
+
+### Caso 3: Substituir Ingrediente
+
+**Cenário:** Usuário quer substituir açúcar por mel
+
+**Passos:**
+1. Edita receita existente
+2. Remove "Açúcar refinado" (77 cal)
+3. Adiciona "Mel" (2 colheres de sopa = 120 cal)
+4. Sistema recalcula: 706 → 749 calorias
+5. Salva como variação ou substitui original
+
+---
+
+### Caso 4: Copiar Receita para Outro Dia
+
+**Cenário:** Usuário fez a vitamina ontem e quer registrar que fez hoje
+
+**Passos:**
+1. Vai no histórico de ontem
+2. Vê "Vitamina de Banana com Aveia"
+3. Clica em [📋 Copiar]
+4. Seleciona data: Hoje
+5. Adiciona em: Café da Manhã
+6. Confirmado! (< 15 segundos)
+
+---
+
+## 🍽️ 1.8 Exemplos de Outras Receitas
+
+### Receita 2: Omelete Completo
+
+**Ingredientes:**
+- 3 ovos grandes (150g)
+- 1 tomate médio picado (80g)
+- 1/2 cebola média (50g)
+- 50g de queijo muçarela
+- 1 colher de sopa de azeite (13ml)
+- Sal e pimenta a gosto
+
+**Totais:** ~420 calorias | P: 28g | C: 12g | G: 28g
+
+---
+
+### Receita 3: Salada Completa de Almoço
+
+**Ingredientes:**
+- 100g de alface
+- 100g de tomate
+- 50g de cenoura ralada
+- 150g de frango grelhado
+- 2 colheres de sopa de azeite (26ml)
+- 1 colher de chá de sal
+
+**Totais:** ~380 calorias | P: 32g | C: 15g | G: 22g
+
+---
+
+### Receita 4: Mingau de Aveia com Frutas
+
+**Ingredientes:**
+- 80g de aveia (1 xícara)
+- 300ml de leite integral
+- 1 banana média cortada (118g)
+- 1 colher de sopa de mel (20g)
+- Canela a gosto
+
+**Totais:** ~520 calorias | P: 18g | C: 82g | G: 13g
+
+---
+
+## 🍽️ 1.9 Sistema de Tags e Filtros
+
+### Tags Automáticas:
+- **Por categoria:** café da manhã, almoço, jantar, lanche
+- **Por tipo:** vitamina, salada, omelete, mingau, sopa
+- **Por ingrediente principal:** banana, frango, aveia, ovo
+- **Por restrição:** vegetariano, vegano, sem lactose, low carb
+
+### Tags Customizadas:
+- Usuário pode adicionar: #rápido, #prático, #fitness, #domingo
+
+### Filtros Inteligentes:
+```
+📂 Minhas Receitas
+
+🔍 Filtrar por:
+  ✓ Favoritas
+  □ Mais usadas
+  □ Recentes
+  □ Café da manhã
+  □ Até 500 calorias
+  □ Vegetarianas
+  □ Com banana
 ```
 
 ---
@@ -936,25 +1508,33 @@ Lifestyle/
 - [ ] Baixar e integrar tabela TACO
 - [ ] Desenvolver sistema de busca de alimentos
 - [ ] Implementar formulário de alimento customizado
+- [ ] **Criar sistema de conversão de unidades** (g, ml, colheres, xícaras, unidades)
+- [ ] **Implementar gerenciador de receitas compostas**
 - [ ] Criar estrutura de dados de tracking
 - [ ] Testes de API e cache
 
-### Fase 3: Alimentação - Interface (2 semanas)
+### Fase 3: Alimentação - Interface (2-3 semanas)
 
 - [ ] Desenvolver tela de refeição
-- [ ] Implementar adicionar/remover alimentos
+- [ ] Implementar adicionar/remover alimentos individuais
+- [ ] **Criar interface de criação de receitas**
+- [ ] **Desenvolver biblioteca de receitas (favoritas, categorias)**
+- [ ] **Implementar seletor inteligente de ingredientes**
 - [ ] Criar indicadores de progresso
 - [ ] Desenvolver cálculo de macronutrientes
 - [ ] Implementar metas diárias
+- [ ] **Adicionar funcionalidade de ajustar porções**
 - [ ] Design e CSS
 - [ ] Testes de interface
 
-### Fase 4: Alimentação - Dashboard (1 semana)
+### Fase 4: Alimentação - Dashboard (1-2 semanas)
 
 - [ ] Criar gráfico de evolução de calorias
 - [ ] Implementar estatísticas semanais/mensais
 - [ ] Desenvolver análise de macronutrientes
 - [ ] Criar indicadores de aderência
+- [ ] **Mostrar receitas mais usadas**
+- [ ] **Estatísticas por tipo de refeição**
 - [ ] Integrar ao dashboard principal
 - [ ] Testes de dashboard
 
@@ -994,7 +1574,7 @@ Lifestyle/
 - [ ] Documentação
 - [ ] Testes E2E completos
 
-**Tempo Total Estimado: 12-15 semanas**
+**Tempo Total Estimado: 13-17 semanas**
 
 ---
 
@@ -1003,6 +1583,8 @@ Lifestyle/
 ### Usabilidade
 
 - [ ] Usuário consegue registrar refeição em < 2 minutos
+- [ ] **Criar receita em < 5 minutos**
+- [ ] **Reusar receita em < 30 segundos**
 - [ ] Atualizar peso em < 30 segundos
 - [ ] Registrar treino em < 5 minutos
 - [ ] Altura configurada apenas 1 vez
@@ -1010,6 +1592,8 @@ Lifestyle/
 ### Funcionalidade
 
 - [ ] 90%+ de alimentos encontrados na API/TACO
+- [ ] **Conversão de unidades funciona para 95%+ dos casos**
+- [ ] **Receitas salvas e recarregadas corretamente**
 - [ ] Histórico de peso preservado por 12+ meses
 - [ ] Recordes pessoais calculados corretamente
 - [ ] Gráficos renderizam em < 2 segundos
@@ -1017,6 +1601,8 @@ Lifestyle/
 ### Precisão
 
 - [ ] Cálculos de calorias precisos ±5%
+- [ ] **Totais de receitas calculados corretamente**
+- [ ] **Conversões de unidades precisas ±2%**
 - [ ] IMC calculado corretamente
 - [ ] Meta de água ajustada ao peso
 - [ ] Estatísticas de exercícios sem erros
@@ -1080,8 +1666,13 @@ Lifestyle/
 1. **Alimentação:**
 
    - ✅ Usar API híbrida (OpenFoodFacts + Custom)
+   - ✅ Sistema de receitas compostas implementado
    - [ ] Permitir scan de códigos de barras? (futuro)
-   - [ ] Importar receitas completas?
+   - [ ] Importar receitas de sites/apps externos?
+   - [ ] **Permitir frações nas quantidades? (ex: 1/2 xícara, 2.5 colheres)**
+   - [ ] **Sugerir substituições inteligentes de ingredientes?**
+   - [ ] **Calcular custo estimado das receitas?**
+   - [ ] **Permitir compartilhar receitas entre usuários?**
 
 2. **Peso:**
 
@@ -1099,6 +1690,7 @@ Lifestyle/
    - [ ] Notificações push para lembrar de registrar?
    - [ ] Gamificação (badges, conquistas)?
    - [ ] Compartilhamento social de conquistas?
+   - [ ] **Sistema de backup/sincronização em nuvem?**
 
 ---
 
