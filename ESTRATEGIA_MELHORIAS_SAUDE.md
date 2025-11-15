@@ -3,36 +3,42 @@
 > Documento de planejamento para expansão das funcionalidades de saúde (Alimentação, Hidratação e Exercícios)
 
 **Data:** 15 de novembro de 2025  
-**Versão:** 1.0
+**Versão:** 2.0 - **SIMPLIFICADA** 🎯
 
 ---
 
 ## 📌 Visão Geral
 
-Este documento detalha a estratégia para implementar um sistema mais robusto e inteligente de acompanhamento de saúde, focando em três pilares principais:
+Este documento detalha a estratégia para implementar um sistema **PRÁTICO E SIMPLES** de acompanhamento de saúde, focando em três pilares:
 
-1. **🍽️ Alimentação com Contador de Calorias**
-2. **💧 Hidratação com Histórico de Peso**
-3. **💪 Exercícios com Registro de Performance**
+1. **🍽️ Alimentação - Receitas Práticas (sem balança)**
+2. **💧 Hidratação - Histórico de Peso**
+3. **💪 Exercícios - Registro de Performance**
+
+**Filosofia:** PRATICIDADE > PRECISÃO
 
 ---
 
-## 🎯 Objetivos
+## 🎯 Objetivos (Revistos)
 
 ### Gerais
 
-- Tornar o sistema mais útil e prático para o usuário
-- Reduzir entrada manual repetitiva de dados
-- Fornecer métricas e evolução ao longo do tempo
-- Criar um sistema de acompanhamento personalizado
+- **Tornar o sistema RÁPIDO e FÁCIL de usar** ⚡
+- **Reduzir fricção** - usuário não precisa de balança
+- **Personalização** - receitas e hábitos do próprio usuário
+- **Calorias opcionais** - só se quiser
+- Fornecer métricas úteis (mas não obrigatórias)
 
 ### Específicos
 
-- Implementar contador de calorias inteligente
-- Criar histórico de peso com gráfico de evolução
-- Adicionar sistema de registro de exercícios específicos
-- Mover altura para configurações gerais
-- Criar dashboards de evolução para cada categoria
+- ✅ Implementar sistema de **receitas do usuário** (medidas práticas)
+- ✅ Calorias **opcionais** (não forçadas)
+- ✅ Criar histórico de peso com evolução
+- ✅ Mover altura para configurações (uma vez só)
+- ✅ Sistema de exercícios com registro de performance
+- ❌ **REMOVIDO:** APIs de alimentos, busca de ingredientes, conversões complexas
+
+**Economia:** ~4 semanas de desenvolvimento removendo complexidade desnecessária
 
 ---
 
@@ -50,257 +56,159 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
 
 ### 1.2 Proposta de Melhoria
 
-#### **Opção A: Sistema Híbrido com Receitas (RECOMENDADO)**
+#### **Sistema de Receitas do Usuário (RECOMENDADO)**
 
 **Justificativa:**
 
-- Melhor experiência do usuário
-- Flexibilidade para alimentos personalizados e receitas compostas
-- Dados confiáveis via API para alimentos comuns
-- Funciona offline para alimentos cadastrados
-- Permite criar receitas complexas (ex: vitaminas, smoothies, pratos completos)
+- **Foco na PRATICIDADE**: Usuário não precisa pesar comida todo dia
+- **Receitas pessoais**: Sistema aprende com os hábitos do usuário
+- **Medidas do dia a dia**: colheres, xícaras, unidades - sem balança
+- **Cálculo assistido**: App ajuda a calcular calorias totais
+- **Opcional pesar**: Balança só se o usuário quiser mais precisão
+- Rápido de usar: Reutilizar receitas favoritas em segundos
 
 **Estrutura:**
 
 ```javascript
 {
   userProfile: {
-    dailyCaloriesGoal: 2000, // Meta diária configurável
-    height: 175, // Movido para configurações gerais
+    dailyCaloriesGoal: 2000, // Meta diária configurável (opcional)
+    height: 175,
     currentWeight: 70,
-    mealsConfig: [...] // Mantém configuração atual
+    trackCalories: false // Padrão: usuário não quer contar calorias
   },
 
-  foodDatabase: {
-    // API Foods (cache local)
-    api: [
-      {
-        id: "api_001",
-        name: "Arroz Branco",
-        calories: 130, // por 100g
-        protein: 2.7,
-        carbs: 28,
-        fat: 0.3,
-        unit: "g",
-        defaultServing: 100,
-        source: "TACO/USDA"
-      },
-      {
-        id: "api_002",
-        name: "Banana com casca",
-        calories: 98, // por 100g
-        protein: 1.3,
-        carbs: 23,
-        fat: 0.2,
-        unit: "g",
-        defaultServing: 118, // 1 banana média
-        alternativeUnit: "unidade",
-        source: "TACO"
-      },
-      {
-        id: "api_003",
-        name: "Aveia em flocos",
-        calories: 394,
-        protein: 13.9,
-        carbs: 66.6,
-        fat: 8.5,
-        unit: "g",
-        defaultServing: 15, // 1 colher de sopa
-        source: "TACO"
-      },
-      {
-        id: "api_004",
-        name: "Iogurte natural integral",
-        calories: 51,
-        protein: 3.5,
-        carbs: 4.0,
-        fat: 2.5,
-        unit: "ml",
-        defaultServing: 200,
-        source: "TACO"
-      },
-      {
-        id: "api_005",
-        name: "Açúcar refinado",
-        calories: 387,
-        protein: 0,
-        carbs: 99.8,
-        fat: 0,
-        unit: "g",
-        defaultServing: 10, // 1 colher de sopa
-        source: "TACO"
-      }
-    ],
-    
-    // User Custom Foods (alimentos simples)
-    custom: [
-      {
-        id: "custom_001",
-        name: "Meu Tempero Caseiro",
-        calories: 50,
-        protein: 1,
-        carbs: 8,
-        fat: 2,
-        unit: "g",
-        defaultServing: 10,
-        createdAt: "2025-11-15"
-      }
-    ],
-    
-    // User Recipes (receitas compostas) - NOVO!
-    recipes: [
-      {
-        id: "recipe_001",
-        name: "Vitamina de Banana com Aveia",
-        category: "breakfast",
-        icon: "🥤",
-        servings: 1,
-        createdAt: "2025-11-15",
-        updatedAt: "2025-11-15",
-        
-        ingredients: [
-          {
-            foodId: "api_002",
-            foodName: "Banana com casca",
-            quantity: 236, // 2 bananas médias
-            unit: "g",
-            displayQuantity: "2 unidades",
-            calories: 231,
-            protein: 3.1,
-            carbs: 54.3,
-            fat: 0.5
-          },
-          {
-            foodId: "api_003",
-            foodName: "Aveia em flocos",
-            quantity: 75, // 5 colheres de sopa
-            unit: "g",
-            displayQuantity: "5 colheres de sopa",
-            calories: 296,
-            protein: 10.4,
-            carbs: 49.9,
-            fat: 6.4
-          },
-          {
-            foodId: "api_004",
-            foodName: "Iogurte natural integral",
-            quantity: 200,
-            unit: "ml",
-            displayQuantity: "200ml",
-            calories: 102,
-            protein: 7.0,
-            carbs: 8.0,
-            fat: 5.0
-          },
-          {
-            foodId: null, // Água não tem calorias, opcional no banco
-            foodName: "Água",
-            quantity: 300,
-            unit: "ml",
-            displayQuantity: "300ml",
-            calories: 0,
-            protein: 0,
-            carbs: 0,
-            fat: 0
-          },
-          {
-            foodId: "api_005",
-            foodName: "Açúcar refinado",
-            quantity: 20, // 2 colheres de sopa
-            unit: "g",
-            displayQuantity: "2 colheres de sopa",
-            calories: 77,
-            protein: 0,
-            carbs: 20.0,
-            fat: 0
-          }
-        ],
-        
-        // Totais calculados automaticamente
-        totals: {
-          calories: 706,
-          protein: 20.5,
-          carbs: 132.2,
-          fat: 11.9,
-          weight: 831 // peso total em gramas
+  // FOCO: Receitas do Usuário
+  userRecipes: [
+    {
+      id: "recipe_001",
+      name: "Minha Vitamina Matinal",
+      category: "breakfast",
+      icon: "🥤",
+      createdAt: "2025-11-15",
+
+      // Ingredientes com MEDIDAS PRÁTICAS
+      ingredients: [
+        {
+          name: "Banana",
+          quantity: 2,
+          unit: "unidades", // SEM gramas!
+          notes: "Bananas médias"
         },
-        
-        instructions: "Bater tudo no liquidificador até ficar homogêneo",
-        notes: "Pode adicionar gelo a gosto",
-        tags: ["vitamina", "café da manhã", "banana", "aveia"],
-        isFavorite: true,
-        timesUsed: 12
-      }
-    ]
-  },
+        {
+          name: "Aveia",
+          quantity: 5,
+          unit: "colheres de sopa",
+          notes: "" // Usuário não precisa saber que são 75g
+        },
+        {
+          name: "Iogurte natural",
+          quantity: 1,
+          unit: "copo", // ou "200ml" se preferir
+          notes: "Copo americano"
+        },
+        {
+          name: "Água",
+          quantity: 300,
+          unit: "ml",
+          notes: "Ou 1 copo e meio"
+        },
+        {
+          name: "Açúcar",
+          quantity: 2,
+          unit: "colheres de sopa",
+          notes: "Pode substituir por mel"
+        }
+      ],
 
-  dailyMealTracking: {
+      // CALORIAS OPCIONAIS
+      // Usuário escolhe se quer calcular ou não
+      nutritionTracking: {
+        enabled: true, // Usuário ativou
+
+        // Se ativado, usuário informa valores ESTIMADOS
+        // Pode usar referências do app ou pesquisar
+        estimatedCalories: 700, // Valor aproximado que o usuário informou
+        estimatedProtein: 20,
+        estimatedCarbs: 130,
+        estimatedFat: 12,
+
+        // Ou deixa o app calcular baseado em médias
+        autoCalculated: false
+      },
+
+      instructions: "Bater tudo no liquidificador",
+      preparationTime: 5, // minutos
+      servings: 1,
+      tags: ["rápido", "café da manhã", "favorita"],
+      isFavorite: true,
+      timesUsed: 24,
+      lastUsed: "2025-11-15"
+    },
+
+    {
+      id: "recipe_002",
+      name: "Almoço Simples",
+      category: "lunch",
+      icon: "🍛",
+
+      ingredients: [
+        {
+          name: "Arroz",
+          quantity: 2,
+          unit: "conchas", // Medida prática!
+          notes: "Concha média de servir"
+        },
+        {
+          name: "Feijão",
+          quantity: 1,
+          unit: "concha",
+          notes: ""
+        },
+        {
+          name: "Frango grelhado",
+          quantity: 1,
+          unit: "filé",
+          notes: "Filé médio"
+        },
+        {
+          name: "Salada",
+          quantity: 1,
+          unit: "prato",
+          notes: "Prato de sobremesa cheio"
+        }
+      ],
+
+      // Usuário NÃO quer contar calorias dessa
+      nutritionTracking: {
+        enabled: false
+      },
+
+      tags: ["almoço", "completo"],
+      isFavorite: true
+    }
+  ],
+
+  // Histórico de refeições (simples!)
+  mealHistory: {
     "2025-11-15": {
       breakfast: {
-        items: [
-          // Pode adicionar receita inteira
-          {
-            type: "recipe",
-            id: "recipe_001",
-            name: "Vitamina de Banana com Aveia",
-            servings: 1,
-            calories: 706,
-            protein: 20.5,
-            carbs: 132.2,
-            fat: 11.9
-          },
-          // Ou alimentos individuais
-          {
-            type: "food",
-            id: "api_001",
-            name: "Pão integral",
-            quantity: 50,
-            unit: "g",
-            calories: 130,
-            protein: 4.5,
-            carbs: 20,
-            fat: 2.5
-          }
-        ],
-        totalCalories: 836,
-        totalProtein: 25.0,
-        totalCarbs: 152.2,
-        totalFat: 14.4,
-        time: "08:30"
+        recipeId: "recipe_001",
+        recipeName: "Minha Vitamina Matinal",
+        time: "08:30",
+        calories: 700 // só se usuário habilitou tracking
       },
       lunch: {
-        items: [
-          {
-            type: "food",
-            id: "api_006",
-            name: "Arroz branco cozido",
-            quantity: 150,
-            unit: "g",
-            calories: 195
-          },
-          {
-            type: "recipe",
-            id: "recipe_002",
-            name: "Frango grelhado temperado",
-            servings: 1,
-            calories: 280
-          }
-        ],
-        totalCalories: 650
+        recipeId: "recipe_002",
+        recipeName: "Almoço Simples",
+        time: "12:30"
+        // sem calorias pois tracking desabilitado
       },
-      dinner: { items: [...], totalCalories: 500 },
-      snacks: { items: [...], totalCalories: 150 },
 
-      // Totais do dia
-      dailyTotal: 2136,
-      goalCalories: 2000,
-      remaining: -136, // excedeu
-      percentage: 106.8,
-      
-      // Macros do dia
-      dailyProtein: 89,
-      dailyCarbs: 245,
-      dailyFat: 72
+      // Totais do dia (opcional)
+      dailyCalories: 700, // soma apenas receitas com tracking
+      trackedMeals: 1, // quantas foram rastreadas
+      totalMeals: 2
     }
   }
 }
@@ -308,129 +216,126 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
 
 #### **APIs Sugeridas:**
 
-1. **OpenFoodFacts API** (RECOMENDADO)
+**NÃO USAR APIs de alimentos!**
 
-   - ✅ Gratuita e open-source
-   - ✅ Base brasileira (TACO)
-   - ✅ Não precisa autenticação
-   - ✅ Funciona offline após cache
+**Motivo:** O usuário não quer ficar pesquisando e medindo alimentos individuais.
 
-   ```javascript
-   // Exemplo de chamada
-   fetch("https://br.openfoodfacts.org/api/v0/product/7891000100103.json");
+**Alternativa:**
+
+- Sistema 100% focado em **receitas pessoais do usuário**
+- **Tabela de referência opcional** para quem quiser calcular calorias
+- Valores aproximados e práticos
+- Sem complexidade de APIs externas
+
+**Se o usuário quiser calcular calorias:**
+
+1. **Modo Manual**: Usuário informa valor aproximado total
+
+   ```
+   "Minha vitamina tem umas 700 calorias"
    ```
 
-2. **Tabela TACO (USP)** - Offline
+2. **Modo Assistido** (Opcional): App oferece valores médios de referência
 
-   - ✅ Completamente gratuita
-   - ✅ Dados brasileiros confiáveis
-   - ✅ Pode ser incluída no projeto
-   - ⚠️ Precisa ser baixada e integrada
+   ```
+   Banana média = ~100 cal
+   Colher sopa aveia = ~60 cal
+   Copo iogurte = ~100 cal
+   ```
 
-3. **USDA FoodData Central**
-   - ✅ Gratuita com API key
-   - ⚠️ Dados americanos (pode não ter alimentos BR)
+   Usuário soma mentalmente ou deixa app calcular
 
-**Implementação Recomendada:**
-
-```
-1. Usar OpenFoodFacts como principal
-2. Fallback para base TACO offline (JSON local)
-3. Permitir cadastro manual pelo usuário
-4. Cache local de alimentos pesquisados
-```
+3. **Modo Ignorar**: Usuário só registra que comeu, sem calorias
+   ```
+   "Tomei minha vitamina" ✓
+   ```
 
 ### 1.3 Interface Proposta
 
 ```
-📱 Tela de Refeição (Ex: Café da Manhã)
+📱 Tela de Refeição - SIMPLES
 ┌─────────────────────────────────────┐
 │ ☀️ Café da Manhã - 08:30           │
 │                                     │
-│ 🎯 Meta de hoje: 2000 cal           │
-│ ✅ Consumido: 836 cal (41.8%)       │
-│ 📊 Restante: 1164 cal               │
+│ [➕ Adicionar Receita]              │
+│ [� Nova Receita]                   │
 │                                     │
-│ ➕ Adicionar  [🥘 Receitas]  [🍎 Alimentos]│
-│                                     │
+│ ✅ Hoje você comeu:                 │
 │ ┌─────────────────────────────────┐│
-│ │ 🔍 Buscar receitas ou alimentos ││
-│ │ [________________]  [Buscar]    ││
-│ │ 💡 Receitas Favoritas           ││
+│ │ 🥤 Minha Vitamina Matinal       ││
+│ │ ~700 cal                        ││
+│ │ [ Remover]                    ││
 │ └─────────────────────────────────┘│
 │                                     │
-│ Itens Adicionados:                  │
-│ ┌─────────────────────────────────┐│
-│ │ 🥤 Vitamina de Banana com Aveia ││
-│ │ (Receita) • 706 cal             ││
-│ │ P: 20.5g • C: 132g • G: 11.9g   ││
-│ │ [📝 Ver] [📋 Copiar] [🗑 Remover]││
-│ └─────────────────────────────────┘│
-│                                     │
-│ ┌─────────────────────────────────┐│
-│ │ 🍞 Pão integral                 ││
-│ │ 50g • 130 cal                   ││
-│ │ P: 4.5g • C: 20g • G: 2.5g [🗑] ││
-│ └─────────────────────────────────┘│
-│                                     │
-│ [Salvar Refeição] [Ver Dashboard]  │
+│ 💡 Dica: Crie suas receitas         │
+│    favoritas para registrar         │
+│    rapidamente!                     │
 └─────────────────────────────────────┘
 
-🥘 Criar/Editar Receita
+🥘 Criar Receita - PRÁTICO
 ┌─────────────────────────────────────┐
 │ 🥤 Nova Receita                     │
 │                                     │
-│ Nome: [Vitamina de Banana]          │
+│ Nome: [Minha Vitamina Matinal]      │
 │ Categoria: [Café da Manhã ▼]       │
 │ Ícone: [🥤 ▼]                       │
-│ Porções: [1]                        │
 │                                     │
-│ 📋 Ingredientes:                    │
+│ 📋 Ingredientes (medidas práticas): │
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 🍌 Banana com casca             ││
-│ │ Qtd: [2] [unidades ▼]           ││
-│ │ (≈ 236g • 231 cal)         [🗑] ││
+│ │ Ingrediente: [Banana]           ││
+│ │ Quantidade: [2] [unidades ▼]    ││
+│ │ Obs: [médias]             [🗑]  ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 🌾 Aveia em flocos              ││
-│ │ Qtd: [5] [colheres sopa ▼]      ││
-│ │ (≈ 75g • 296 cal)          [🗑] ││
+│ │ Ingrediente: [Aveia]            ││
+│ │ Quantidade: [5] [colheres sopa▼]││
+│ │ Obs: []                   [🗑]  ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 🥛 Iogurte natural integral     ││
-│ │ Qtd: [200] [ml ▼]               ││
-│ │ (200ml • 102 cal)          [🗑] ││
+│ │ Ingrediente: [Iogurte natural]  ││
+│ │ Quantidade: [1] [copo ▼]        ││
+│ │ Obs: [copo americano]     [🗑]  ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 💧 Água                         ││
-│ │ Qtd: [300] [ml ▼]               ││
-│ │ (300ml • 0 cal)            [🗑] ││
+│ │ Ingrediente: [Água]             ││
+│ │ Quantidade: [300] [ml ▼]        ││
+│ │ Obs: [ou 1 copo e meio]   [🗑]  ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 🍬 Açúcar refinado              ││
-│ │ Qtd: [2] [colheres sopa ▼]      ││
-│ │ (≈ 20g • 77 cal)           [🗑] ││
+│ │ Ingrediente: [Açúcar]           ││
+│ │ Quantidade: [2] [colheres sopa▼]││
+│ │ Obs: [pode ser mel]       [🗑]  ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ ➕ [Adicionar Ingrediente]          │
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 📊 Total por Porção:            ││
-│ │ 🔥 706 calorias                 ││
-│ │ 💪 Proteínas: 20.5g (12%)       ││
-│ │ 🌾 Carboidratos: 132g (75%)     ││
-│ │ 🥑 Gorduras: 11.9g (15%)        ││
+│ │ ⚙️ Calorias (opcional)          ││
+│ │                                 ││
+│ │ [ ] Não quero contar calorias   ││
+│ │ [✓] Quero estimar calorias      ││
+│ │                                 ││
+│ │ � Calorias totais (aprox):     ││
+│ │ [700] kcal                      ││
+│ │                                 ││
+│ │ 💡 Ajuda:                       ││
+│ │ • Banana média: ~100 cal        ││
+│ │ • Col. sopa aveia: ~60 cal      ││
+│ │ • Copo iogurte: ~100 cal        ││
+│ │ • Açúcar col. sopa: ~40 cal     ││
+│ │ [Calcular Automaticamente]      ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ 📝 Modo de Preparo:                 │
-│ [Bater tudo no liquidificador...]   │
+│ [Bater tudo no liquidificador]      │
 │                                     │
-│ 🏷️ Tags: [vitamina] [café da manhã]│
+│ ⏱️ Tempo: [5] minutos               │
+│ 🏷️ Tags: [rápido] [favorita]       │
 │ ⭐ [Marcar como Favorita]           │
 │                                     │
 │ [Cancelar]  [Salvar Receita]       │
@@ -440,324 +345,277 @@ Este documento detalha a estratégia para implementar um sistema mais robusto e 
 ┌─────────────────────────────────────┐
 │ 🥘 Minhas Receitas                  │
 │                                     │
-│ 🔍 Buscar: [________] 🔽 [Todas]    │
+│ 🔍 Buscar: [________]               │
 │                                     │
-│ ⭐ Favoritas (3)                    │
+│ ⭐ Favoritas                        │
 │ ┌─────────────────────────────────┐│
-│ │ 🥤 Vitamina de Banana com Aveia ││
-│ │ 706 cal • Usado 12x             ││
-│ │ [➕ Adicionar] [📝 Editar]       ││
+│ │ 🥤 Minha Vitamina Matinal       ││
+│ │ ~700 cal • 5 min                ││
+│ │ Usado 24x • Última: Hoje        ││
+│ │ [➕ Usar] [📝 Editar]            ││
 │ └─────────────────────────────────┘│
 │                                     │
 │ ┌─────────────────────────────────┐│
-│ │ 🥗 Salada Completa de Almoço    ││
-│ │ 320 cal • Usado 8x              ││
-│ │ [➕ Adicionar] [📝 Editar]       ││
+│ │ 🍛 Meu Almoço Simples           ││
+│ │ Sem contagem de calorias        ││
+│ │ Usado 18x • Última: Ontem       ││
+│ │ [➕ Usar] [📝 Editar]            ││
 │ └─────────────────────────────────┘│
 │                                     │
-│ 📂 Café da Manhã (5)                │
-│ 📂 Almoço (12)                      │
-│ 📂 Jantar (8)                       │
-│ 📂 Lanches (6)                      │
+│ 📂 Café da Manhã (3)                │
+│ 📂 Almoço (5)                       │
+│ 📂 Jantar (4)                       │
+│ 📂 Lanches (2)                      │
 │                                     │
 │ [➕ Criar Nova Receita]             │
 └─────────────────────────────────────┘
 
-📊 Dashboard de Alimentação
+📊 Dashboard (Simplificado)
 ┌─────────────────────────────────────┐
-│ 📈 Evolução Semanal de Calorias     │
+│ � Resumo da Semana                 │
 │                                     │
-│  2200|        ╱╲                    │
-│  2000|───────●──●───── Meta         │
-│  1800|      ╱    ╲                  │
-│  1600|    ●        ●                │
-│      └──S──T──Q──Q──S──S──D        │
+│ 🍽️ Refeições registradas: 18       │
+│ ⭐ Receita mais usada:              │
+│    Minha Vitamina Matinal (5x)      │
 │                                     │
-│ 🎯 Semana Atual:                    │
-│   • Média: 1850 cal/dia             │
-│   • Meta: 2000 cal/dia              │
-│   • Aderência: 92.5%                │
+│ 🔥 Calorias (se habilitado):        │
+│   • Média diária: ~1850 cal         │
+│   • Meta: 2000 cal                  │
 │                                     │
-│ 🥇 Macronutrientes Médios:          │
-│   Proteínas: 85g (22%)              │
-│   Carboidratos: 230g (50%)          │
-│   Gorduras: 58g (28%)               │
+│ 💡 Você é mais consistente no       │
+│    café da manhã!                   │
 └─────────────────────────────────────┘
 ```
 
 ### 1.4 Fluxo de Trabalho
 
-#### Fluxo 1: Criar e Usar Receita
+#### Fluxo Principal: Usar Receita Existente (Ultra-Rápido)
 
 ```mermaid
 graph TD
-    A[Usuário quer adicionar vitamina] --> B{Receita já existe?}
-    B -->|Não| C[Clica em Criar Nova Receita]
-    C --> D[Preenche nome e categoria]
-    D --> E[Adiciona ingredientes um por um]
-    E --> F[Busca ingrediente na API/Local]
-    F --> G{Encontrou?}
-    G -->|Sim| H[Seleciona e define quantidade]
-    G -->|Não| I[Cadastra alimento manualmente]
-    H --> J[Sistema calcula totais automaticamente]
-    I --> J
-    J --> K{Mais ingredientes?}
-    K -->|Sim| E
-    K -->|Não| L[Adiciona instruções opcionais]
+    A[Usuário abre Café da Manhã] --> B[Clica Adicionar Receita]
+    B --> C[Vê suas receitas favoritas]
+    C --> D[Seleciona Minha Vitamina]
+    D --> E[Confirma]
+    E --> F[Registrado! < 10 segundos]
+```
+
+#### Fluxo Completo: Criar Nova Receita
+
+```mermaid
+graph TD
+    A[Quer criar nova receita] --> B[Clica Nova Receita]
+    B --> C[Preenche nome e categoria]
+    C --> D[Adiciona ingrediente 1]
+    D --> E[Define: nome, quantidade, unidade]
+    E --> F[Adiciona observação opcional]
+    F --> G{Mais ingredientes?}
+    G -->|Sim| D
+    G -->|Não| H{Quer contar calorias?}
+    H -->|Não| I[Pula para instruções]
+    H -->|Sim - Manual| J[Informa valor aproximado]
+    H -->|Sim - Assistido| K[Usa sugestões do app]
+    J --> I
+    K --> I
+    I --> L[Adiciona modo de preparo]
     L --> M[Salva receita]
-    M --> N[Receita disponível para uso]
-    
-    B -->|Sim| O[Busca receita salva]
-    O --> P[Seleciona receita]
-    P --> Q[Define número de porções]
-    Q --> R[Adiciona à refeição]
-    R --> S[Atualiza totais do dia]
-    S --> T[Mostra progresso da meta]
+    M --> N[Receita disponível para uso rápido]
 ```
 
-#### Fluxo 2: Adicionar Alimentos Individuais
-
-```mermaid
-graph TD
-    A[Usuário abre Refeição] --> B[Sistema carrega meta diária]
-    B --> C[Clica em Adicionar Alimento]
-    C --> D[Busca na API/Local]
-    D --> E{Encontrou?}
-    E -->|Sim| F[Seleciona alimento]
-    F --> G[Define quantidade e unidade]
-    G --> H[Sistema calcula calorias/macros]
-    E -->|Não| I[Cadastra manualmente]
-    I --> H
-    H --> J[Adiciona à refeição]
-    J --> K[Atualiza totais do dia]
-    K --> L[Mostra progresso da meta]
-    L --> M{Continuar adicionando?}
-    M -->|Sim| C
-    M -->|Não| N[Salva no histórico]
-    N --> O[Atualiza Dashboard]
-```
-
-#### Fluxo 3: Editar Receita Existente
-
-```mermaid
-graph TD
-    A[Usuário vê receita em Minhas Receitas] --> B[Clica em Editar]
-    B --> C[Carrega ingredientes atuais]
-    C --> D{O que fazer?}
-    D -->|Adicionar ingrediente| E[Busca novo ingrediente]
-    D -->|Remover ingrediente| F[Remove da lista]
-    D -->|Alterar quantidade| G[Ajusta quantidade]
-    E --> H[Sistema recalcula totais]
-    F --> H
-    G --> H
-    H --> I{Finalizar edição?}
-    I -->|Não| D
-    I -->|Sim| J[Salva alterações]
-    J --> K[Atualiza histórico de uso]
-```
-
-### 1.5 Estrutura de Arquivos
+### 1.5 Estrutura de Arquivos (Simplificada)
 
 ```
 js/categories/meals.js (expandir)
 js/nutrition/
-  ├── food-api.js          # Integração com APIs
-  ├── food-database.js     # Database local (TACO)
-  ├── calorie-tracker.js   # Lógica de tracking
-  ├── macro-calculator.js  # Cálculo de macros
-  ├── nutrition-goals.js   # Metas e objetivos
-  ├── recipe-manager.js    # NOVO: Gerenciamento de receitas
-  └── unit-converter.js    # NOVO: Conversão de unidades (g, ml, colher, xícara)
+  ├── recipe-manager.js       # Gerenciamento de receitas do usuário
+  ├── calorie-helper.js       # OPCIONAL: Ajuda com estimativas
+  └── nutrition-goals.js      # OPCIONAL: Metas (se usuário quiser)
 
 data/
-  ├── taco-foods.json      # Base TACO offline
-  └── common-units.json    # NOVO: Conversões comuns (colher sopa = 15ml, etc)
+  └── calorie-reference.json  # OPCIONAL: Valores médios para ajuda
+                              # (banana ~100cal, col aveia ~60cal, etc)
 
 components/nutrition/
-  ├── food-search.html     # Busca de alimentos
-  ├── food-form.html       # Formulário customizado
-  ├── meal-tracker.html    # Tela de refeição
-  ├── recipe-creator.html  # NOVO: Criar/Editar receita
-  ├── recipe-library.html  # NOVO: Biblioteca de receitas
-  ├── ingredient-picker.html # NOVO: Seletor de ingredientes
-  └── nutrition-dashboard.html
+  ├── recipe-creator.html     # Criar/Editar receita
+  ├── recipe-library.html     # Biblioteca de receitas
+  ├── meal-tracker.html       # Tela de refeição (simples)
+  └── nutrition-dashboard.html # Dashboard (opcional, se tracking habilitado)
 
 css/nutrition/
-  ├── food-cards.css
-  ├── nutrition-dashboard.css
-  ├── calorie-tracker.css
-  ├── recipe-creator.css   # NOVO
-  └── recipe-library.css   # NOVO
+  ├── recipe-creator.css
+  ├── recipe-library.css
+  └── meal-tracker.css
 ```
 
-### 1.6 Recursos Adicionais do Sistema de Receitas
+**NÃO PRECISA:**
 
-#### Unidades de Medida Suportadas:
+- ❌ `food-api.js` - Sem integração com APIs externas
+- ❌ `food-database.js` - Sem banco de alimentos
+- ❌ `food-search.html` - Usuário não busca alimentos
+- ❌ `unit-converter.js` - Conversões são opcionais e simples
+- ❌ `macro-calculator.js` - Cálculos complexos opcionais
+
+### 1.6 Recursos do Sistema (Focado em Praticidade)
+
+#### Unidades de Medida Práticas:
 
 ```javascript
-const COMMON_UNITS = {
-  // Volume
-  "ml": { type: "volume", base: 1 },
-  "litro": { type: "volume", base: 1000 },
-  "xícara": { type: "volume", base: 240 }, // 240ml
-  "colher sopa": { type: "volume", base: 15 }, // 15ml
-  "colher chá": { type: "volume", base: 5 }, // 5ml
-  
-  // Peso
-  "g": { type: "weight", base: 1 },
-  "kg": { type: "weight", base: 1000 },
-  
-  // Unidades
-  "unidade": { type: "count", base: 1 },
-  "fatia": { type: "count", base: 1 },
-  "porção": { type: "count", base: 1 }
-};
+const PRACTICAL_UNITS = [
+  // Sem gramas! Apenas medidas do dia a dia
+  "unidades",
+  "colheres de sopa",
+  "colheres de chá",
+  "xícaras",
+  "copos",
+  "conchas",
+  "fatias",
+  "filés",
+  "porções",
+  "pratos",
+  "ml", // só quando faz sentido (água, leite)
+];
+```
 
-// Conversões específicas por alimento
-const FOOD_CONVERSIONS = {
-  "banana": {
-    "unidade": 118, // 1 banana média = 118g
-    "pequena": 90,
-    "média": 118,
-    "grande": 150
-  },
-  "ovo": {
-    "unidade": 50, // 1 ovo médio = 50g
-    "pequeno": 40,
-    "médio": 50,
-    "grande": 60
-  },
-  "aveia": {
-    "colher sopa": 15, // 1 colher sopa = 15g
-    "xícara": 80 // 1 xícara = 80g
-  }
+#### Tabela de Referência OPCIONAL:
+
+```javascript
+// Apenas para AJUDAR o usuário se ele quiser
+// Não é obrigatório usar!
+const CALORIE_REFERENCE = {
+  "Banana média": "~100 cal",
+  "Colher sopa aveia": "~60 cal",
+  "Colher sopa açúcar": "~40 cal",
+  "Copo leite": "~150 cal",
+  "Copo iogurte": "~100 cal",
+  "Ovo unidade": "~70 cal",
+  "Colher sopa azeite": "~120 cal",
+  "Filé frango": "~150-200 cal",
+  "Concha arroz": "~100 cal",
+  "Concha feijão": "~80 cal",
+  "Fatia pão": "~70 cal",
+  // ... mais alguns comuns
 };
 ```
 
-#### Funcionalidades Inteligentes:
+#### Funcionalidades Principais:
 
-1. **Auto-completar ao digitar ingredientes**
-   ```
-   Usuário digita: "ban"
-   Sistema sugere: Banana, Banana-prata, Banana da terra, etc.
-   ```
+1. **Criar receita rapidamente** (< 5 min)
 
-2. **Conversão automática de unidades**
-   ```
-   Usuário: "2 bananas"
-   Sistema: "≈ 236g • 231 cal"
-   ```
+   - Nome, ingredientes com medidas práticas
+   - Modo de preparo
+   - Calorias opcional
 
-3. **Sugestões de receitas baseadas em histórico**
-   ```
-   "Você costuma fazer Vitamina às segundas-feiras"
-   "Adicionar automaticamente?"
-   ```
+2. **Reusar receitas** (< 10 segundos)
 
-4. **Copiar receita para outro dia**
+   - Lista de favoritas
+   - Um clique para adicionar
+
+3. **Calorias flexível**
+
    ```
-   [📋 Copiar] → Seleciona data → Receita adicionada
+   Opção 1: "Não quero contar" ✓
+   Opção 2: "Eu estimo ~700 cal"
+   Opção 3: "App me ajuda a calcular"
    ```
 
-5. **Ajustar porções dinamicamente**
-   ```
-   Receita original: 1 porção (706 cal)
-   Usuário quer: 1.5 porções
-   Sistema: Multiplica tudo por 1.5 (1059 cal)
-   ```
+4. **Histórico simples**
 
-6. **Substituir ingredientes**
-   ```
-   "Açúcar" → Sugestões: Mel, Adoçante, Xilitol
-   Sistema recalcula automaticamente
-   ```
+   - O que comeu e quando
+   - Estatísticas básicas (receitas mais usadas)
+
+5. **Sem balança obrigatória**
+   - Tudo em medidas caseiras
+   - Precisão não é o foco
+   - Praticidade é prioridade
 
 ---
 
-## 🍽️ 1.7 Casos de Uso Reais - Sistema de Receitas
+## 🍽️ 1.7 Casos de Uso Reais - Sistema Prático
 
-### Caso 1: Vitamina de Banana com Aveia (Exemplo Completo)
+### Caso 1: Criar Vitamina (Primeira Vez)
 
-**Cenário:** Usuário quer fazer sua vitamina matinal habitual
+**Cenário:** Usuário quer cadastrar sua vitamina matinal
 
 **Passos:**
-1. Abre "Café da Manhã" → Clica em "Adicionar" → "Receitas"
-2. Clica em "Criar Nova Receita"
-3. Preenche:
-   - Nome: "Vitamina de Banana com Aveia"
+
+1. Clica em "Nova Receita"
+2. Preenche:
+
+   - Nome: "Minha Vitamina Matinal"
    - Categoria: Café da Manhã
    - Ícone: 🥤
 
-4. Adiciona ingredientes:
-   - Busca "banana" → Seleciona "Banana com casca"
-     - Quantidade: 2 unidades (sistema converte para 236g)
-   - Busca "aveia" → Seleciona "Aveia em flocos"
-     - Quantidade: 5 colheres de sopa (sistema converte para 75g)
-   - Busca "iogurte" → Seleciona "Iogurte natural integral"
-     - Quantidade: 200ml
-   - Busca "água" → Seleciona "Água"
-     - Quantidade: 300ml
-   - Busca "açúcar" → Seleciona "Açúcar refinado"
-     - Quantidade: 2 colheres de sopa (sistema converte para 20g)
+3. Adiciona ingredientes **SEM BALANÇA:**
 
-5. Sistema calcula automaticamente:
-   - **Total: 706 calorias**
-   - Proteínas: 20.5g (12%)
-   - Carboidratos: 132g (75%)
-   - Gorduras: 11.9g (15%)
+   - Banana: 2 unidades (obs: médias)
+   - Aveia: 5 colheres de sopa
+   - Iogurte: 1 copo (obs: copo americano)
+   - Água: 300ml (obs: ou 1 copo e meio)
+   - Açúcar: 2 colheres de sopa (obs: pode ser mel)
 
-6. Adiciona instruções: "Bater tudo no liquidificador até ficar homogêneo"
-7. Marca como favorita ⭐
-8. Salva receita
+4. **Calorias (OPCIONAL):**
 
-**Próximas vezes:**
-- Abre "Café da Manhã" → "Receitas" → "Favoritas"
-- Seleciona "Vitamina de Banana com Aveia"
-- Clica em "Adicionar" → Pronto! (< 30 segundos)
+   - Marca: "Quero estimar calorias"
+   - Vê sugestões do app:
+     - Banana média: ~100 cal (x2 = 200)
+     - Col. sopa aveia: ~60 cal (x5 = 300)
+     - Copo iogurte: ~100 cal
+     - Açúcar col. sopa: ~40 cal (x2 = 80)
+   - Digita: **~700 cal** (valor aproximado)
 
----
+5. Modo de preparo: "Bater tudo no liquidificador"
+6. Marca como favorita ⭐
+7. Salva - **PRONTO!**
 
-### Caso 2: Ajustar Porções
+**Próximas vezes (< 10 segundos):**
 
-**Cenário:** Usuário quer fazer a vitamina para 2 pessoas
-
-**Passos:**
-1. Seleciona receita "Vitamina de Banana com Aveia" (1 porção = 706 cal)
-2. Ajusta porções: 1 → 2
-3. Sistema multiplica todos ingredientes:
-   - Bananas: 2 → 4 unidades
-   - Aveia: 5 → 10 colheres de sopa
-   - Iogurte: 200ml → 400ml
-   - Água: 300ml → 600ml
-   - Açúcar: 2 → 4 colheres de sopa
-4. Total recalculado: 1412 calorias (2 porções)
+- Abre "Café da Manhã"
+- Clica "Adicionar Receita"
+- Seleciona "Minha Vitamina Matinal"
+- Confirma → **REGISTRADO!**
 
 ---
 
-### Caso 3: Substituir Ingrediente
+### Caso 2: Usuário NÃO Quer Contar Calorias
 
-**Cenário:** Usuário quer substituir açúcar por mel
+**Cenário:** Só quer registrar o que come, sem números
 
 **Passos:**
-1. Edita receita existente
-2. Remove "Açúcar refinado" (77 cal)
-3. Adiciona "Mel" (2 colheres de sopa = 120 cal)
-4. Sistema recalcula: 706 → 749 calorias
-5. Salva como variação ou substitui original
+
+1. Cria receita "Meu Almoço Simples"
+2. Ingredientes:
+
+   - Arroz: 2 conchas
+   - Feijão: 1 concha
+   - Frango: 1 filé
+   - Salada: 1 prato
+
+3. **Calorias:** Marca "Não quero contar" ✓
+4. Salva
+
+**Resultado:**
+
+- Receita salva
+- Pode reusar rapidamente
+- Dashboard mostra "Almoço registrado" sem calorias
+- Sem pressão, sem complexidade
 
 ---
 
-### Caso 4: Copiar Receita para Outro Dia
+### Caso 3: Ajustar Receita (Sem Balança)
 
-**Cenário:** Usuário fez a vitamina ontem e quer registrar que fez hoje
+**Cenário:** Hoje fez a vitamina com 3 bananas em vez de 2
 
-**Passos:**
-1. Vai no histórico de ontem
-2. Vê "Vitamina de Banana com Aveia"
-3. Clica em [📋 Copiar]
-4. Seleciona data: Hoje
-5. Adiciona em: Café da Manhã
-6. Confirmado! (< 15 segundos)
+**Opção 1 - Não liga para precisão:**
+
+- Usa a mesma receita normalmente
+- "~700 cal" continua bom o suficiente
+
+**Opção 2 - Quer ajustar:**
+
+- Edita temporariamente: 2 → 3 bananas
+- Ajusta calorias: 700 → 800 cal
+- Ou cria variação: "Vitamina Reforçada"
 
 ---
 
@@ -765,69 +623,105 @@ const FOOD_CONVERSIONS = {
 
 ### Receita 2: Omelete Completo
 
-**Ingredientes:**
-- 3 ovos grandes (150g)
-- 1 tomate médio picado (80g)
-- 1/2 cebola média (50g)
-- 50g de queijo muçarela
-- 1 colher de sopa de azeite (13ml)
-- Sal e pimenta a gosto
+**Ingredientes (sem balança):**
 
-**Totais:** ~420 calorias | P: 28g | C: 12g | G: 28g
+- 3 ovos
+- 1 tomate médio picado
+- 1/2 cebola
+- Queijo: 3 colheres de sopa ralado
+- Azeite: 1 colher de sopa
+- Sal e pimenta
+
+**Calorias (opcional):** ~420 cal _(usuário pode ignorar)_
+
+**Preparo:** Bater ovos, refogar cebola e tomate, adicionar ovos e queijo
 
 ---
 
 ### Receita 3: Salada Completa de Almoço
 
-**Ingredientes:**
-- 100g de alface
-- 100g de tomate
-- 50g de cenoura ralada
-- 150g de frango grelhado
-- 2 colheres de sopa de azeite (26ml)
-- 1 colher de chá de sal
+**Ingredientes (medidas práticas):**
 
-**Totais:** ~380 calorias | P: 32g | C: 15g | G: 22g
+- Alface: 1 prato fundo
+- Tomate: 1 unidade média
+- Cenoura ralada: 4 colheres de sopa
+- Frango grelhado: 1 filé
+- Azeite: 2 colheres de sopa
+
+**Calorias (opcional):** ~380 cal _(só se usuário quiser)_
+
+**Preparo:** Grelhar frango, montar salada, temperar
 
 ---
 
 ### Receita 4: Mingau de Aveia com Frutas
 
-**Ingredientes:**
-- 80g de aveia (1 xícara)
-- 300ml de leite integral
-- 1 banana média cortada (118g)
-- 1 colher de sopa de mel (20g)
-- Canela a gosto
+**Ingredientes (sem pesar):**
 
-**Totais:** ~520 calorias | P: 18g | C: 82g | G: 13g
+- Aveia: 1 xícara
+- Leite: 1 copo e meio
+- Banana: 1 unidade cortada
+- Mel: 1 colher de sopa
+- Canela: a gosto
+
+**Calorias (opcional):** ~520 cal _(ajuda do app se quiser)_
+
+**Preparo:** Cozinhar aveia com leite, adicionar banana e mel
 
 ---
 
-## 🍽️ 1.9 Sistema de Tags e Filtros
+### Receita 5: Sanduíche Natural
 
-### Tags Automáticas:
-- **Por categoria:** café da manhã, almoço, jantar, lanche
-- **Por tipo:** vitamina, salada, omelete, mingau, sopa
-- **Por ingrediente principal:** banana, frango, aveia, ovo
-- **Por restrição:** vegetariano, vegano, sem lactose, low carb
+**Ingredientes (rápido):**
 
-### Tags Customizadas:
-- Usuário pode adicionar: #rápido, #prático, #fitness, #domingo
+- Pão integral: 2 fatias
+- Peito de peru: 3 fatias
+- Queijo: 2 fatias
+- Alface e tomate
 
-### Filtros Inteligentes:
+**Calorias:** Usuário decide se quer rastrear ou não
+
+**Preparo:** Montar e comer!
+
+---
+
+## �️ 1.9 Sistema de Tags e Filtros (Simples)
+
+### Tags Automáticas (opcionais):
+
+- **Por refeição:** #café, #almoço, #jantar, #lanche
+- **Por rapidez:** #rápido (< 10min), #elaborado
+- **Por preferência:** #favorita ⭐
+
+### Tags do Usuário (se quiser):
+
+- Pode criar: #fitness, #domingo, #prático, #conforto
+- Totalmente opcional
+
+### Filtros na Lista de Receitas:
+
 ```
-📂 Minhas Receitas
+📂 Minhas Receitas (82 receitas)
 
-🔍 Filtrar por:
-  ✓ Favoritas
-  □ Mais usadas
-  □ Recentes
-  □ Café da manhã
-  □ Até 500 calorias
-  □ Vegetarianas
-  □ Com banana
+🔍 Buscar: [        ]
+
+Filtros rápidos:
+  ⭐ Favoritas (12)
+  ⚡ Mais usadas (8)
+  🕒 Recentes (5)
+
+Por refeição:
+  ☕ Café (24)
+  🍽️ Almoço (31)
+  🌙 Jantar (19)
+  🥤 Lanche (8)
+
+Especiais:
+  ✓ Com calorias registradas (45)
+  ○ Sem calorias (37)
 ```
+
+**Objetivo:** Encontrar receitas rapidamente, sem complexidade
 
 ---
 
@@ -1319,9 +1213,614 @@ css/exercise/
 
 ---
 
-## 🎨 4. DASHBOARD UNIFICADO
+## � 4. MODO FOCO - Detalhamento de Atividades
 
-### 4.1 Expandir Dashboard Existente
+### 4.1 Visão Geral
+
+**Problema atual:** Atividades no cronograma aparecem de forma compacta, sem detalhes ou interatividade individual.
+
+**Solução:** Implementar **Modo Foco** - ao clicar em qualquer atividade, abre uma visualização detalhada e focada com:
+- Informações completas da atividade
+- Temporizador/contador em destaque
+- Ações específicas por tipo de atividade
+- Notas e contexto
+- Integração com novas funcionalidades (receitas, exercícios, etc)
+
+### 4.2 Estrutura de Dados
+
+```javascript
+{
+  focusMode: {
+    active: false,
+    activityId: null,
+    scheduleDate: null,
+    activityIndex: null,
+    
+    // Dados da atividade em foco
+    activityData: {
+      id: "work-0",
+      type: "work",
+      name: "💼 Trabalho Remoto",
+      startTime: "09:00",
+      endTime: "12:00",
+      description: "Reunião de sprint e desenvolvimento",
+      
+      // Dados específicos por tipo
+      typeSpecificData: {
+        // Para trabalho/estudo
+        project: "Sistema de Saúde v2.0",
+        tasks: ["Implementar modo foco", "Testar funcionalidades"],
+        
+        // Para refeição
+        recipeId: "recipe_001",
+        recipeName: "Minha Vitamina Matinal",
+        
+        // Para exercício
+        exerciseIds: ["ex_001", "ex_002"],
+        sets: [...],
+        
+        // Para hidratação
+        waterGoal: 2450,
+        consumed: 1800
+      },
+      
+      // Tracking
+      simpleTracking: {
+        status: null, // 'complete', 'incomplete', null
+        completedAt: null,
+        notes: ""
+      },
+      
+      // Timer info
+      isActive: true,
+      timeRemaining: "1h 23min",
+      progress: 45 // percentual
+    }
+  }
+}
+```
+
+### 4.3 Interface do Modo Foco
+
+```
+📱 Modo Foco - Trabalho
+┌─────────────────────────────────────┐
+│ [← Voltar]              [✕ Fechar] │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │                                 ││
+│ │       💼 TRABALHO REMOTO        ││
+│ │                                 ││
+│ │     ⏰ 09:00 - 12:00 (3h)       ││
+│ │                                 ││
+│ │   ⏳ Tempo restante: 1h 23min   ││
+│ │                                 ││
+│ │ ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░    ││
+│ │         45% concluído            ││
+│ │                                 ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📋 Descrição:                       │
+│ Reunião de sprint e desenvolvimento │
+│                                     │
+│ 🎯 Projeto:                         │
+│ Sistema de Saúde v2.0               │
+│                                     │
+│ ✅ Tarefas:                         │
+│ • Implementar modo foco             │
+│ • Testar funcionalidades            │
+│                                     │
+│ 📝 Notas:                           │
+│ [________________________]          │
+│ [Adicionar Nota]                    │
+│                                     │
+│ 🔔 Notificações:                    │
+│ [✓] Avisar 5 min antes do fim      │
+│ [✓] Tocar som ao terminar           │
+│                                     │
+│ ⚙️ Ações:                           │
+│ [✅ Marcar Concluída]               │
+│ [❌ Marcar Não Feita]               │
+│ [⏸️ Pausar Timer]                   │
+│ [📝 Editar Atividade]               │
+└─────────────────────────────────────┘
+
+📱 Modo Foco - Refeição (com Receita)
+┌─────────────────────────────────────┐
+│ [← Voltar]              [✕ Fechar] │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │                                 ││
+│ │    🥤 MINHA VITAMINA MATINAL    ││
+│ │                                 ││
+│ │     ⏰ Café da Manhã - 08:00    ││
+│ │                                 ││
+│ │      ~700 calorias              ││
+│ │                                 ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📋 Ingredientes:                    │
+│ • 2 bananas médias                  │
+│ • 5 colheres de sopa de aveia      │
+│ • 1 copo de iogurte natural        │
+│ • 300ml de água                     │
+│ • 2 colheres de sopa de açúcar     │
+│                                     │
+│ 👨‍🍳 Modo de Preparo:                 │
+│ Bater tudo no liquidificador até    │
+│ ficar homogêneo                     │
+│                                     │
+│ ⏱️ Tempo de preparo: 5 min          │
+│                                     │
+│ 🔥 Informações Nutricionais:        │
+│ ┌─────────────────────────────────┐│
+│ │ Calorias: 700 kcal              ││
+│ │ Proteínas: 20.5g (12%)          ││
+│ │ Carboidratos: 132g (75%)        ││
+│ │ Gorduras: 11.9g (15%)           ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📝 Observações:                     │
+│ [Estava deliciosa hoje!_______]    │
+│                                     │
+│ ⚙️ Ações:                           │
+│ [✅ Marcar como Consumida]          │
+│ [📝 Editar Receita]                 │
+│ [📋 Copiar para Outro Dia]          │
+└─────────────────────────────────────┘
+
+📱 Modo Foco - Exercício
+┌─────────────────────────────────────┐
+│ [← Voltar]              [✕ Fechar] │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │                                 ││
+│ │       💪 TREINO MATINAL         ││
+│ │                                 ││
+│ │     ⏰ 07:00 - 08:00 (1h)       ││
+│ │                                 ││
+│ │   ⏳ Em andamento: 32min         ││
+│ │                                 ││
+│ │ ▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░    ││
+│ │         53% concluído            ││
+│ │                                 ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 💪 Exercícios de Hoje:              │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 💪 Flexão                       ││
+│ │ ✅ 3 séries completas           ││
+│ │ Série 1: 15 reps                ││
+│ │ Série 2: 12 reps                ││
+│ │ Série 3: 10 reps                ││
+│ │ Total: 37 reps                  ││
+│ │ 🏆 Seu recorde: 15 reps         ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🏋️ Barra Fixa                   ││
+│ │ ⏳ Em andamento (2/3 séries)    ││
+│ │ Série 1: 8 reps ✅              ││
+│ │ Série 2: 6 reps ✅              ││
+│ │ Série 3: [_] reps 🎯            ││
+│ │ [Registrar Série 3]             ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🦵 Agachamento                  ││
+│ │ ⏸️ Pendente (0/3 séries)        ││
+│ │ [Iniciar]                       ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📊 Resumo do Treino:                │
+│ • Exercícios: 3 total               │
+│ • Completos: 1                      │
+│ • Em andamento: 1                   │
+│ • Calorias estimadas: ~280 kcal     │
+│                                     │
+│ ⚙️ Ações:                           │
+│ [▶️ Continuar Treino]               │
+│ [✅ Finalizar Treino]               │
+│ [➕ Adicionar Exercício]            │
+└─────────────────────────────────────┘
+
+📱 Modo Foco - Hidratação
+┌─────────────────────────────────────┐
+│ [← Voltar]              [✕ Fechar] │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │                                 ││
+│ │     💧 HIDRATAÇÃO DIÁRIA        ││
+│ │                                 ││
+│ │        Meta: 2450ml             ││
+│ │                                 ││
+│ │     🥤 1800ml / 2450ml          ││
+│ │         73.5%                   ││
+│ │                                 ││
+│ │ 💧💧💧💧💧💧💧💧░░░░░░░░░░      ││
+│ │                                 ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📊 Faltam: 650ml (2.6 copos)        │
+│                                     │
+│ ⚡ Registrar Consumo Rápido:        │
+│ ┌───────────────────────────────┐  │
+│ │ [250ml] [500ml] [750ml]       │  │
+│ │ [1 Copo] [1 Garrafa]          │  │
+│ └───────────────────────────────┘  │
+│                                     │
+│ 🎯 Personalizado:                   │
+│ [___] ml  [Adicionar]               │
+│                                     │
+│ 📝 Histórico de Hoje:               │
+│ • 08:30 - 300ml (início do dia)     │
+│ • 10:00 - 500ml (meio da manhã)     │
+│ • 14:30 - 500ml (após almoço)       │
+│ • 18:00 - 500ml (fim da tarde)      │
+│                                     │
+│ ⚖️ Seu Peso: 71.2 kg (IMC: 23.2)    │
+│ [📝 Atualizar Peso]                 │
+│                                     │
+│ 💡 Dica: Beba 250ml agora para      │
+│    atingir 75% da meta!             │
+│                                     │
+│ 🔔 Lembretes:                       │
+│ [✓] Lembrar a cada 2 horas         │
+│                                     │
+│ ⚙️ Ações:                           │
+│ [📊 Ver Evolução Semanal]           │
+│ [⚙️ Ajustar Meta]                   │
+└─────────────────────────────────────┘
+```
+
+### 4.4 Fluxo de Interação
+
+```mermaid
+graph TD
+    A[Cronograma Exibido] --> B{Usuário clica em atividade}
+    B --> C[Detecta tipo da atividade]
+    C --> D{Qual tipo?}
+    
+    D -->|Trabalho/Estudo| E[Modo Foco - Timer]
+    D -->|Refeição| F[Modo Foco - Receita]
+    D -->|Exercício| G[Modo Foco - Treino]
+    D -->|Hidratação| H[Modo Foco - Água]
+    D -->|Outros| I[Modo Foco - Genérico]
+    
+    E --> J[Carrega dados da atividade]
+    F --> K[Carrega receita vinculada]
+    G --> L[Carrega exercícios e séries]
+    H --> M[Carrega tracking de água]
+    I --> J
+    
+    J --> N[Exibe interface focada]
+    K --> N
+    L --> N
+    M --> N
+    
+    N --> O{Usuário interage}
+    O -->|Marca concluída| P[Atualiza status]
+    O -->|Edita| Q[Abre editor]
+    O -->|Adiciona nota| R[Salva nota]
+    O -->|Fecha| S[Volta ao cronograma]
+    
+    P --> S
+    Q --> S
+    R --> S
+```
+
+### 4.5 Implementação Técnica
+
+#### 4.5.1 Estrutura de Arquivos
+
+```
+js/focus-mode/
+  ├── focus-manager.js         # Gerenciador principal do modo foco
+  ├── focus-renderer.js        # Renderização das interfaces
+  ├── focus-interactions.js    # Interações e eventos
+  └── focus-types/
+      ├── work-study-focus.js  # Foco para trabalho/estudo
+      ├── meal-focus.js        # Foco para refeições (integra receitas)
+      ├── exercise-focus.js    # Foco para exercícios (integra workouts)
+      ├── hydration-focus.js   # Foco para hidratação
+      └── generic-focus.js     # Foco genérico
+
+components/focus-mode/
+  ├── focus-overlay.html       # Overlay/modal principal
+  ├── focus-timer.html         # Componente de timer
+  ├── focus-actions.html       # Botões de ação
+  └── focus-notes.html         # Área de notas
+
+css/focus-mode/
+  ├── focus-layout.css         # Layout geral do modo foco
+  ├── focus-timer.css          # Estilo do timer
+  ├── focus-cards.css          # Cards de conteúdo
+  └── focus-responsive.css     # Responsividade
+```
+
+#### 4.5.2 API Principal
+
+```javascript
+// focus-manager.js
+
+const FocusMode = {
+  // Estado
+  state: {
+    active: false,
+    activityId: null,
+    scheduleDate: null,
+    activityIndex: null,
+    activityData: null
+  },
+
+  // Abrir modo foco
+  open(scheduleDate, activityIndex) {
+    const schedule = appState.userData.dailySchedules[scheduleDate];
+    const activity = schedule.activities[activityIndex];
+    
+    this.state = {
+      active: true,
+      activityId: activity.id,
+      scheduleDate: scheduleDate,
+      activityIndex: activityIndex,
+      activityData: activity
+    };
+    
+    // Renderizar interface apropriada
+    this.render();
+    
+    // Iniciar timer se necessário
+    if (this.isActive()) {
+      this.startTimer();
+    }
+  },
+
+  // Fechar modo foco
+  close() {
+    this.stopTimer();
+    this.state.active = false;
+    this.hideOverlay();
+    
+    // Recarregar cronograma para mostrar atualizações
+    showScheduleView();
+  },
+
+  // Renderizar interface
+  render() {
+    const type = this.state.activityData.type;
+    const renderer = FocusRenderers[type] || FocusRenderers.generic;
+    
+    const html = renderer(this.state.activityData, this.state);
+    document.getElementById('focus-mode-overlay').innerHTML = html;
+    this.showOverlay();
+  },
+
+  // Verificar se atividade está ativa agora
+  isActive() {
+    const activity = this.state.activityData;
+    const now = new Date();
+    const todayKey = formatDateKey(now);
+    
+    // Apenas ativo se for hoje e dentro do horário
+    return this.state.scheduleDate === todayKey &&
+           isEventActive(activity.startTime, activity.endTime);
+  },
+
+  // Timer
+  timerInterval: null,
+  
+  startTimer() {
+    this.updateTimer();
+    this.timerInterval = setInterval(() => this.updateTimer(), 1000);
+  },
+  
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  },
+  
+  updateTimer() {
+    const activity = this.state.activityData;
+    const remaining = getTimeRemaining(activity.endTime);
+    
+    // Atualizar UI
+    const timerEl = document.getElementById('focus-timer');
+    if (timerEl) {
+      timerEl.textContent = remaining.text;
+    }
+    
+    // Atualizar barra de progresso
+    const progress = this.calculateProgress();
+    const progressBar = document.getElementById('focus-progress-bar');
+    if (progressBar) {
+      progressBar.style.width = `${progress}%`;
+    }
+    
+    // Notificação quando terminar
+    if (remaining.minutes === 0 && remaining.seconds === 0) {
+      this.onTimerComplete();
+    }
+  },
+  
+  calculateProgress() {
+    const activity = this.state.activityData;
+    const start = parseTimeToMinutes(activity.startTime);
+    const end = parseTimeToMinutes(activity.endTime);
+    const now = parseTimeToMinutes(getCurrentTime());
+    
+    return Math.round(((now - start) / (end - start)) * 100);
+  },
+  
+  onTimerComplete() {
+    this.stopTimer();
+    
+    // Notificação
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Atividade Concluída!', {
+        body: `${this.state.activityData.name} terminou`,
+        icon: '/icon-192.png'
+      });
+    }
+    
+    // Som (opcional)
+    this.playCompletionSound();
+  },
+  
+  // Ações
+  markComplete() {
+    markEventSimpleComplete(this.state.scheduleDate, this.state.activityIndex);
+    this.close();
+  },
+  
+  markIncomplete() {
+    markEventSimpleIncomplete(this.state.scheduleDate, this.state.activityIndex);
+    this.close();
+  },
+  
+  addNote(note) {
+    const schedule = appState.userData.dailySchedules[this.state.scheduleDate];
+    const activity = schedule.activities[this.state.activityIndex];
+    
+    if (!activity.simpleTracking) {
+      activity.simpleTracking = {};
+    }
+    activity.simpleTracking.notes = note;
+    
+    saveToStorage();
+  },
+  
+  // Overlay
+  showOverlay() {
+    const overlay = document.getElementById('focus-mode-overlay');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  },
+  
+  hideOverlay() {
+    const overlay = document.getElementById('focus-mode-overlay');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+};
+
+// Expor globalmente
+window.FocusMode = FocusMode;
+```
+
+#### 4.5.3 Integração com Atividades
+
+```javascript
+// Modificar schedule-render.js para adicionar click handler
+
+function renderActivity(schedule, activity, index, isToday) {
+  // ... código existente ...
+  
+  // Adicionar atributo onclick para abrir modo foco
+  const focusHandler = `onclick="FocusMode.open('${schedule.date}', ${index}); event.stopPropagation();"`;
+  
+  return `
+    <div class="activity ${isActive ? 'active-event' : ''} ${statusClass}" 
+         ${focusHandler}
+         style="cursor: pointer;">
+      <div class="activity-main">
+        ${activityInfoHtml}
+        ${actionsHtml}
+      </div>
+      ${countdownHtml}
+      ${trackingInfo}
+    </div>
+  `;
+}
+```
+
+### 4.6 Benefícios do Modo Foco
+
+#### Para o Usuário:
+- ✅ **Visão detalhada** de cada atividade
+- ✅ **Timer em destaque** para atividades ativas
+- ✅ **Acesso rápido** a receitas, exercícios, etc
+- ✅ **Adicionar notas** e contexto
+- ✅ **Marcar conclusão** de forma focada
+- ✅ **Menos distração** - foco em uma atividade por vez
+
+#### Para o Sistema:
+- ✅ **Base para novas features** (receitas, exercícios)
+- ✅ **Integração natural** com tracking detalhado
+- ✅ **Extensível** - fácil adicionar novos tipos
+- ✅ **Consistente** - mesmo padrão para todas atividades
+
+### 4.7 Casos de Uso
+
+#### Caso 1: Trabalho em Andamento
+1. Usuário vê trabalho ativo no cronograma
+2. Clica na atividade
+3. Modo Foco abre com timer grande
+4. Vê tempo restante: "1h 23min"
+5. Adiciona nota: "Reunião produtiva"
+6. Fecha e continua trabalhando
+
+#### Caso 2: Hora da Refeição
+1. Notificação: "Hora do café da manhã!"
+2. Usuário abre cronograma
+3. Clica na refeição
+4. Modo Foco mostra receita completa
+5. Vê ingredientes e modo de preparo
+6. Marca como consumida
+7. Opcional: Adiciona nota sobre sabor
+
+#### Caso 3: Treino em Progresso
+1. Usuário está treinando
+2. Clica em "Exercício" no cronograma
+3. Modo Foco abre
+4. Registra séries em tempo real
+5. Vê progresso: 2/3 exercícios completos
+6. Finaliza treino quando termina
+
+#### Caso 4: Lembrete de Hidratação
+1. Sistema lembra: "Hora de beber água!"
+2. Usuário clica em Hidratação
+3. Modo Foco mostra progresso: 73.5%
+4. Clica em "500ml"
+5. Barra atualiza para 93.9%
+6. Fecha satisfeito
+
+### 4.8 Prioridade de Implementação
+
+**Fase 0 (Base):** Antes das outras features
+- [ ] Implementar estrutura básica do modo foco
+- [ ] Timer e progresso visual
+- [ ] Overlay/modal responsivo
+- [ ] Integração com cronograma (click handlers)
+
+**Fase 1 (Genérico):** Funciona com tudo
+- [ ] Modo foco genérico (trabalho, estudo, etc)
+- [ ] Marcação de conclusão
+- [ ] Adicionar notas
+- [ ] Notificações
+
+**Fase 2 (Especializado):** Quando implementar receitas
+- [ ] Modo foco para refeições
+- [ ] Exibir receita completa
+- [ ] Integração com sistema de calorias
+
+**Fase 3 (Exercícios):** Quando implementar workout tracking
+- [ ] Modo foco para exercícios
+- [ ] Registro de séries em tempo real
+- [ ] Progresso do treino
+
+**Fase 4 (Hidratação):** Melhorar tracking
+- [ ] Modo foco para hidratação
+- [ ] Registro rápido de consumo
+- [ ] Histórico do dia
+
+---
+
+## �🎨 5. DASHBOARD UNIFICADO
+
+### 5.1 Expandir Dashboard Existente
 
 ```javascript
 // Adicionar ao dashboard atual
@@ -1356,7 +1855,7 @@ css/exercise/
 }
 ```
 
-### 4.2 Interface do Dashboard
+### 5.2 Interface do Dashboard
 
 ```
 📊 Dashboard de Saúde (Expandido)
@@ -1394,7 +1893,7 @@ css/exercise/
 
 ---
 
-## 🗂️ 5. ESTRUTURA GERAL DO PROJETO
+## 🗂️ 6. ESTRUTURA GERAL DO PROJETO
 
 ### 5.1 Organização de Pastas (Atualizada)
 
@@ -1489,162 +1988,257 @@ Lifestyle/
 
 ---
 
-## 📋 6. PLANO DE IMPLEMENTAÇÃO
+## 📋 7. PLANO DE IMPLEMENTAÇÃO (SIMPLIFICADO)
+
+### Fase 0: Modo Foco - Base (1-2 semanas)
+
+**Implementar ANTES das outras features** - será a base para todas as funcionalidades detalhadas.
+
+- [ ] Criar estrutura de arquivos (`js/focus-mode/`)
+- [ ] Implementar `focus-manager.js` (gerenciador principal)
+- [ ] Criar overlay/modal responsivo
+- [ ] Implementar sistema de timer e progresso
+- [ ] Adicionar click handlers nas atividades do cronograma
+- [ ] Modo foco genérico (trabalho, estudo, projetos, hobby, etc)
+- [ ] Sistema de notas por atividade
+- [ ] Marcação de conclusão pelo modo foco
+- [ ] Notificações quando atividade termina
+- [ ] Testes básicos
+
+**Por que primeiro?**
+- ✅ Base para exibir receitas detalhadas (Fase 2+3)
+- ✅ Base para registrar séries de exercícios (Fase 5+6)
+- ✅ Base para tracking rápido de hidratação (Fase 1)
+- ✅ Melhora UX imediatamente - mesmo sem novas features
 
 ### Fase 1: Configurações e Peso (1-2 semanas)
 
 - [ ] Criar seção de Configurações Gerais
-- [ ] Mover altura para configurações
+- [ ] Mover altura para configurações (uma vez só)
 - [ ] Implementar sistema de histórico de peso
 - [ ] Criar modal de registro de peso
-- [ ] Desenvolver dashboard de evolução de peso
+- [ ] Desenvolver dashboard simples de evolução
 - [ ] Simplificar tela de hidratação
+- [ ] **Modo Foco para Hidratação:**
+  - Renderizador específico (`hydration-focus.js`)
+  - Mostrar progresso diário (ml/meta)
+  - Botões de registro rápido (250ml, 500ml, 1 copo, 1 garrafa)
+  - Histórico do dia
+  - Informações de peso atual e IMC
 - [ ] Testes unitários
 
-### Fase 2: Alimentação - Base (2-3 semanas)
+### Fase 2: Alimentação - Base Receitas (1-2 semanas)
 
-- [ ] Integrar OpenFoodFacts API
-- [ ] Criar cache local de alimentos
-- [ ] Baixar e integrar tabela TACO
-- [ ] Desenvolver sistema de busca de alimentos
-- [ ] Implementar formulário de alimento customizado
-- [ ] **Criar sistema de conversão de unidades** (g, ml, colheres, xícaras, unidades)
-- [ ] **Implementar gerenciador de receitas compostas**
-- [ ] Criar estrutura de dados de tracking
-- [ ] Testes de API e cache
+**REMOVIDO:** ❌ APIs, ❌ Busca de alimentos, ❌ Tabela TACO, ❌ Cache
 
-### Fase 3: Alimentação - Interface (2-3 semanas)
+**FAZER APENAS:**
 
-- [ ] Desenvolver tela de refeição
-- [ ] Implementar adicionar/remover alimentos individuais
-- [ ] **Criar interface de criação de receitas**
-- [ ] **Desenvolver biblioteca de receitas (favoritas, categorias)**
-- [ ] **Implementar seletor inteligente de ingredientes**
-- [ ] Criar indicadores de progresso
-- [ ] Desenvolver cálculo de macronutrientes
-- [ ] Implementar metas diárias
-- [ ] **Adicionar funcionalidade de ajustar porções**
+- [ ] Criar estrutura de receitas (`userRecipes`)
+- [ ] Implementar CRUD de receitas (criar, editar, deletar)
+- [ ] Sistema de ingredientes com medidas práticas
+- [ ] **Opcional:** Tabela de referência de calorias (estática)
+- [ ] Estrutura de tracking de refeições
+- [ ] **Integração Modo Foco:** Preparar dados para exibição detalhada
+- [ ] Testes básicos
+
+**Tempo reduzido:** De 2-3 semanas → **1-2 semanas** (sem API!)
+
+---
+
+### Fase 3: Alimentação - Interface (2 semanas)
+
+- [ ] Tela de "Nova Receita" (formulário simples)
+
+  - Nome, categoria, ícone
+  - Lista de ingredientes (quantity + unit)
+  - Checkbox: "Quero estimar calorias" (opcional)
+  - Modo de preparo
+  - Botão "Favorita" ⭐
+
+- [ ] Biblioteca de Receitas
+
+  - Lista com favoritas no topo
+  - Busca por nome
+  - Filtros: café/almoço/jantar, favoritas, com/sem calorias
+
+- [ ] Tela de Refeição
+
+  - Botão "Adicionar Receita"
+  - Selecionar da biblioteca
+  - Registro rápido (< 10 segundos)
+
+- [ ] **Modo Foco para Refeições:**
+  - Renderizador específico (`meal-focus.js`)
+  - Exibir receita completa (ingredientes, preparo)
+  - Mostrar informações nutricionais (se disponível)
+  - Botão "Marcar como Consumida"
+  - Espaço para observações
+
+- [ ] Edição de receitas
 - [ ] Design e CSS
 - [ ] Testes de interface
 
-### Fase 4: Alimentação - Dashboard (1-2 semanas)
+**Simplificado:** Sem busca de ingredientes, sem API, sem conversões complexas
 
-- [ ] Criar gráfico de evolução de calorias
-- [ ] Implementar estatísticas semanais/mensais
-- [ ] Desenvolver análise de macronutrientes
-- [ ] Criar indicadores de aderência
-- [ ] **Mostrar receitas mais usadas**
-- [ ] **Estatísticas por tipo de refeição**
-- [ ] Integrar ao dashboard principal
-- [ ] Testes de dashboard
+---
+
+### Fase 4: Alimentação - Dashboard (1 semana)
+
+- [ ] Dashboard de refeições:
+
+  - Refeições registradas hoje
+  - **Se tracking habilitado:** Progresso de calorias
+  - **Se não:** Apenas lista de refeições
+
+- [ ] Estatísticas simples:
+
+  - Receitas mais usadas
+  - Refeições por categoria (café/almoço/jantar)
+
+- [ ] **Opcional:** Gráfico de calorias (se usuário rastreia)
+
+**Tempo reduzido:** De 1-2 semanas → **1 semana** (menos complexidade)
+
+---
 
 ### Fase 5: Exercícios - Base (2 semanas)
 
-- [ ] Criar biblioteca de exercícios
-- [ ] Desenvolver sistema de workout tracking
-- [ ] Implementar registro de séries/reps
-- [ ] Criar estrutura de recordes pessoais
-- [ ] Desenvolver cálculo de estatísticas
+- [ ] Biblioteca de exercícios (customizada pelo usuário)
+- [ ] Sistema de workout tracking
+- [ ] Registro de séries/reps/peso
+- [ ] Estrutura de recordes pessoais
+- [ ] Cálculo de estatísticas
+- [ ] **Integração Modo Foco:** Preparar dados de exercícios para exibição
 - [ ] Testes unitários
 
 ### Fase 6: Exercícios - Interface (2 semanas)
 
-- [ ] Desenvolver tela de treino
-- [ ] Criar biblioteca visual de exercícios
-- [ ] Implementar formulário de registro
-- [ ] Desenvolver resumo pós-treino
+- [ ] Tela de treino
+- [ ] Biblioteca visual de exercícios
+- [ ] Formulário de registro
+- [ ] **Modo Foco para Exercícios:**
+  - Renderizador específico (`exercise-focus.js`)
+  - Lista de exercícios do treino
+  - Registro de séries em tempo real
+  - Progresso do treino (X/Y exercícios completos)
+  - Mostrar recordes pessoais
+  - Botão "Finalizar Treino"
+- [ ] Resumo pós-treino
 - [ ] Design e CSS
 - [ ] Testes de interface
 
 ### Fase 7: Exercícios - Evolução (1-2 semanas)
 
-- [ ] Criar dashboard de evolução
-- [ ] Implementar gráficos de progresso
-- [ ] Desenvolver sistema de metas
-- [ ] Criar análise de tendências
+- [ ] Dashboard de evolução
+- [ ] Gráficos de progresso
+- [ ] Sistema de metas
+- [ ] Análise de tendências
 - [ ] Integrar ao dashboard principal
 - [ ] Testes completos
 
 ### Fase 8: Integração e Polimento (1 semana)
 
 - [ ] Integrar todos os dashboards
-- [ ] Criar visualizações consolidadas
+- [ ] Visualizações consolidadas
 - [ ] Otimizar performance
 - [ ] Revisar UX/UI
 - [ ] Documentação
 - [ ] Testes E2E completos
 
-**Tempo Total Estimado: 13-17 semanas**
+**Tempo Total Estimado: 11-15 semanas** _(antes: 13-17 semanas sem modo foco)_
+
+**Breakdown:**
+- Fase 0 (Modo Foco): 1-2 semanas
+- Fases 1-7: 9-12 semanas  
+- Fase 8 (Integração): 1 semana
+
+**Nota:** Modo Foco adiciona 1-2 semanas mas melhora drasticamente a UX desde o início e serve como base para todas as outras features.
 
 ---
 
-## 🎯 7. MÉTRICAS DE SUCESSO
+## 🎯 8. MÉTRICAS DE SUCESSO (AJUSTADAS)
 
-### Usabilidade
+### Usabilidade (PRIORIDADE)
 
-- [ ] Usuário consegue registrar refeição em < 2 minutos
-- [ ] **Criar receita em < 5 minutos**
-- [ ] **Reusar receita em < 30 segundos**
+- [ ] **Criar receita em < 5 minutos** 🎯
+- [ ] **Reusar receita em < 10 segundos** 🎯
+- [ ] **Usuário pode NÃO rastrear calorias se quiser**
+- [ ] Registrar refeição rapidamente
 - [ ] Atualizar peso em < 30 segundos
 - [ ] Registrar treino em < 5 minutos
-- [ ] Altura configurada apenas 1 vez
 
 ### Funcionalidade
 
-- [ ] 90%+ de alimentos encontrados na API/TACO
-- [ ] **Conversão de unidades funciona para 95%+ dos casos**
-- [ ] **Receitas salvas e recarregadas corretamente**
+**REMOVIDO:**
+
+- ❌ "90%+ alimentos encontrados na API" (sem API!)
+- ❌ "Conversões precisas ±2%" (não é foco!)
+
+**NOVO:**
+
+- [ ] **95%+ receitas criadas sem frustração**
+- [ ] **Receitas salvas e carregadas corretamente**
+- [ ] **Ingredientes com medidas práticas funcionam**
 - [ ] Histórico de peso preservado por 12+ meses
 - [ ] Recordes pessoais calculados corretamente
-- [ ] Gráficos renderizam em < 2 segundos
 
-### Precisão
+### Precisão (Opcional para Calorias)
 
-- [ ] Cálculos de calorias precisos ±5%
-- [ ] **Totais de receitas calculados corretamente**
-- [ ] **Conversões de unidades precisas ±2%**
+- [ ] **Se usuário rastreia:** Calorias estimadas (~±10% ok!)
+- [ ] **Se não rastreia:** Sistema não força
 - [ ] IMC calculado corretamente
 - [ ] Meta de água ajustada ao peso
 - [ ] Estatísticas de exercícios sem erros
 
+### Satisfação do Usuário 🎯
+
+- [ ] **Usuário não precisa de balança**
+- [ ] **App não força comportamentos**
+- [ ] **Sistema é RÁPIDO e PRÁTICO**
+
 ---
 
-## 🚀 8. TECNOLOGIAS E BIBLIOTECAS
+## 🚀 9. TECNOLOGIAS E BIBLIOTECAS
 
 ### APIs Externas
 
-- **OpenFoodFacts API** - Base de alimentos
-- Fallback offline com TACO
+**❌ DECISÃO: NÃO USAR APIs de alimentos**
+
+- ❌ OpenFoodFacts - Removido
+- ❌ TACO - Removido
+- ❌ USDA - Removido
+
+**Motivo:** Foco em praticidade e velocidade, não em precisão absoluta
 
 ### Bibliotecas JavaScript (Opcionais)
 
-- **Chart.js** - Gráficos de evolução (já usado?)
+- **Chart.js** - Gráficos de evolução (se necessário)
 - **Day.js** - Manipulação de datas
-- **LocalForage** - Storage avançado
+- **LocalForage** - Storage avançado (se localStorage não bastar)
 
 ### Ferramentas
 
-- **Jest** - Testes (já configurado)
+- **Jest** - Testes (já configurado ✅)
 - **Prettier/ESLint** - Code quality
 
 ---
 
-## 📝 9. CONSIDERAÇÕES FINAIS
+## 📝 10. CONSIDERAÇÕES FINAIS
 
-### Prioridades
+### Prioridades (Revistas)
 
-1. **Implementar primeiro o sistema de peso** - Base para outras features
-2. **Depois alimentação** - Feature mais complexa
-3. **Por último exercícios** - Depende menos das outras
+1. **Sistema de peso primeiro** - Base para hidratação
+2. **Receitas simples depois** - Core do sistema de alimentação
+3. **Exercícios por último** - Independente dos outros
 
-### Opções de API
+### Filosofia de Design 🎯
 
-**RECOMENDAÇÃO: OpenFoodFacts**
+**PRATICIDADE > PRECISÃO**
 
-- Gratuita, sem limites
-- Base brasileira (TACO integrada)
-- Sem necessidade de chave de API
-- Funciona offline após cache
+- Usuário não deve precisar de balança
+- Medidas caseiras são suficientes
+- Calorias são opcionais, não obrigatórias
+- Velocidade de uso é prioridade #1
 
 ### Backup de Dados
 
@@ -1655,42 +2249,51 @@ Lifestyle/
 ### Performance
 
 - Lazy loading de dashboards
-- Cache agressivo de alimentos
-- Índices em históricos grandes
+- Renderização rápida de listas
+- Sem dependências de APIs externas (mais rápido!)
 - Otimização de gráficos
 
 ---
 
-## ❓ 10. DECISÕES PENDENTES
+## ❓ 11. DECISÕES TÉCNICAS
 
-1. **Alimentação:**
+### ✅ Decidido (Alimentação)
 
-   - ✅ Usar API híbrida (OpenFoodFacts + Custom)
-   - ✅ Sistema de receitas compostas implementado
-   - [ ] Permitir scan de códigos de barras? (futuro)
-   - [ ] Importar receitas de sites/apps externos?
-   - [ ] **Permitir frações nas quantidades? (ex: 1/2 xícara, 2.5 colheres)**
-   - [ ] **Sugerir substituições inteligentes de ingredientes?**
-   - [ ] **Calcular custo estimado das receitas?**
-   - [ ] **Permitir compartilhar receitas entre usuários?**
+- ✅ **NÃO usar APIs de alimentos** - Foco em receitas do usuário
+- ✅ **Sistema de receitas apenas** - Sem busca de ingredientes
+- ✅ **Calorias opcionais** - Usuário escolhe se quer rastrear
+- ✅ **Medidas práticas** - Colheres, copos, unidades (sem gramas forçadas)
+- ✅ **Permitir frações** - Ex: 1/2 copo, 2.5 colheres ✓
 
-2. **Peso:**
+### ❓ Pendente (Alimentação)
 
-   - ✅ Histórico infinito ou limite de 12 meses?
-   - [ ] Permitir múltiplas medições por dia?
-   - [ ] Adicionar % de gordura corporal?
+- [ ] Scan de códigos de barras? (provavelmente não, fora do escopo)
+- [ ] Importar receitas de sites externos? (futuro distante)
+- [ ] Sugerir substituições de ingredientes? (interessante, mas complexo)
+- [ ] Calcular custo estimado das receitas? (legal, mas não prioritário)
+- [ ] Compartilhar receitas entre usuários? (não, app é pessoal)
 
-3. **Exercícios:**
+### ✅ Decidido (Peso)
 
-   - [ ] Incluir exercícios de cardio (km, tempo)?
-   - [ ] Adicionar planos de treino pré-definidos?
-   - [ ] Incluir vídeos/GIFs de instruções?
+- ✅ Histórico infinito
+- ✅ Uma medição por dia (pode editar)
 
-4. **Geral:**
-   - [ ] Notificações push para lembrar de registrar?
-   - [ ] Gamificação (badges, conquistas)?
-   - [ ] Compartilhamento social de conquistas?
-   - [ ] **Sistema de backup/sincronização em nuvem?**
+### ❓ Pendente (Peso)
+
+- [ ] % de gordura corporal? (futuro, se houver demanda)
+
+### ❓ Pendente (Exercícios)
+
+- [ ] Cardio (km, tempo, calorias)? - **Sim, implementar**
+- [ ] Planos de treino pré-definidos? - **Não, usuário cria os próprios**
+- [ ] Vídeos/GIFs? - **Não, sem escopo para isso**
+
+### ❓ Pendente (Geral)
+
+- [ ] Notificações push? - **Talvez, se simples**
+- [ ] Gamificação? - **Não prioritário**
+- [ ] Compartilhamento social? - **Não, app é privado**
+- [ ] Backup em nuvem? - **Futuro, começar com export/import**
 
 ---
 
