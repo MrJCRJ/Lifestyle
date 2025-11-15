@@ -1,0 +1,240 @@
+/* Health Card */
+
+.health-card {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: none;
+  color: white;
+  position: relative;
+}
+
+.health-card h3 {
+  color: white;
+}
+
+.health-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.health-empty .empty-icon {
+  font-size: 4rem;
+  opacity: 0.6;
+}
+
+.health-empty .btn {
+  margin-top: var(--spacing-sm);
+}
+
+.data-source {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.health-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.health-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+}
+
+.health-metric {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.health-metric.highlight {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.metric-icon {
+  font-size: 1.8rem;
+}
+
+.metric-info {
+  flex: 1;
+}
+
+.metric-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-xs);
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  color: white;
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+}
+
+.metric-category {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.weight-progress-container {
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.weight-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-md);
+  color: white;
+  font-weight: 600;
+}
+
+.weight-progress-bar {
+  position: relative;
+  height: 60px;
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.progress-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.weight-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.weight-marker::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid white;
+  background: currentColor;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.weight-marker.current {
+  color: #3b82f6;
+}
+
+.weight-marker.ideal {
+  color: #10b981;
+}
+
+.marker-label {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.3;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.marker-label::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+}
+
+.health-period-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.progress-icon {
+  font-size: 1.5rem;
+}
+
+.progress-text {
+  font-size: var(--font-size-md);
+}
+
+.health-goals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.goal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.goal-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--font-size-sm);
+}
+
+.goal-value {
+  color: white;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.health-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}

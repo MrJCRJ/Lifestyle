@@ -1,0 +1,73 @@
+/* Hydration Card */
+
+.hydration-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border: none;
+  color: white;
+}
+
+.hydration-card h3 {
+  color: white;
+}
+
+.hydration-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.hydration-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.hydration-progress {
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hydration-fill {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.3s ease;
+}
+
+.hydration-label {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.hydration-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.hydration-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.hydration-icon {
+  font-size: 1.5rem;
+}
+
+.hydration-stat-value {
+  color: white;
+  font-weight: 600;
+  font-size: var(--font-size-md);
+}
+
+.hydration-stat-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-xs);
+}

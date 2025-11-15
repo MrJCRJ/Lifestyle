@@ -1,0 +1,68 @@
+/* Activities Card */
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.activity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.activity-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.activity-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.activity-icon {
+  font-size: 1.5rem;
+}
+
+.activity-label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.activity-stats {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+}
+
+.activity-count,
+.activity-time,
+.activity-avg {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  min-width: 50px;
+  text-align: right;
+}
+
+.activity-count {
+  color: var(--primary-light);
+  font-weight: 600;
+}
+
+.activity-time {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.activity-avg {
+  color: var(--text-muted);
+  font-style: italic;
+}

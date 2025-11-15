@@ -1,0 +1,21 @@
+/* Dashboard - Versão 2.0 Modular */
+
+/* Base Styles */
+@import url("./base/layout.css");
+@import url("./base/controls.css");
+
+/* Components */
+@import url("./components/dashboard-card.css");
+@import url("./components/empty-states.css");
+
+/* Cards */
+@import url("./cards/overview-card.css");
+@import url("./cards/completion-card.css");
+@import url("./cards/health-card.css");
+@import url("./cards/hydration-card.css");
+@import url("./cards/activities-card.css");
+@import url("./cards/meals-card.css");
+@import url("./cards/recent-days-card.css");
+
+/* Responsive */
+@import url("./components/responsive.css");

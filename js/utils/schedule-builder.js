@@ -188,18 +188,24 @@ function addExerciseActivity(schedule, exercise) {
 /**
  * Adiciona atividade de hidratação ao cronograma
  * @param {Array} schedule - Array de atividades
- * @param {number} waterGoal - Meta de água em ml
+ * @param {Object} hydrationData - Dados de hidratação
  */
-function addHydrationActivity(schedule, waterGoal) {
-  if (waterGoal) {
+function addHydrationActivity(schedule, hydrationData) {
+  if (hydrationData && hydrationData.waterNeeds) {
     schedule.push({
       id: 'hydration-daily',
       type: 'hydration',
       name: '💧 Hidratação Diária',
       startTime: '23:59',
       endTime: '23:59',
-      waterGoal: waterGoal,
-      duration: 0
+      waterGoal: hydrationData.waterNeeds,
+      duration: 0,
+      waterTracking: {
+        goal: hydrationData.waterNeeds,
+        consumed: 0,
+        weight: hydrationData.weight || null,
+        height: hydrationData.height || null
+      }
     });
   }
 }
@@ -207,10 +213,10 @@ function addHydrationActivity(schedule, waterGoal) {
 /**
  * Constrói cronograma completo a partir dos dados do plano (formato 24h)
  * @param {Object} planData - Dados do plano
- * @param {number} waterGoal - Meta de água (opcional)
+ * @param {Object} hydrationData - Dados de hidratação (opcional)
  * @returns {Array} Array de atividades ordenadas de 00:00 a 23:59
  */
-function buildScheduleFromPlanData(planData, waterGoal = null) {
+function buildScheduleFromPlanData(planData, hydrationData = null) {
   const schedule = [];
 
   // Adicionar atividades com horário fixo
@@ -233,7 +239,7 @@ function buildScheduleFromPlanData(planData, waterGoal = null) {
   addMealActivities(schedule, planData.mealsCount, planData.mealsConfig);
 
   // Adicionar hidratação no final (não tem horário fixo)
-  addHydrationActivity(schedule, waterGoal);
+  addHydrationActivity(schedule, hydrationData || planData.hydration);
 
   return schedule;
 }

@@ -1,0 +1,128 @@
+/* Meals Card */
+
+.meals-card {
+  grid-column: span 2;
+}
+
+.meals-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.meals-summary-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--light-gray);
+  border-radius: var(--radius-md);
+  transition: transform 0.2s ease;
+}
+
+.meals-summary-item:hover {
+  transform: translateY(-2px);
+}
+
+.meals-summary-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.meals-summary-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.meals-summary-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meals-info {
+  padding: var(--spacing-md);
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+}
+
+.info-text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.meals-list {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.meal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.meal-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 140px;
+}
+
+.meal-icon {
+  font-size: 1.3rem;
+}
+
+.meal-label {
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.meal-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.meal-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meal-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.meal-count {
+  color: var(--primary-light);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  min-width: 30px;
+  text-align: right;
+}
+
+.meals-total {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}

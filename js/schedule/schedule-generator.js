@@ -153,6 +153,16 @@ function generateTodaySchedule() {
 
 // Gerar cronograma a partir de dados
 function generateScheduleFromData(planData) {
-    const waterGoal = appState.userData.userProfile?.waterNeeds;
-    return buildScheduleFromPlanData(planData, waterGoal);
+    // Usar dados de hidratação do planData se disponível, senão pegar do perfil
+    let hydrationData = planData.hydration;
+
+    if (!hydrationData && appState.userData.userProfile) {
+        hydrationData = {
+            weight: appState.userData.userProfile.weight,
+            height: appState.userData.userProfile.height,
+            waterNeeds: appState.userData.userProfile.waterNeeds
+        };
+    }
+
+    return buildScheduleFromPlanData(planData, hydrationData);
 }

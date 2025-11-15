@@ -1,0 +1,22 @@
+/* Dashboard Card Base */
+
+.dashboard-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+  border-color: var(--primary-light);
+}
+
+.dashboard-card h3 {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--spacing-lg) 0;
+  font-weight: 600;
+}

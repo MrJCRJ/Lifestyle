@@ -1,0 +1,50 @@
+/* Dashboard Controls */
+
+.dashboard-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.period-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.period-tab {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.period-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.period-tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+.period-label {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}

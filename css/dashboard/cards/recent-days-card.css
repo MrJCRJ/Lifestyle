@@ -1,0 +1,69 @@
+/* Recent Days Card */
+
+.recent-days-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.recent-day {
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.recent-day:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--primary-light);
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.day-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.day-date {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.day-activities {
+  color: var(--primary-light);
+  font-size: var(--font-size-xs);
+}
+
+.day-completion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  margin-left: var(--spacing-sm);
+}
+
+.day-completion.high {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.day-completion.medium {
+  background: rgba(251, 191, 36, 0.15);
+  color: #f59e0b;
+}
+
+.day-completion.low {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}

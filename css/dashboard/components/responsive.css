@@ -1,0 +1,144 @@
+/* Dashboard Responsive Styles */
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: var(--spacing-sm);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-card,
+  .meals-card {
+    grid-column: span 1;
+  }
+
+  .overview-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .period-tabs {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .period-tab {
+    justify-content: flex-start;
+  }
+
+  .completion-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .completion-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .completion-circle::before {
+    width: 75px;
+    height: 75px;
+  }
+
+  .completion-value {
+    font-size: 1.5rem;
+  }
+
+  .hydration-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .health-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .health-metric {
+    justify-content: flex-start;
+  }
+
+  .weight-progress-bar {
+    height: 80px;
+    margin-top: var(--spacing-xxl);
+  }
+
+  .marker-label {
+    font-size: 10px;
+    padding: 4px 6px;
+    top: -50px;
+  }
+
+  .weight-progress-label {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    text-align: center;
+  }
+
+  .meals-summary {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .meals-summary-item {
+    padding: var(--spacing-md);
+  }
+
+  .meals-summary-icon {
+    font-size: 1.5rem;
+  }
+
+  .meals-summary-value {
+    font-size: 1.5rem;
+  }
+
+  .activity-stats {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: flex-end;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
+
+  .activity-count,
+  .activity-time,
+  .activity-avg {
+    min-width: auto;
+  }
+
+  .meal-stats {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .meal-count {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
+
+  .activity-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .activity-stats {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
