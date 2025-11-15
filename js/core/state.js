@@ -10,7 +10,7 @@ const appState = {
     }
 };
 
-// Expor estado globalmente para integrações (ex: Google Drive)
+// Expor estado globalmente
 window.appState = appState;
 
 // Converter string YYYY-MM-DD para Date local (sem timezone)
@@ -112,11 +112,6 @@ function saveToStorage() {
         tempPlanData: appState.tempPlanData,
         dailySchedules: Object.keys(appState.userData.dailySchedules || {})
     });
-
-    // Sincronizar com Google Drive automaticamente (se disponível)
-    if (typeof autoSyncToDrive === 'function') {
-        autoSyncToDrive();
-    }
 }
 
 // Carregar do localStorage

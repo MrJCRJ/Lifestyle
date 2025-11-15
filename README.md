@@ -1,23 +1,21 @@
 # 🌟 Lifestyle App
 
-> Gerenciador inteligente de rotinas diárias com sincronização automática na nuvem
+> Gerenciador inteligente de rotinas diárias
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/MrJCRJ/Lifestyle)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## 📱 Sobre
 
-O **Lifestyle App** é um aplicativo web moderno para gerenciar sua rotina diária de forma inteligente e organizada. Com sincronização automática via Google Drive, seus dados ficam sempre disponíveis em qualquer dispositivo.
+O **Lifestyle App** é um aplicativo web moderno para gerenciar sua rotina diária de forma inteligente e organizada. Seus dados ficam salvos localmente no navegador.
 
 ### ✨ Características Principais
 
 - 📅 **Planejamento Inteligente** - Crie cronogramas detalhados para cada dia
-- ☁️ **Sincronização Automática** - Dados salvos automaticamente no Google Drive
 - 📊 **Dashboard Analytics** - Visualize estatísticas e insights da sua rotina
 - 🎯 **Múltiplas Categorias** - Trabalho, Estudo, Exercícios, Alimentação, e mais
 - 💾 **Backup Local** - Exporte e importe seus dados em JSON
 - 📱 **Responsivo** - Funciona perfeitamente em desktop e mobile
-- 🔒 **Seguro** - Autenticação OAuth 2.0 do Google
 
 ## 🚀 Demo
 
@@ -30,8 +28,7 @@ Acesse a versão online: [https://lifestyle-rouge.vercel.app](https://lifestyle-
 ## 🏗️ Tecnologias
 
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Sincronização**: Google Drive API v3
-- **Autenticação**: Google OAuth 2.0
+- **Storage**: LocalStorage
 - **Deploy**: Vercel
 - **Testes**: Jest
 
@@ -40,7 +37,6 @@ Acesse a versão online: [https://lifestyle-rouge.vercel.app](https://lifestyle-
 ### Pré-requisitos
 
 - Python 3.x ou Node.js (para servidor local)
-- Credenciais do Google OAuth 2.0 (opcional para desenvolvimento)
 
 ### Setup Rápido
 
@@ -49,39 +45,12 @@ Acesse a versão online: [https://lifestyle-rouge.vercel.app](https://lifestyle-
 git clone https://github.com/MrJCRJ/Lifestyle.git
 cd Lifestyle
 
-# 2. Configure as variáveis de ambiente
-cp .env.example .env
-# Edite o .env com suas credenciais (ou use as padrões para teste)
-
-# 3. Gere o arquivo de configuração
-./scripts/generate-env.sh
-
-# 4. Inicie o servidor local
+# 2. Inicie o servidor local
 python -m http.server 8000
 
-# 5. Acesse no navegador
+# 3. Acesse no navegador
 # http://localhost:8000
 ```
-
-## 🔧 Configuração
-
-### Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-# Google OAuth 2.0
-VITE_GOOGLE_CLIENT_ID=seu_client_id.apps.googleusercontent.com
-VITE_GOOGLE_API_KEY=sua_api_key (opcional)
-VITE_DRIVE_FILE_NAME=lifestyle-app-data.json
-```
-
-### Configurar Google Drive
-
-Para habilitar a sincronização com Google Drive:
-
-1. Siga o guia completo em [docs/GOOGLE_DRIVE_SETUP.md](docs/GOOGLE_DRIVE_SETUP.md)
-2. Ou use as credenciais já configuradas para teste
 
 ## 🧪 Testes
 
@@ -101,10 +70,8 @@ npm run test:coverage
 Toda a documentação está disponível na pasta `docs/`:
 
 - [📖 Índice Completo](docs/README.md)
-- [🔧 Configuração Google Drive](docs/GOOGLE_DRIVE_SETUP.md)
-- [💻 Testes Locais](docs/LOCAL_TESTING.md)
+- [ Testes Locais](docs/LOCAL_TESTING.md)
 - [🚀 Deploy Vercel](docs/VERCEL_SETUP.md)
-- [🔑 Credenciais](docs/GOOGLE_CREDENTIALS.md)
 
 ## 🎯 Funcionalidades
 
@@ -119,14 +86,6 @@ Toda a documentação está disponível na pasta `docs/`:
 - 🧹 **Limpeza** - Organizar tarefas domésticas
 - 🎨 **Projetos** - Gerenciar projetos pessoais
 
-### Sincronização Google Drive
-
-- ✅ Sincronização automática (2 segundos após alterações)
-- ✅ Sincronização manual sob demanda
-- ✅ Resolução automática de conflitos
-- ✅ Multi-dispositivo
-- ✅ Dados salvos em pasta privada do app
-
 ## 🤝 Contribuindo
 
 Contribuições são bem-vindas! Sinta-se à vontade para:
@@ -139,22 +98,17 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 
 ## 📝 Changelog
 
-### v2.0.0 - Sincronização Google Drive (Nov 2024)
+### v2.0.0 - Sistema de Planejamento Completo (Nov 2024)
 
-- ✨ Integração completa com Google Drive API
-- ✨ Sincronização automática e manual
-- ✨ Suporte multi-dispositivo
-- ✨ Sistema de variáveis de ambiente
-- ✨ Scripts de build para desenvolvimento e produção
+- ✨ Sistema de planejamento de rotinas
+- ✨ Múltiplas categorias de atividades
+- ✨ Dashboard com estatísticas
+- ✨ Backup local (exportar/importar)
 - 📚 Documentação completa
-- 🔒 Segurança aprimorada
 
 ### v1.0.0 - Release Inicial
 
-- Sistema de planejamento de rotinas
-- Múltiplas categorias de atividades
-- Dashboard com estatísticas
-- Backup local (exportar/importar)
+- Sistema básico de gerenciamento de rotinas
 
 ## 📄 Licença
 
@@ -166,7 +120,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 🙏 Agradecimentos
 
-- Google Drive API pela excelente documentação
 - Vercel pela hospedagem
 - Comunidade open source
 
