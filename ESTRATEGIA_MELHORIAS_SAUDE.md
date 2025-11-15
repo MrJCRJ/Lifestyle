@@ -1213,9 +1213,603 @@ css/exercise/
 
 ---
 
-## � 4. MODO FOCO - Detalhamento de Atividades
+## 🧹 4. LIMPEZA INTELIGENTE - Sistema de Cômodos
 
 ### 4.1 Visão Geral
+
+**Problema atual:** Limpeza é tratada de forma genérica, sem rastreamento de cômodos específicos ou frequência de limpeza.
+
+**Solução:** Implementar **Sistema Inteligente de Limpeza por Cômodos** com:
+- Cadastro de cômodos da casa
+- Tracking de última limpeza por cômodo
+- Sugestões baseadas em frequência recomendada
+- Alertas de cômodos que precisam atenção
+- Estatísticas de frequência real vs recomendada
+- Histórico de limpezas realizadas
+
+### 4.2 Estrutura de Dados
+
+```javascript
+{
+  userData: {
+    // Configuração de cômodos da casa
+    houseRooms: [
+      {
+        id: "room_001",
+        name: "Sala",
+        type: "living_room",
+        icon: "🛋️",
+        size: "large", // small, medium, large
+        recommendedFrequency: 3, // dias entre limpezas
+        priority: "medium", // low, medium, high
+        createdAt: "2025-11-15"
+      },
+      {
+        id: "room_002",
+        name: "Cozinha",
+        type: "kitchen",
+        icon: "🍳",
+        size: "medium",
+        recommendedFrequency: 1, // limpeza diária
+        priority: "high",
+        createdAt: "2025-11-15"
+      },
+      {
+        id: "room_003",
+        name: "Quarto",
+        type: "bedroom",
+        icon: "🛏️",
+        size: "medium",
+        recommendedFrequency: 7, // semanal
+        priority: "medium",
+        createdAt: "2025-11-15"
+      },
+      {
+        id: "room_004",
+        name: "Banheiro",
+        type: "bathroom",
+        icon: "🚽",
+        size: "small",
+        recommendedFrequency: 2, // a cada 2 dias
+        priority: "high",
+        createdAt: "2025-11-15"
+      }
+    ],
+
+    // Histórico de limpezas
+    cleaningHistory: {
+      "2025-11-15": {
+        date: "2025-11-15",
+        rooms: ["room_001", "room_002"], // IDs dos cômodos limpos
+        startTime: "14:00",
+        endTime: "15:30",
+        duration: 90, // minutos
+        notes: "Limpeza rápida da sala e cozinha",
+        tasks: ["Passar pano", "Aspirar", "Organizar"]
+      },
+      "2025-11-12": {
+        date: "2025-11-12",
+        rooms: ["room_003", "room_004"],
+        startTime: "10:00",
+        endTime: "11:00",
+        duration: 60,
+        notes: "Limpeza completa quarto e banheiro",
+        tasks: ["Trocar roupa de cama", "Limpar banheiro"]
+      }
+    },
+
+    // Estatísticas calculadas automaticamente
+    cleaningStats: {
+      totalCleanings: 15, // total no mês
+      averageTimePerCleaning: 75, // minutos
+      mostCleanedRoom: "room_002", // cozinha
+      leastCleanedRoom: "room_003", // quarto
+      currentStreak: 5, // dias consecutivos com limpeza
+      
+      // Por cômodo
+      roomStats: {
+        "room_001": {
+          lastCleaned: "2025-11-15",
+          daysSinceLastCleaning: 0,
+          timesCleanedThisMonth: 8,
+          averageFrequency: 2.8, // dias entre limpezas (real)
+          adherence: 93, // % de aderência à frequência recomendada
+          status: "ok" // ok, attention, urgent
+        },
+        "room_002": {
+          lastCleaned: "2025-11-15",
+          daysSinceLastCleaning: 0,
+          timesCleanedThisMonth: 15,
+          averageFrequency: 1.1,
+          adherence: 100,
+          status: "ok"
+        },
+        "room_003": {
+          lastCleaned: "2025-11-08",
+          daysSinceLastCleaning: 7,
+          timesCleanedThisMonth: 3,
+          averageFrequency: 9.2,
+          adherence: 78,
+          status: "attention" // passou da frequência recomendada
+        },
+        "room_004": {
+          lastCleaned: "2025-11-12",
+          daysSinceLastCleaning: 3,
+          timesCleanedThisMonth: 6,
+          averageFrequency: 2.5,
+          adherence: 85,
+          status: "attention"
+        }
+      }
+    }
+  }
+}
+```
+
+### 4.3 Interface - Configuração de Cômodos
+
+```
+⚙️ Configurar Cômodos da Casa
+┌─────────────────────────────────────┐
+│ 🏠 Meus Cômodos                     │
+│                                     │
+│ [+ Adicionar Cômodo]                │
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🛋️ Sala                         ││
+│ │ Tamanho: Grande                 ││
+│ │ Limpar a cada: 3 dias           ││
+│ │ Prioridade: Média               ││
+│ │ [✏️ Editar] [🗑️ Remover]        ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🍳 Cozinha                      ││
+│ │ Tamanho: Médio                  ││
+│ │ Limpar a cada: 1 dia (diário)   ││
+│ │ Prioridade: Alta ⚠️             ││
+│ │ [✏️ Editar] [🗑️ Remover]        ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🛏️ Quarto                       ││
+│ │ Tamanho: Médio                  ││
+│ │ Limpar a cada: 7 dias (semanal) ││
+│ │ Prioridade: Média               ││
+│ │ [✏️ Editar] [🗑️ Remover]        ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🚽 Banheiro                     ││
+│ │ Tamanho: Pequeno                ││
+│ │ Limpar a cada: 2 dias           ││
+│ │ Prioridade: Alta ⚠️             ││
+│ │ [✏️ Editar] [🗑️ Remover]        ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📊 Total: 4 cômodos                 │
+│                                     │
+│ [Salvar Configuração]               │
+└─────────────────────────────────────┘
+
+📝 Modal: Adicionar/Editar Cômodo
+┌─────────────────────────────────────┐
+│ ➕ Novo Cômodo                      │
+│                                     │
+│ Nome:                               │
+│ [Sala________________]              │
+│                                     │
+│ Tipo:                               │
+│ [🛋️ Sala de Estar ▼]               │
+│                                     │
+│ Opções:                             │
+│ • 🛋️ Sala de Estar                 │
+│ • 🍳 Cozinha                        │
+│ • 🛏️ Quarto                         │
+│ • 🚽 Banheiro                       │
+│ • 🚪 Corredor                       │
+│ • 🏡 Área Externa                   │
+│ • 🧺 Área de Serviço                │
+│ • 📚 Escritório                     │
+│ • 🎮 Outro                          │
+│                                     │
+│ Tamanho:                            │
+│ ( ) Pequeno (< 10m²)                │
+│ (•) Médio (10-20m²)                 │
+│ ( ) Grande (> 20m²)                 │
+│                                     │
+│ Frequência recomendada:             │
+│ [Limpar a cada [3] dias]            │
+│                                     │
+│ Dicas:                              │
+│ • Diário: Cozinha, banheiro         │
+│ • 2-3 dias: Sala, áreas comuns      │
+│ • Semanal: Quartos, escritório      │
+│                                     │
+│ Prioridade:                         │
+│ ( ) Baixa                           │
+│ (•) Média                           │
+│ ( ) Alta                            │
+│                                     │
+│ [Cancelar] [Salvar Cômodo]          │
+└─────────────────────────────────────┘
+```
+
+### 4.4 Interface - Planejar Limpeza
+
+```
+📅 Planejamento de Limpeza
+┌─────────────────────────────────────┐
+│ 🧹 Limpeza - Sexta, 15/11           │
+│                                     │
+│ 💡 Sugestões Inteligentes           │
+│                                     │
+│ ⚠️ Atenção Necessária:              │
+│ ┌─────────────────────────────────┐│
+│ │ ☐ 🛏️ Quarto                     ││
+│ │   Há 7 dias sem limpeza         ││
+│ │   Recomendado: a cada 7 dias    ││
+│ │   Tempo estimado: 30 min        ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ ☐ 🚽 Banheiro                   ││
+│ │   Há 3 dias sem limpeza         ││
+│ │   Recomendado: a cada 2 dias    ││
+│ │   Tempo estimado: 20 min        ││
+│ │   ⚠️ Prioridade Alta            ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ✅ Em Dia:                          │
+│ ┌─────────────────────────────────┐│
+│ │ ☐ 🛋️ Sala                       ││
+│ │   Limpa hoje                    ││
+│ │   Próxima limpeza: em 3 dias    ││
+│ │   Tempo estimado: 25 min        ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ ☐ 🍳 Cozinha                    ││
+│ │   Limpa hoje                    ││
+│ │   Próxima limpeza: amanhã       ││
+│ │   Tempo estimado: 20 min        ││
+│ │   ⚠️ Prioridade Alta            ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ⏱️ Tempo Total Estimado: 95 min     │
+│                                     │
+│ 📋 Tarefas Sugeridas:               │
+│ ☑ Passar pano no chão               │
+│ ☑ Tirar pó                          │
+│ ☐ Aspirar tapetes                   │
+│ ☐ Limpar vidros                     │
+│ ☐ Organizar objetos                 │
+│                                     │
+│ ⏰ Horários:                         │
+│ Início: [14:00]                     │
+│ Término: [15:35] (calculado)        │
+│                                     │
+│ 📝 Observações:                     │
+│ [_____________________________]    │
+│                                     │
+│ [Cancelar] [Salvar Limpeza]         │
+└─────────────────────────────────────┘
+```
+
+### 4.5 Interface - Dashboard de Limpeza
+
+```
+📊 Dashboard de Limpeza
+┌─────────────────────────────────────┐
+│ 🏠 Visão Geral da Casa              │
+│                                     │
+│ ┌───────────────────────────────┐  │
+│ │ Este Mês                      │  │
+│ │ 🧹 15 limpezas realizadas     │  │
+│ │ ⏱️ 75 min média por limpeza   │  │
+│ │ 🔥 5 dias de sequência        │  │
+│ └───────────────────────────────┘  │
+│                                     │
+│ 🎯 Status dos Cômodos               │
+│                                     │
+│ ✅ Em Dia (2):                      │
+│ ┌─────────────────────────────────┐│
+│ │ 🛋️ Sala                         ││
+│ │ Limpa hoje • Próxima: 3 dias    ││
+│ │ ▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░ 93%       ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🍳 Cozinha                      ││
+│ │ Limpa hoje • Próxima: amanhã    ││
+│ │ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%      ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ⚠️ Precisam Atenção (2):            │
+│ ┌─────────────────────────────────┐│
+│ │ 🛏️ Quarto                       ││
+│ │ Há 7 dias • Limpar HOJE         ││
+│ │ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░ 78%       ││
+│ │ [Planejar Limpeza]              ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ ┌─────────────────────────────────┐│
+│ │ 🚽 Banheiro                     ││
+│ │ Há 3 dias • Limpar em breve     ││
+│ │ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 85%       ││
+│ │ [Planejar Limpeza]              ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 📈 Gráfico de Aderência             │
+│ ┌─────────────────────────────────┐│
+│ │ 100%│     ▓▓                    ││
+│ │  75%│  ▓▓ ▓▓ ▓▓                 ││
+│ │  50%│  ▓▓ ▓▓ ▓▓ ▓▓              ││
+│ │  25%│  ▓▓ ▓▓ ▓▓ ▓▓              ││
+│ │   0%│──────────────────────     ││
+│ │     Coz Sal Ban Qua            ││
+│ └─────────────────────────────────┘│
+│                                     │
+│ 🏆 Conquistas                       │
+│ • 🥇 5 dias seguidos limpando       │
+│ • ⭐ Cozinha sempre em dia          │
+│ • 🎯 90%+ aderência no mês          │
+│                                     │
+│ [Ver Histórico] [Configurar]        │
+└─────────────────────────────────────┘
+```
+
+### 4.6 Fluxo de Interação
+
+```mermaid
+graph TD
+    A[Primeira Vez] --> B[Configurar Cômodos]
+    B --> C[Informar quantidade]
+    C --> D[Definir nome e tipo]
+    D --> E[Escolher frequência]
+    E --> F[Definir prioridade]
+    F --> G[Cômodos Salvos]
+    
+    G --> H{Planejar Limpeza}
+    H --> I[Sistema analisa histórico]
+    I --> J[Calcula dias desde última limpeza]
+    J --> K{Passou da frequência?}
+    
+    K -->|Sim| L[Marca como ATENÇÃO ⚠️]
+    K -->|Não| M[Marca como EM DIA ✅]
+    
+    L --> N[Ordena por urgência]
+    M --> N
+    N --> O[Exibe sugestões]
+    
+    O --> P[Usuário seleciona cômodos]
+    P --> Q[Calcula tempo estimado]
+    Q --> R[Ajusta horário de término]
+    
+    R --> S[Salva limpeza planejada]
+    S --> T[Atualiza histórico]
+    T --> U[Recalcula estatísticas]
+    
+    U --> V[Dashboard atualizado]
+    V --> W{Ver próxima limpeza}
+    W --> H
+```
+
+### 4.7 Algoritmo de Sugestões
+
+```javascript
+// Calcular status de cada cômodo
+function calculateRoomStatus(room, history) {
+  const lastCleaned = getLastCleanedDate(room.id, history);
+  const daysSince = calculateDaysSince(lastCleaned);
+  
+  // Status baseado na frequência recomendada
+  let status = 'ok';
+  let urgency = 0;
+  
+  if (daysSince >= room.recommendedFrequency * 2) {
+    status = 'urgent'; // Passou muito tempo
+    urgency = 3;
+  } else if (daysSince >= room.recommendedFrequency) {
+    status = 'attention'; // Na hora de limpar
+    urgency = 2;
+  } else if (daysSince >= room.recommendedFrequency * 0.7) {
+    status = 'soon'; // Em breve
+    urgency = 1;
+  }
+  
+  // Aumentar urgência se for prioridade alta
+  if (room.priority === 'high') {
+    urgency += 1;
+  }
+  
+  return {
+    status,
+    urgency,
+    daysSince,
+    suggested: daysSince >= room.recommendedFrequency,
+    daysUntilNext: Math.max(0, room.recommendedFrequency - daysSince)
+  };
+}
+
+// Gerar sugestões para o dia
+function generateCleaningSuggestions(rooms, history) {
+  const suggestions = rooms.map(room => ({
+    ...room,
+    ...calculateRoomStatus(room, history),
+    estimatedTime: calculateEstimatedTime(room)
+  }));
+  
+  // Ordenar por urgência e prioridade
+  suggestions.sort((a, b) => {
+    if (a.urgency !== b.urgency) return b.urgency - a.urgency;
+    if (a.priority !== b.priority) {
+      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      return priorityOrder[b.priority] - priorityOrder[a.priority];
+    }
+    return b.daysSince - a.daysSince;
+  });
+  
+  return {
+    attention: suggestions.filter(s => s.status === 'urgent' || s.status === 'attention'),
+    ok: suggestions.filter(s => s.status === 'ok' || s.status === 'soon'),
+    all: suggestions
+  };
+}
+
+// Calcular estatísticas mensais
+function calculateCleaningStats(rooms, history, currentMonth) {
+  const cleaningsThisMonth = getCleaningsForMonth(history, currentMonth);
+  
+  const stats = {
+    totalCleanings: cleaningsThisMonth.length,
+    averageTime: calculateAverageTime(cleaningsThisMonth),
+    currentStreak: calculateStreak(history),
+    roomStats: {}
+  };
+  
+  rooms.forEach(room => {
+    const roomCleanings = cleaningsThisMonth.filter(c => c.rooms.includes(room.id));
+    const lastCleaned = getLastCleanedDate(room.id, history);
+    const daysSince = calculateDaysSince(lastCleaned);
+    
+    // Calcular frequência real
+    const realFrequency = roomCleanings.length > 1 
+      ? calculateAverageFrequency(room.id, history)
+      : null;
+    
+    // Calcular aderência (% de seguir a frequência recomendada)
+    const adherence = realFrequency 
+      ? Math.min(100, Math.round((room.recommendedFrequency / realFrequency) * 100))
+      : daysSince <= room.recommendedFrequency ? 100 : 0;
+    
+    stats.roomStats[room.id] = {
+      lastCleaned,
+      daysSinceLastCleaning: daysSince,
+      timesCleanedThisMonth: roomCleanings.length,
+      averageFrequency: realFrequency,
+      adherence,
+      status: calculateRoomStatus(room, history).status
+    };
+  });
+  
+  return stats;
+}
+```
+
+### 4.8 Estrutura de Arquivos
+
+```
+js/categories/
+  └── cleaning.js (expandir com sistema inteligente)
+
+js/cleaning/
+  ├── room-manager.js         # Gerenciar cômodos
+  ├── cleaning-suggestions.js # Algoritmo de sugestões
+  ├── cleaning-history.js     # Histórico e tracking
+  └── cleaning-stats.js       # Cálculo de estatísticas
+
+components/cleaning/
+  ├── room-config.html        # Configurar cômodos
+  ├── room-form.html          # Formulário de cômodo
+  ├── cleaning-planner.html   # Planejar limpeza
+  └── cleaning-dashboard.html # Dashboard de limpeza
+
+css/cleaning/
+  ├── room-cards.css          # Cards de cômodos
+  ├── cleaning-suggestions.css # Sugestões
+  └── cleaning-dashboard.css   # Dashboard
+```
+
+### 4.9 Benefícios
+
+**Para o Usuário:**
+- ✅ **Nunca esquecer** de limpar cômodos importantes
+- ✅ **Sugestões inteligentes** baseadas no histórico real
+- ✅ **Priorização automática** dos cômodos que precisam atenção
+- ✅ **Estimativas de tempo** realistas
+- ✅ **Gamificação** com conquistas e sequências
+- ✅ **Visão clara** de toda a casa
+
+**Para o Sistema:**
+- ✅ **Aprendizado contínuo** da frequência real do usuário
+- ✅ **Adaptação** às prioridades individuais
+- ✅ **Estatísticas** para insights de comportamento
+- ✅ **Base para notificações** futuras
+
+### 4.10 Casos de Uso
+
+#### Caso 1: Primeira Configuração
+1. Usuário acessa configurações de limpeza
+2. Clica em "Configurar Cômodos"
+3. Adiciona: Sala, Cozinha, Quarto, Banheiro
+4. Define frequências: Cozinha (diária), Banheiro (2 dias), etc
+5. Sistema está pronto para sugerir
+
+#### Caso 2: Planejamento Inteligente
+1. Usuário vai planejar limpeza para sexta
+2. Sistema mostra: Quarto (7 dias sem limpar) ⚠️
+3. Sistema sugere: Banheiro (3 dias, prioridade alta) ⚠️
+4. Usuário marca ambos
+5. Sistema calcula: 50 min total
+6. Ajusta horário: 14:00-14:50
+7. Salva e atualiza histórico
+
+#### Caso 3: Dashboard e Insights
+1. Usuário abre dashboard de limpeza
+2. Vê que Cozinha tem 100% aderência (sempre em dia)
+3. Vê que Quarto tem 78% aderência (às vezes atrasa)
+4. Sistema mostra conquista: "5 dias seguidos limpando"
+5. Usuário sente-se motivado a manter sequência
+
+#### Caso 4: Alerta Urgente
+1. Banheiro não é limpo há 5 dias (recomendado: 2 dias)
+2. Sistema marca como URGENTE ⚠️
+3. Coloca no topo das sugestões
+4. Destaca em vermelho no dashboard
+5. Usuário vê e planeja limpeza
+
+### 4.11 Prioridade de Implementação
+
+**Fase 1 (Base):** 2 semanas
+- [ ] Criar estrutura de dados de cômodos
+- [ ] Interface de configuração de cômodos
+- [ ] CRUD de cômodos (criar, editar, deletar)
+- [ ] Armazenamento em localStorage
+
+**Fase 2 (Tracking):** 1 semana
+- [ ] Sistema de histórico de limpezas
+- [ ] Salvar cômodos limpos em cada limpeza
+- [ ] Calcular dias desde última limpeza
+- [ ] Determinar status (ok, attention, urgent)
+
+**Fase 3 (Sugestões):** 1-2 semanas
+- [ ] Algoritmo de sugestões inteligentes
+- [ ] Ordenação por urgência e prioridade
+- [ ] Estimativa de tempo por cômodo
+- [ ] Interface de planejamento com sugestões
+- [ ] Seleção múltipla de cômodos
+
+**Fase 4 (Estatísticas):** 1 semana
+- [ ] Cálculo de estatísticas mensais
+- [ ] Aderência por cômodo
+- [ ] Frequência real vs recomendada
+- [ ] Dashboard visual
+- [ ] Gráficos de progresso
+
+**Fase 5 (Gamificação):** 1 semana
+- [ ] Sistema de conquistas
+- [ ] Sequências (streaks)
+- [ ] Badges e recompensas
+- [ ] Integração com dashboard principal
+
+**Tempo Total:** 6-7 semanas
+
+---
+
+## 🎯 5. MODO FOCO - Detalhamento de Atividades
+
+### 5.1 Visão Geral
 
 **Problema atual:** Atividades no cronograma aparecem de forma compacta, sem detalhes ou interatividade individual.
 
@@ -1818,7 +2412,7 @@ function renderActivity(schedule, activity, index, isToday) {
 
 ---
 
-## �🎨 5. DASHBOARD UNIFICADO
+## 🎨 6. DASHBOARD UNIFICADO
 
 ### 5.1 Expandir Dashboard Existente
 
@@ -1893,7 +2487,7 @@ function renderActivity(schedule, activity, index, isToday) {
 
 ---
 
-## 🗂️ 6. ESTRUTURA GERAL DO PROJETO
+## 🗂️ 7. ESTRUTURA GERAL DO PROJETO
 
 ### 5.1 Organização de Pastas (Atualizada)
 
@@ -1988,7 +2582,7 @@ Lifestyle/
 
 ---
 
-## 📋 7. PLANO DE IMPLEMENTAÇÃO (SIMPLIFICADO)
+## 📋 8. PLANO DE IMPLEMENTAÇÃO (SIMPLIFICADO)
 
 ### Fase 0: Modo Foco - Base (1-2 semanas)
 
@@ -2027,6 +2621,20 @@ Lifestyle/
   - Informações de peso atual e IMC
 - [ ] Testes unitários
 
+### Fase 1.5: Limpeza - Base (2 semanas)
+
+- [ ] Criar estrutura de cômodos (`userRooms`)
+- [ ] Modal de configuração de cômodos
+- [ ] Implementar CRUD de cômodos (criar, editar, deletar)
+- [ ] Sistema de frequências de limpeza por cômodo
+- [ ] Estrutura de histórico de limpezas (`cleaningHistory`)
+- [ ] Algoritmo de sugestões inteligentes
+- [ ] Cálculo de urgência baseado em frequência
+- [ ] **Integração Modo Foco:** Preparar dados de cômodos
+- [ ] Arquivo `js/cleaning/room-manager.js`
+- [ ] Arquivo `js/cleaning/cleaning-suggestions.js`
+- [ ] Testes unitários
+
 ### Fase 2: Alimentação - Base Receitas (1-2 semanas)
 
 **REMOVIDO:** ❌ APIs, ❌ Busca de alimentos, ❌ Tabela TACO, ❌ Cache
@@ -2042,6 +2650,43 @@ Lifestyle/
 - [ ] Testes básicos
 
 **Tempo reduzido:** De 2-3 semanas → **1-2 semanas** (sem API!)
+
+### Fase 2.5: Limpeza - Interface de Configuração (1 semana)
+
+- [ ] Modal de configuração de cômodos (`components/cleaning/room-config.html`)
+- [ ] Formulário de adicionar/editar cômodo:
+  - Nome do cômodo
+  - Tipo (sala, quarto, cozinha, banheiro, etc)
+  - Frequência de limpeza (dias)
+  - Ícone/emoji visual
+- [ ] Lista visual de cômodos configurados
+- [ ] Botões de editar/deletar cômodos
+- [ ] Validações (nome único, frequência > 0)
+- [ ] Design responsivo
+- [ ] CSS (`css/cleaning/room-config.css`)
+- [ ] Testes de interface
+
+### Fase 2.7: Limpeza - Planner e Tracking (1-2 semanas)
+
+- [ ] Tela de planejamento de limpeza (`components/planner/cleaning.html`)
+- [ ] Sistema de sugestões inteligentes:
+  - Mostrar cômodos sugeridos baseado em urgência
+  - Badges de urgência (🔴 atrasado, 🟡 em breve, 🟢 em dia)
+  - Ordenação por prioridade
+- [ ] Seletor de múltiplos cômodos
+- [ ] Estimativa automática de tempo
+- [ ] Campo de observações por limpeza
+- [ ] Integração com `schedule-builder.js`
+- [ ] Registro automático no histórico
+- [ ] **Modo Foco para Limpeza:**
+  - Renderizador específico (`cleaning-focus.js`)
+  - Lista de cômodos a limpar
+  - Checklist de tarefas por cômodo
+  - Progresso visual (X/Y cômodos completos)
+  - Botão "Marcar Cômodo como Limpo"
+  - Timer de tempo gasto
+- [ ] Arquivo `js/planner/planner-cleaning-loader.js`
+- [ ] Testes de integração
 
 ---
 
@@ -2095,6 +2740,31 @@ Lifestyle/
   - Receitas mais usadas
   - Refeições por categoria (café/almoço/jantar)
 
+### Fase 4.5: Limpeza - Dashboard e Estatísticas (1 semana)
+
+- [ ] Seção de limpeza no dashboard principal:
+  - Cômodos limpos hoje
+  - Próximas limpezas sugeridas (top 3)
+  - Badges de urgência visíveis
+- [ ] Mini card de estatísticas:
+  - Total de cômodos em dia
+  - Cômodos atrasados
+  - Taxa de cumprimento semanal
+- [ ] Gráfico de evolução (últimos 30 dias):
+  - Limpezas realizadas por semana
+  - Cômodos mais limpos
+- [ ] Histórico visual com filtros:
+  - Por data
+  - Por cômodo
+  - Mostrar observações
+- [ ] Cálculo de insights:
+  - Cômodo mais negligenciado
+  - Média de dias entre limpezas
+  - Sugestão de ajuste de frequências
+- [ ] Design responsivo
+- [ ] CSS (`css/cleaning/dashboard.css`)
+- [ ] Testes de estatísticas
+
 - [ ] **Opcional:** Gráfico de calorias (se usuário rastreia)
 
 **Tempo reduzido:** De 1-2 semanas → **1 semana** (menos complexidade)
@@ -2145,18 +2815,34 @@ Lifestyle/
 - [ ] Documentação
 - [ ] Testes E2E completos
 
-**Tempo Total Estimado: 11-15 semanas** _(antes: 13-17 semanas sem modo foco)_
+**Tempo Total Estimado: 16-22 semanas** _(antes: 11-15 semanas)_
 
 **Breakdown:**
 - Fase 0 (Modo Foco): 1-2 semanas
-- Fases 1-7: 9-12 semanas  
+- Fase 1 (Config & Peso): 1-2 semanas
+- **Fase 1.5 (Limpeza Base): 2 semanas** 🆕
+- Fase 2 (Receitas Base): 1-2 semanas
+- **Fase 2.5 (Limpeza Config): 1 semana** 🆕
+- **Fase 2.7 (Limpeza Planner): 1-2 semanas** 🆕
+- Fase 3 (Receitas Interface): 2 semanas
+- Fase 4 (Receitas Dashboard): 1 semana
+- **Fase 4.5 (Limpeza Dashboard): 1 semana** 🆕
+- Fase 5 (Exercícios Base): 2 semanas
+- Fase 6 (Exercícios Interface): 2 semanas
+- Fase 7 (Exercícios Evolução): 1-2 semanas
 - Fase 8 (Integração): 1 semana
 
-**Nota:** Modo Foco adiciona 1-2 semanas mas melhora drasticamente a UX desde o início e serve como base para todas as outras features.
+**Sistema de Limpeza:** 5-6 semanas adicionais no total
+
+**Nota:** Sistema de limpeza inteligente adiciona ~5-6 semanas mas traz benefícios imediatos:
+- ✅ Tracking automático de todos os cômodos
+- ✅ Sugestões inteligentes reduzem carga mental
+- ✅ Gamificação aumenta motivação para manter casa limpa
+- ✅ Insights ajudam a otimizar rotina de limpeza
 
 ---
 
-## 🎯 8. MÉTRICAS DE SUCESSO (AJUSTADAS)
+## 🎯 9. MÉTRICAS DE SUCESSO (AJUSTADAS)
 
 ### Usabilidade (PRIORIDADE)
 
@@ -2198,7 +2884,7 @@ Lifestyle/
 
 ---
 
-## 🚀 9. TECNOLOGIAS E BIBLIOTECAS
+## 🚀 10. TECNOLOGIAS E BIBLIOTECAS
 
 ### APIs Externas
 
@@ -2223,7 +2909,7 @@ Lifestyle/
 
 ---
 
-## 📝 10. CONSIDERAÇÕES FINAIS
+## 📝 11. CONSIDERAÇÕES FINAIS
 
 ### Prioridades (Revistas)
 
@@ -2255,7 +2941,7 @@ Lifestyle/
 
 ---
 
-## ❓ 11. DECISÕES TÉCNICAS
+## ❓ 12. DECISÕES TÉCNICAS
 
 ### ✅ Decidido (Alimentação)
 
