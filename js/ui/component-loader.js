@@ -192,6 +192,9 @@ async function initializeComponents() {
         // 5. Modal de calendário (pode ser acessado a qualquer momento)
         await ComponentLoader.appendComponent('components/calendar-modal.html', 'body');
 
+        // 6. Overlay de modo foco (pode ser acessado a qualquer momento)
+        await ComponentLoader.appendComponent('components/focus-mode-overlay.html', 'body');
+
         const loadTime = (performance.now() - startTime).toFixed(2);
         console.log(`[ComponentLoader] ✅ Componentes essenciais carregados em ${loadTime}ms`);
 

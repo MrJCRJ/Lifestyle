@@ -138,7 +138,9 @@ function renderActivity(schedule, activity, index, isToday) {
 
     return `
         ${freeTimeHtml}
-        <div class="activity ${isActive ? 'active-event' : ''} ${statusClass}">
+        <div class="activity ${isActive ? 'active-event' : ''} ${statusClass}" 
+             onclick="FocusMode.open('${schedule.date}', ${index}); event.stopPropagation();"
+             style="cursor: pointer;">
             <div class="activity-main">
                 ${activityInfoHtml}
                 ${actionsHtml}
