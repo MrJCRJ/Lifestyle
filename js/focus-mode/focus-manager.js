@@ -311,11 +311,11 @@ const FocusRenderers = {
           ` : `
             <!-- Atividade futura ou passada -->
             <div class="focus-inactive-message">
-              ${state.scheduleDate < getDateKey(new Date()) 
-                ? '📅 Esta atividade já passou' 
-                : state.scheduleDate > getDateKey(new Date())
-                  ? '📅 Esta atividade é para outro dia'
-                  : '⏰ Esta atividade ainda não começou'}
+              ${state.scheduleDate < getDateKey(new Date())
+        ? '📅 Esta atividade já passou'
+        : state.scheduleDate > getDateKey(new Date())
+          ? '📅 Esta atividade é para outro dia'
+          : '⏰ Esta atividade ainda não começou'}
             </div>
           `}
 
