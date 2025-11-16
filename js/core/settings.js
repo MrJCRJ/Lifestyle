@@ -3,7 +3,7 @@
 // Abrir modal de configurações
 function openSettings() {
     document.getElementById('settings-modal').classList.add('active');
-    
+
     // Carregar dados do perfil se a função existir
     if (typeof loadUserProfileData === 'function') {
         loadUserProfileData();

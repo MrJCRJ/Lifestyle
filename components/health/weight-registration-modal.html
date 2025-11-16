@@ -5,22 +5,21 @@
       <h3>⚖️ Registrar Peso</h3>
       <button onclick="closeWeightRegistration()" class="btn-close">×</button>
     </div>
-    
+
     <div class="modal-body">
       <!-- Informação do último peso -->
       <div id="last-weight-info" class="info-box"></div>
-      
-      <form id="weight-registration-form" onsubmit="handleWeightRegistration(event)">
+
+      <form
+        id="weight-registration-form"
+        onsubmit="handleWeightRegistration(event)"
+      >
         <div class="form-group">
           <label for="weight-date">Data *</label>
-          <input
-            type="date"
-            id="weight-date"
-            required
-          />
+          <input type="date" id="weight-date" required />
           <small>Data da pesagem</small>
         </div>
-        
+
         <div class="form-group">
           <label for="weight-value">Peso (kg) *</label>
           <input
@@ -34,7 +33,7 @@
           />
           <small>Seu peso atual</small>
         </div>
-        
+
         <div class="form-group">
           <label for="weight-note">Observações</label>
           <textarea
@@ -44,17 +43,25 @@
           ></textarea>
           <small>Opcional: contexto da pesagem</small>
         </div>
-        
+
         <!-- Informação calculada (IMC) -->
-        <div id="calculated-bmi-info" class="info-box" style="display: none;"></div>
+        <div
+          id="calculated-bmi-info"
+          class="info-box"
+          style="display: none"
+        ></div>
       </form>
     </div>
-    
+
     <div class="modal-footer">
       <button onclick="closeWeightRegistration()" class="btn btn-outline">
         Cancelar
       </button>
-      <button type="submit" form="weight-registration-form" class="btn btn-primary">
+      <button
+        type="submit"
+        form="weight-registration-form"
+        class="btn btn-primary"
+      >
         💾 Salvar Peso
       </button>
     </div>

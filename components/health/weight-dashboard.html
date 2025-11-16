@@ -1,0 +1,168 @@
+<!-- Dashboard de Evolução de Peso -->
+<div id="weight-dashboard-modal" class="modal">
+  <div class="modal-content modal-large">
+    <div class="modal-header">
+      <h3>📈 Evolução de Peso</h3>
+      <button onclick="closeWeightDashboard()" class="btn-close">×</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Loading state -->
+      <div
+        id="weight-dashboard-loading"
+        class="loading-state"
+        style="display: none"
+      >
+        <div class="spinner"></div>
+        <p>Carregando estatísticas...</p>
+      </div>
+
+      <!-- Empty state -->
+      <div
+        id="weight-dashboard-empty"
+        class="empty-state"
+        style="display: none"
+      >
+        <div class="empty-icon">⚖️</div>
+        <h4>Nenhum Peso Registrado</h4>
+        <p>Registre seu peso para começar a acompanhar sua evolução!</p>
+        <button
+          onclick="closeWeightDashboard(); openWeightRegistration();"
+          class="btn btn-primary"
+        >
+          📝 Registrar Primeiro Peso
+        </button>
+      </div>
+
+      <!-- Dashboard content -->
+      <div id="weight-dashboard-content">
+        <!-- Resumo Geral -->
+        <div class="dashboard-summary">
+          <div class="summary-card">
+            <div class="summary-icon">⚖️</div>
+            <div class="summary-info">
+              <span class="summary-label">Peso Atual</span>
+              <span class="summary-value" id="current-weight-value">--</span>
+              <span class="summary-date" id="current-weight-date">--</span>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-icon">📊</div>
+            <div class="summary-info">
+              <span class="summary-label">IMC Atual</span>
+              <span class="summary-value" id="current-bmi-value">--</span>
+              <span class="summary-classification" id="current-bmi-class"
+                >--</span
+              >
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-icon">📉</div>
+            <div class="summary-info">
+              <span class="summary-label">Variação Total</span>
+              <span class="summary-value" id="total-change-value">--</span>
+              <span class="summary-percent" id="total-change-percent">--</span>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-icon">🎯</div>
+            <div class="summary-info">
+              <span class="summary-label">Meta de Peso</span>
+              <span class="summary-value" id="goal-weight-value">--</span>
+              <span class="summary-remaining" id="goal-remaining">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico de Evolução -->
+        <div class="dashboard-chart-section">
+          <h4>📈 Evolução nos Últimos 3 Meses</h4>
+          <div id="weight-chart-container" class="weight-chart">
+            <!-- Gráfico será renderizado aqui -->
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item">
+              <span
+                class="legend-dot"
+                style="background: var(--primary-color)"
+              ></span>
+              Peso registrado
+            </span>
+            <span class="legend-item" id="goal-legend" style="display: none">
+              <span
+                class="legend-dot"
+                style="
+                  background: var(--success-color);
+                  border: 2px dashed var(--success-color);
+                  background: transparent;
+                "
+              ></span>
+              Meta
+            </span>
+          </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="dashboard-stats">
+          <div class="stats-group">
+            <h4>📊 Estatísticas</h4>
+
+            <div class="stat-row">
+              <span class="stat-label">Peso Inicial:</span>
+              <span class="stat-value" id="initial-weight-stat">--</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">Total de Registros:</span>
+              <span class="stat-value" id="total-records-stat">--</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">Média (7 dias):</span>
+              <span class="stat-value" id="avg-7days-stat">--</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">Média (30 dias):</span>
+              <span class="stat-value" id="avg-30days-stat">--</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">Tendência:</span>
+              <span class="stat-value" id="trend-stat">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Histórico Detalhado -->
+        <div class="dashboard-history">
+          <div class="history-header">
+            <h4>📝 Histórico de Registros</h4>
+            <button
+              onclick="openWeightRegistration()"
+              class="btn btn-small btn-primary"
+            >
+              ➕ Novo Registro
+            </button>
+          </div>
+
+          <div id="weight-history-list" class="history-list">
+            <!-- Histórico será renderizado aqui -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button onclick="openWeightRegistration()" class="btn btn-primary">
+        📝 Registrar Peso
+      </button>
+      <button onclick="closeWeightDashboard()" class="btn btn-outline">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>

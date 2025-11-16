@@ -198,6 +198,9 @@ async function initializeComponents() {
         // 7. Modal de registro de peso (pode ser acessado a qualquer momento)
         await ComponentLoader.appendComponent('components/health/weight-registration-modal.html', 'body');
 
+        // 8. Modal de dashboard de peso (pode ser acessado a qualquer momento)
+        await ComponentLoader.appendComponent('components/health/weight-dashboard.html', 'body');
+
         const loadTime = (performance.now() - startTime).toFixed(2);
         console.log(`[ComponentLoader] ✅ Componentes essenciais carregados em ${loadTime}ms`);
 

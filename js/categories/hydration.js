@@ -13,7 +13,7 @@ function calculateWaterNeeds(weight, height) {
     if (typeof window.calculateWaterNeeds === 'function' && window.calculateWaterNeeds !== calculateWaterNeeds) {
         return window.calculateWaterNeeds(weight, height);
     }
-    
+
     // Fallback (fórmula básica)
     const baseWater = weight * 35;
     const heightFactor = height > 170 ? 1.1 : 1.0;
@@ -23,7 +23,7 @@ function calculateWaterNeeds(weight, height) {
 // Atualizar recomendação de água (DEPRECATED)
 function updateWaterRecommendation() {
     console.warn('updateWaterRecommendation() está deprecated. Use updateWaterGoal() de user-profile.js');
-    
+
     // Redirecionar para nova função se disponível
     if (typeof updateWaterGoal === 'function') {
         updateWaterGoal();
@@ -33,7 +33,7 @@ function updateWaterRecommendation() {
 // Carregar perfil do usuário (DEPRECATED)
 function loadUserProfile() {
     console.warn('loadUserProfile() está deprecated. Use loadUserProfileData() de user-profile.js');
-    
+
     // Redirecionar para nova função se disponível
     if (typeof loadUserProfileData === 'function') {
         loadUserProfileData();
@@ -43,17 +43,17 @@ function loadUserProfile() {
 // Salvar hidratação do dia atual (DEPRECATED - agora hidratação não precisa salvar peso/altura)
 function saveHydration() {
     console.warn('saveHydration() está deprecated. Configure altura e peso em Settings');
-    
+
     // Verificar se altura está configurada
     const height = appState.userData.userProfile?.height;
     const currentWeight = getCurrentWeight ? getCurrentWeight() : null;
-    
+
     if (!height || !currentWeight) {
         alert('⚠️ Por favor, configure sua altura e registre seu peso nas Configurações primeiro!');
         openSettings();
         return;
     }
-    
+
     // Ir para exercícios
     showScreen('exercise');
 }
@@ -63,11 +63,11 @@ function saveHydration() {
 // Atualizar recomendação de água no planejador (DEPRECATED)
 function updatePlannerWaterRecommendation() {
     console.warn('updatePlannerWaterRecommendation() está deprecated');
-    
+
     // Usar função nova se disponível
     if (typeof updateWaterGoal === 'function') {
         const waterNeeds = updateWaterGoal();
-        
+
         const recDiv = document.getElementById('planner-water-recommendation');
         if (recDiv && waterNeeds) {
             const liters = (waterNeeds / 1000).toFixed(1);
@@ -85,11 +85,11 @@ function updatePlannerWaterRecommendation() {
 // Carregar perfil do usuário no planejador (DEPRECATED)
 function loadPlannerUserProfile() {
     console.warn('loadPlannerUserProfile() está deprecated');
-    
+
     // Apenas mostrar informações se disponíveis
     const height = appState.userData.userProfile?.height;
     const currentWeight = getCurrentWeight ? getCurrentWeight() : null;
-    
+
     const recDiv = document.getElementById('planner-water-recommendation');
     if (recDiv) {
         if (height && currentWeight) {
@@ -121,43 +121,43 @@ function savePlannerHydration() {
     // Verificar se altura está configurada
     const height = appState.userData.userProfile?.height;
     const currentWeight = getCurrentWeight ? getCurrentWeight() : null;
-    
+
     if (!height) {
         alert('⚠️ Por favor, configure sua altura nas Configurações primeiro!');
         openSettings();
         return;
     }
-    
+
     if (!currentWeight) {
         alert('⚠️ Por favor, registre seu peso nas Configurações primeiro!');
         openWeightRegistration();
         return;
     }
-    
+
     // Meta de água já está calculada automaticamente
     const waterNeeds = appState.userData.userProfile?.dailyWaterGoal;
-    
+
     if (!waterNeeds) {
         // Calcular se ainda não foi calculada
         if (typeof updateWaterGoal === 'function') {
             updateWaterGoal();
         }
     }
-    
+
     if (!appState.tempPlanData) {
         appState.tempPlanData = {};
     }
-    
+
     appState.tempPlanData.hydration = {
         weight: currentWeight,
         height: height,
         waterNeeds: appState.userData.userProfile?.dailyWaterGoal || calculateWaterNeeds(currentWeight, height)
     };
-    
+
     saveToStorage();
-    
+
     alert('✅ Hidratação salva!');
-    
+
     // Voltar para tela de edição e atualizar status
     showScreen('planner-edit');
     if (typeof updateEditPlannerStatus === 'function') {
