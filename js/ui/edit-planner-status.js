@@ -54,11 +54,8 @@ function updateCategoryStatus(category, planData) {
     card.classList.remove('configured');
   }
 
-  // Inserir antes do botão
-  const button = card.querySelector('button');
-  if (button) {
-    button.parentNode.insertBefore(preview, button);
-  }
+  // Inserir preview no topo do card
+  card.insertBefore(preview, card.firstChild);
 }
 
 /**

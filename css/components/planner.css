@@ -120,11 +120,14 @@
   text-align: center;
   transition: all 0.3s ease;
   position: relative;
+  cursor: pointer;
+  user-select: none;
 }
 
 .edit-category-card:hover {
   border-color: var(--primary-color);
-  transform: translateY(-4px);
+  background: var(--bg-card-hover, #232a3a);
+  transform: translateY(-4px) scale(1.03);
   box-shadow: var(--shadow-lg);
 }
 
