@@ -64,6 +64,10 @@ function removeScheduledDay(dateKey) {
 // Adicionar consumo de água
 function addWaterIntake(dateKey, activityIndex, amount) {
     const schedule = appState.userData.dailySchedules[dateKey];
+    if (!schedule || !schedule.activities || !schedule.activities[activityIndex]) {
+        alert('Atividade de hidratação não encontrada para este dia.');
+        return;
+    }
     const activity = schedule.activities[activityIndex];
 
     // Inicializar tracking de água se não existir
