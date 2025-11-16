@@ -195,6 +195,9 @@ async function initializeComponents() {
         // 6. Overlay de modo foco (pode ser acessado a qualquer momento)
         await ComponentLoader.appendComponent('components/focus-mode-overlay.html', 'body');
 
+        // 7. Modal de registro de peso (pode ser acessado a qualquer momento)
+        await ComponentLoader.appendComponent('components/health/weight-registration-modal.html', 'body');
+
         const loadTime = (performance.now() - startTime).toFixed(2);
         console.log(`[ComponentLoader] ✅ Componentes essenciais carregados em ${loadTime}ms`);
 
